@@ -41,7 +41,6 @@
   .brand-logo .st0 { fill: #f0f0f0; }
   .brand-logo .st1 { fill: var(--brand); }
 
-  /* Botón "Inicio" */
   .btn-home {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 10px 16px;
@@ -52,22 +51,16 @@
     transition: background .2s, border-color .2s, transform .15s, color .2s, box-shadow .2s;
   }
   .btn-home:hover {
-    background: var(--brand);
-    border-color: var(--brand);
-    color: #fff;
+    background: var(--brand); border-color: var(--brand); color: #fff;
     transform: translateY(-1px);
     box-shadow: 0 8px 20px rgba(255, 42, 0, .35);
   }
   .btn-home:focus-visible {
-    outline: 2px solid var(--brand);
-    outline-offset: 3px;
-    background: var(--brand);
-    border-color: var(--brand);
-    color: #fff;
+    outline: 2px solid var(--brand); outline-offset: 3px;
+    background: var(--brand); border-color: var(--brand); color: #fff;
   }
   .btn-home svg { width: 15px; height: 15px; }
 
-  /* ============ PROJECTS HEADER ============ */
   .app-header {
     display: flex; align-items: center; justify-content: space-between;
     gap: 20px; flex-wrap: wrap;
@@ -81,39 +74,27 @@
     position: absolute; left: 0; right: 0; bottom: -1px;
     height: 2px;
     background: linear-gradient(90deg, var(--brand) 0%, transparent 45%);
-    opacity: .4;
-    pointer-events: none;
+    opacity: .4; pointer-events: none;
   }
-
   .header-brand {
     display: flex; align-items: center; gap: 14px;
     flex: 0 0 auto; min-width: 0;
   }
-
   .brand-lockup {
     display: flex; align-items: center; gap: 12px;
     padding-left: 14px;
     border-left: 1px solid var(--border-2);
     min-width: 0;
   }
-  .brand-lockup .brand-logo {
-    height: 42px;
-    flex-shrink: 0;
-  }
+  .brand-lockup .brand-logo { height: 42px; flex-shrink: 0; }
   .brand-suffix {
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--brand);
-    letter-spacing: -.5px;
-    line-height: 1;
-    white-space: nowrap;
-    text-transform: capitalize;
+    font-size: 22px; font-weight: 800;
+    color: var(--brand); letter-spacing: -.5px;
+    line-height: 1; white-space: nowrap; text-transform: capitalize;
   }
-
   .header-controls {
     display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-    flex: 1 1 auto;
-    justify-content: flex-end;
+    flex: 1 1 auto; justify-content: flex-end;
   }
 
   .projects-title-bar {
@@ -121,22 +102,15 @@
     padding: 30px clamp(16px, 3vw, 40px) 0;
   }
   .projects-title {
-    margin: 0;
-    font-size: clamp(32px, 5vw, 48px);
-    font-weight: 800;
-    letter-spacing: -1px;
-    color: #fff;
-    display: inline-block;
-    padding-bottom: 12px;
-    border-bottom: 3px solid var(--brand);
-    line-height: 1;
+    margin: 0; font-size: clamp(32px, 5vw, 48px);
+    font-weight: 800; letter-spacing: -1px; color: #fff;
+    display: inline-block; padding-bottom: 12px;
+    border-bottom: 3px solid var(--brand); line-height: 1;
   }
-
   .projects-body {
     max-width: 1400px; margin: 0 auto;
     padding: 28px clamp(16px, 3vw, 40px) 60px;
   }
-
   .projects-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .ctrl-select { position: relative; }
   .ctrl-select select {
@@ -152,8 +126,8 @@
   .ctrl-select select:focus { border-color: var(--brand); }
   .ctrl-select::after {
     content: '▾'; position: absolute; right: 12px; top: 50%;
-    transform: translateY(-50%); color: var(--txt-dim); pointer-events: none;
-    font-size: 11px;
+    transform: translateY(-50%); color: var(--txt-dim);
+    pointer-events: none; font-size: 11px;
   }
   .view-toggle {
     display: inline-flex; align-items: center;
@@ -314,7 +288,6 @@
   .new-card-icon svg { width: 22px; height: 22px; }
   .new-card-label { font-size: 13.5px; font-weight: 700; color: #c0c0c4; }
 
-  /* ============ REVIEW HEADER ============ */
   .review-header {
     display: flex; align-items: center; gap: 12px;
     padding: 12px clamp(12px, 2vw, 22px);
@@ -371,8 +344,8 @@
   .state-select:disabled, .version-select:disabled { opacity: .5; cursor: not-allowed; }
   .state-select-wrap::after, .version-select-wrap::after {
     content: '▾'; position: absolute; right: 12px; top: 50%;
-    transform: translateY(-50%); color: var(--txt-dim); pointer-events: none;
-    font-size: 11px;
+    transform: translateY(-50%); color: var(--txt-dim);
+    pointer-events: none; font-size: 11px;
   }
   .state-select[data-state="sin-empezar"] { border-color: rgba(107, 114, 128, .6); color: #a0a0a6; }
   .state-select[data-state="en-edicion"]  { border-color: rgba(255, 42, 0, .7); color: #ff6b3d; }
@@ -409,7 +382,6 @@
   }
   .btn-import:hover { transform: translateY(-1px); filter: brightness(1.06); }
 
-  /* ============ REVIEW MAIN ============ */
   .review-main {
     flex: 1 1 auto; display: flex;
     min-height: 0; overflow: hidden;
@@ -431,30 +403,20 @@
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0, 0, 0, .8);
   }
-  /* ====== Reproductor YouTube ====== */
   #yt-player-host {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    background: #000;
-    z-index: 1;
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    background: #000; z-index: 1;
   }
   .video-container iframe {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    z-index: 1;
-    pointer-events: none;
-    background: #000;
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    border: 0; z-index: 1;
+    pointer-events: none; background: #000;
   }
   #yt-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    cursor: pointer;
+    position: absolute; inset: 0;
+    z-index: 2; cursor: pointer;
     background: transparent;
   }
   .video-empty {
@@ -498,7 +460,6 @@
   .btn-upload-video:hover { transform: translateY(-1px); filter: brightness(1.06); }
   .btn-upload-video svg { width: 15px; height: 15px; }
 
-  /* ============ VIDEO CONTROLS ============ */
   .vc-bar {
     position: absolute; left: 0; right: 0; bottom: 0;
     padding: 34px 18px 14px;
@@ -525,10 +486,8 @@
     flex: 1 1 auto;
     height: 30px;
     display: flex; align-items: center;
-    cursor: pointer;
-    user-select: none;
-    padding: 0 6px;
-    margin: 0 2px;
+    cursor: pointer; user-select: none;
+    padding: 0 6px; margin: 0 2px;
   }
   .vc-track {
     position: absolute;
@@ -558,14 +517,10 @@
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 3px;
-    height: 20px;
+    width: 3px; height: 20px;
     background: var(--brand);
-    border: 0;
-    border-radius: 2px;
-    padding: 0;
-    pointer-events: auto;
-    cursor: pointer;
+    border: 0; border-radius: 2px; padding: 0;
+    pointer-events: auto; cursor: pointer;
     transition: transform .15s, height .15s, box-shadow .15s, filter .15s;
     box-shadow: 0 0 4px rgba(255, 42, 0, .55);
     z-index: 3;
@@ -575,30 +530,24 @@
     transform: translate(-50%, -50%) scaleX(1.8);
     height: 28px;
     box-shadow: 0 0 14px rgba(255, 42, 0, .95);
-    filter: brightness(1.2);
-    z-index: 5;
+    filter: brightness(1.2); z-index: 5;
   }
   .vc-marker.resolved {
     background: #16a34a;
     box-shadow: 0 0 4px rgba(22, 163, 74, .55);
   }
-  .vc-marker.resolved:hover {
-    box-shadow: 0 0 14px rgba(22, 163, 74, .95);
-  }
+  .vc-marker.resolved:hover { box-shadow: 0 0 14px rgba(22, 163, 74, .95); }
   .vc-marker::after {
     content: attr(data-tip);
     position: absolute;
     bottom: calc(100% + 12px);
-    left: 50%;
-    transform: translateX(-50%);
+    left: 50%; transform: translateX(-50%);
     padding: 7px 11px;
-    background: #1e1e1e;
-    color: #fff;
+    background: #1e1e1e; color: #fff;
     border: 1px solid var(--border-2);
     border-radius: 8px;
     font-size: 11.5px; font-weight: 600;
-    white-space: nowrap;
-    max-width: 280px;
+    white-space: nowrap; max-width: 280px;
     overflow: hidden; text-overflow: ellipsis;
     opacity: 0; pointer-events: none;
     transition: opacity .15s;
@@ -628,7 +577,6 @@
     background: #fff; border-radius: 999px;
   }
 
-  /* ============ COMMENTS PANEL ============ */
   .comments-panel {
     flex: 0 0 380px;
     background: var(--panel);
@@ -707,9 +655,7 @@
   }
   .comment-item.resolved { opacity: .6; border-left-color: #16a34a; }
   .comment-item.resolved .comment-text { text-decoration: line-through; text-decoration-color: rgba(255,255,255,.25); }
-  .comment-item.new-by-guest {
-    border-left-color: #6366f1;
-  }
+  .comment-item.new-by-guest { border-left-color: #6366f1; }
   .comment-head { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
   .comment-time-btn {
     display: inline-flex; align-items: center; gap: 4px;
@@ -840,7 +786,6 @@
   .btn-send-comment:hover { transform: translateY(-1px); filter: brightness(1.06); }
   .btn-send-comment svg { width: 16px; height: 16px; }
 
-  /* ============ MODAL ============ */
   .modal-overlay {
     position: fixed; inset: 0; z-index: 2000;
     display: none; align-items: center; justify-content: center;
@@ -876,6 +821,7 @@
     font-size: 12px; line-height: 1.55; color: var(--txt-dim);
   }
   .modal-hint strong { color: #fbbf24; }
+  .modal-hint code { background: rgba(255,255,255,.08); padding: 1px 5px; border-radius: 4px; font-size: 11px; }
   .config-field {
     width: 100%;
     padding: 12px 14px;
@@ -906,16 +852,6 @@
     box-shadow: 0 6px 16px rgba(255, 42, 0, .35);
   }
   .btn-save:hover { transform: translateY(-1px); filter: brightness(1.06); }
-  .btn-save-green {
-    background: var(--grad-green); color: #fff;
-    box-shadow: 0 6px 16px rgba(22, 163, 74, .35);
-  }
-  .btn-save-green:hover { transform: translateY(-1px); filter: brightness(1.06); }
-  .btn-save-blue {
-    background: var(--grad-blue); color: #fff;
-    box-shadow: 0 6px 16px rgba(79, 70, 229, .35);
-  }
-  .btn-save-blue:hover { transform: translateY(-1px); filter: brightness(1.06); }
 
   .share-link-box {
     width: 100%;
@@ -948,6 +884,7 @@
     text-align: center;
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .toast.error { background: #fee2e2; color: #991b1b; }
 
   @media (max-width: 640px) {
     .review-header { padding: 10px 12px; gap: 8px; min-height: 62px; }
@@ -1190,7 +1127,13 @@
 
 <script>
 /* =========================================================
-   0 · UTILIDADES
+   0 · CONFIGURACIÓN API (👉 EDITA ESTAS DOS LÍNEAS)
+   ========================================================= */
+const API_URL = 'https://script.google.com/macros/s/TU_ID_AQUI/exec';
+const API_KEY = 'TU_CLAVE_SECRETA_AQUI';
+
+/* =========================================================
+   1 · UTILIDADES
    ========================================================= */
 const $ = id => document.getElementById(id);
 const uid = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -1218,11 +1161,10 @@ function parseTime(str) {
 }
 function fmtDateDisplay(iso) {
   if (!iso) return '';
-  const [y, m, d] = iso.split('-');
+  const [y, m, d] = String(iso).split('-');
   if (!y || !m || !d) return iso;
   return `${d}/${m}/${y}`;
 }
-/** Extrae el ID de cualquier URL/formato de YouTube. Devuelve null si no es válido. */
 function getYouTubeId(input) {
   if (!input) return null;
   const s = String(input).trim();
@@ -1238,9 +1180,10 @@ function getYouTubeId(input) {
 }
 
 let toastTimer;
-function showToast(msg, duration = 3000) {
+function showToast(msg, duration = 3000, isError = false) {
   const el = $('toast');
   el.textContent = msg;
+  el.classList.toggle('error', !!isError);
   el.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), duration);
@@ -1285,55 +1228,31 @@ const STATE_LABELS = {
 };
 
 /* =========================================================
-   1 · INDEXEDDB
+   2 · API (Google Apps Script)
    ========================================================= */
-const DB_NAME = 'kevirago_local_db';
-const DB_VER = 1;
-const STORE_PROJECTS = 'projects';
-
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VER);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      if (!db.objectStoreNames.contains(STORE_PROJECTS)) {
-        db.createObjectStore(STORE_PROJECTS, { keyPath: 'id' });
-      }
-    };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
+async function apiGet(params = {}) {
+  const qs = new URLSearchParams({ key: API_KEY, ...params }).toString();
+  const res = await fetch(`${API_URL}?${qs}`, { method: 'GET' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || 'Error API');
+  return json;
 }
-async function idbGetAllProjects() {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_PROJECTS, 'readonly');
-    const rq = tx.objectStore(STORE_PROJECTS).getAll();
-    rq.onsuccess = () => resolve(rq.result || []);
-    rq.onerror = () => reject(rq.error);
+async function apiPost(body) {
+  const res = await fetch(`${API_URL}?key=${encodeURIComponent(API_KEY)}`, {
+    method: 'POST',
+    // OJO: text/plain para evitar preflight OPTIONS (Apps Script no lo maneja)
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(body)
   });
-}
-async function idbPutProject(p) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_PROJECTS, 'readwrite');
-    tx.objectStore(STORE_PROJECTS).put(p);
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
-}
-async function idbDeleteProject(id) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_PROJECTS, 'readwrite');
-    tx.objectStore(STORE_PROJECTS).delete(id);
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || 'Error API');
+  return json;
 }
 
 /* =========================================================
-   2 · ESTADO
+   3 · ESTADO
    ========================================================= */
 let projects = [];
 let currentProjectId = null;
@@ -1351,10 +1270,38 @@ let isReturnToHost = false;
 
 function getProject(id) { return projects.find(p => p.id === id); }
 function getActiveProject() { return isGuest ? guestProject : getProject(currentProjectId); }
-async function refreshProjects() { projects = await idbGetAllProjects(); }
+
+async function refreshProjects() {
+  try {
+    const data = await apiGet({ action: 'all' });
+    projects = data.projects || [];
+  } catch (err) {
+    console.error(err);
+    showToast('Error al cargar desde Drive: ' + err.message, 4500, true);
+  }
+}
+async function persistProject(p) {
+  try {
+    await apiPost({ action: 'saveProject', project: p });
+    // actualizamos la lista local
+    const idx = projects.findIndex(x => x.id === p.id);
+    if (idx >= 0) projects[idx] = p; else projects.push(p);
+  } catch (err) {
+    console.error(err);
+    showToast('No se pudo guardar en Drive: ' + err.message, 4500, true);
+  }
+}
+async function removeProject(id) {
+  try {
+    await apiPost({ action: 'deleteProject', id });
+  } catch (err) {
+    console.error(err);
+    showToast('No se pudo eliminar en Drive: ' + err.message, 4500, true);
+  }
+}
 
 /* =========================================================
-   3 · LOGO
+   4 · LOGO
    ========================================================= */
 (function injectLogo() {
   const tpl = $('logo-tpl').content;
@@ -1364,7 +1311,7 @@ async function refreshProjects() { projects = await idbGetAllProjects(); }
 })();
 
 /* =========================================================
-   4 · VISTAS
+   5 · VISTAS
    ========================================================= */
 function showView(name) {
   document.querySelectorAll('.view').forEach(v => {
@@ -1373,7 +1320,7 @@ function showView(name) {
 }
 
 /* =========================================================
-   5 · PROYECTOS · RENDER
+   6 · PROYECTOS · RENDER
    ========================================================= */
 function getSortedProjects() {
   let list = [...projects];
@@ -1470,14 +1417,14 @@ async function deleteProject(id) {
   const p = getProject(id);
   if (!p) return;
   if (!confirm(`¿Eliminar "${p.name || 'Sin nombre'}" y todos sus comentarios?`)) return;
-  await idbDeleteProject(id);
+  await removeProject(id);
   await refreshProjects();
   renderProjects();
   showToast('Proyecto eliminado');
 }
 
 /* =========================================================
-   6 · VISTA / ORDEN
+   7 · VISTA / ORDEN
    ========================================================= */
 $('view-grid-btn').addEventListener('click', () => {
   currentViewMode = 'grid';
@@ -1495,7 +1442,7 @@ $('sort-select').addEventListener('change', e => { currentSort = e.target.value;
 $('state-filter').addEventListener('change', e => { currentStateFilter = e.target.value; renderProjects(); });
 
 /* =========================================================
-   7 · NUEVO PROYECTO
+   8 · NUEVO PROYECTO
    ========================================================= */
 $('btn-new-project').addEventListener('click', e => {
   e.stopPropagation();
@@ -1503,7 +1450,7 @@ $('btn-new-project').addEventListener('click', e => {
 });
 
 /* =========================================================
-   8 · CONFIG MODAL
+   9 · CONFIG MODAL
    ========================================================= */
 let configMode = 'create';
 let configProjectId = null;
@@ -1550,8 +1497,7 @@ async function saveConfig() {
       comments: [], thumb: '',
       createdAt: now, updatedAt: now
     };
-    await idbPutProject(p);
-    await refreshProjects();
+    await persistProject(p);
     closeConfig();
     renderProjects();
     showToast('Proyecto creado ✔');
@@ -1560,8 +1506,7 @@ async function saveConfig() {
     if (!p) return;
     p.name = name; p.client = client; p.date = date;
     p.updatedAt = Date.now();
-    await idbPutProject(p);
-    await refreshProjects();
+    await persistProject(p);
     closeConfig();
     renderProjects();
     showToast('Proyecto actualizado ✔');
@@ -1575,7 +1520,7 @@ $('config-save').addEventListener('click', saveConfig);
 });
 
 /* =========================================================
-   9 · YOUTUBE IFRAME API
+   10 · YOUTUBE IFRAME API
    ========================================================= */
 let ytApiPromise = null;
 function loadYouTubeAPI() {
@@ -1595,14 +1540,14 @@ function loadYouTubeAPI() {
 }
 
 /* =========================================================
-   10 · REPRODUCTOR (wrapper sobre YT.Player)
+   11 · REPRODUCTOR (wrapper sobre YT.Player)
    ========================================================= */
 let ytPlayer = null;
 let ytReady = false;
 let timePollTimer = null;
 
 const videoContainer = $('video-container');
-let video = null; // wrapper cuando hay reproductor; null si no hay
+let video = null;
 let vcBar, vcPlay, vcPlayIcon, vcTimeline, vcProgress, vcMarkersEl, vcCurrent, vcTotal;
 let vcMute, vcMuteIcon, vcVolume, vcVolumeFill, vcFullscreen;
 
@@ -1612,7 +1557,6 @@ const ICON_VOL   = `<path d="M3 9v6h4l5 5V4L7 9H3z"/>`;
 const ICON_MUTE  = `<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3l3.5-3.5-1-1L15.5 11 12 7.5l-1 1L14.5 12 11 15.5l1 1L15.5 13l3.5 3.5 1-1z"/>`;
 let controlsHideTimer = null;
 
-/** Wrapper con la misma interfaz que el <video> original, sobre YT.Player */
 const ytWrap = {
   get currentTime() { return ytReady && ytPlayer ? (ytPlayer.getCurrentTime() || 0) : 0; },
   set currentTime(t) { if (ytReady && ytPlayer) ytPlayer.seekTo(Number(t) || 0, true); },
@@ -1645,7 +1589,7 @@ function buildLoadingState() {
 
 function buildEmptyState(version) {
   const guestMsg = isGuest
-    ? 'El autor no compartió el enlace del video en este enlace. Pídeselo para poder revisar.'
+    ? 'El autor no compartió el enlace del video. Pídeselo para poder revisar.'
     : 'Pega el enlace del video de YouTube para empezar a revisar y dejar comentarios.';
   videoContainer.innerHTML = `
     <div class="video-empty" id="video-empty">
@@ -1711,7 +1655,6 @@ function buildVideoPlayer() {
 }
 
 function bindControlsEvents() {
-  // Overlay sobre el iframe: captura clics para play/pause
   const overlay = $('yt-overlay');
   if (overlay) {
     overlay.addEventListener('click', () => {
@@ -1803,13 +1746,12 @@ function onPlayerReady(event) {
   if (vcTotal) vcTotal.textContent = fmtTime(duration);
   if (vcBar) vcBar.classList.remove('hidden');
 
-  // Guardar duración en el proyecto
   const p = getActiveProject();
   if (p && !isGuest) {
     const vObj = (p.versions || []).find(v => v.id === (p.currentVersion || 'v1'));
     if (vObj) {
       vObj.duration = duration || 0;
-      idbPutProject(p).catch(() => {});
+      persistProject(p).catch(() => {});
     }
   }
 
@@ -1822,12 +1764,11 @@ function onPlayerReady(event) {
 function onPlayerStateChange(event) {
   const state = event.data;
   updatePlayIcon();
-  if (state === 1) { // playing
+  if (state === 1) {
     startTimePolling();
     scheduleControlsHide();
   } else {
     stopTimePolling();
-    // una última actualización
     if (ytReady && ytPlayer) {
       const t = ytPlayer.getCurrentTime() || 0;
       const d = ytPlayer.getDuration() || 0;
@@ -1840,7 +1781,7 @@ function onPlayerStateChange(event) {
 }
 
 function onPlayerError() {
-  showToast('No se pudo reproducir este video (puede ser privado o no permitir inserción)');
+  showToast('No se pudo reproducir este video (puede ser privado o no permitir inserción)', 4500, true);
 }
 
 function startTimePolling() {
@@ -1883,7 +1824,7 @@ function showControls() {
 }
 
 /* =========================================================
-   11 · CARGA DE VIDEO (YouTube)
+   12 · CARGA DE VIDEO
    ========================================================= */
 async function loadVideoForVersion(p, version) {
   destroyPlayer();
@@ -1908,7 +1849,7 @@ async function loadVideoForVersion(p, version) {
 }
 
 /* =========================================================
-   12 · MODAL YOUTUBE URL
+   13 · MODAL YOUTUBE URL
    ========================================================= */
 let pendingVersionForYT = null;
 function openYouTubeModal(versionId) {
@@ -1952,8 +1893,7 @@ async function saveYouTubeUrl() {
   p.updatedAt = Date.now();
 
   if (!isGuest) {
-    await idbPutProject(p);
-    await refreshProjects();
+    await persistProject(p);
   }
   closeYouTubeModal();
   showToast('Video añadido ✔');
@@ -1968,7 +1908,7 @@ async function saveYouTubeUrl() {
 }
 
 /* =========================================================
-   13 · SHARE / GUEST MODE
+   14 · SHARE / GUEST MODE
    ========================================================= */
 function buildSharePayload(p) {
   const version = p.currentVersion || 'v1';
@@ -2073,7 +2013,6 @@ function updateGuestControlsUI() {
     } else {
       btnReturn.style.display = 'inline-flex';
       btnImport.style.display = 'none';
-      // El invitado puede pegar la URL si el autor no la compartió:
       btnUploadTop.style.display = (guestProject.versions[0].youtubeId) ? 'none' : 'inline-flex';
       $('shared-note').textContent = '👤 Modo invitado · solo ves este proyecto';
     }
@@ -2136,6 +2075,7 @@ $('btn-import').addEventListener('click', async () => {
 
   if (!confirm(`¿Importar ${incoming.comments.length} comentarios al proyecto "${localProject.name}"?`)) return;
 
+  const existingIds = new Set((localProject.comments || []).map(c => c.id));
   let added = 0, updated = 0;
 
   incoming.comments.forEach(inc => {
@@ -2160,7 +2100,7 @@ $('btn-import').addEventListener('click', async () => {
   });
 
   localProject.updatedAt = Date.now();
-  await idbPutProject(localProject);
+  await persistProject(localProject);
   await refreshProjects();
 
   showToast(`Importado: +${added} nuevos, ${updated} actualizados`);
@@ -2180,7 +2120,7 @@ function exitGuestMode() {
 }
 
 /* =========================================================
-   14 · ROUTER
+   15 · ROUTER
    ========================================================= */
 function applyHashRoute() {
   const hash = location.hash || '';
@@ -2223,7 +2163,7 @@ function applyHashRoute() {
 window.addEventListener('hashchange', applyHashRoute);
 
 /* =========================================================
-   15 · REVIEW
+   16 · REVIEW
    ========================================================= */
 async function openReview(id, versionOverride) {
   const p = isGuest ? guestProject : getProject(id);
@@ -2255,7 +2195,7 @@ async function openReview(id, versionOverride) {
     : (p.currentVersion || currentVersions[0] || 'v1');
   vSel.value = activeVersion;
   p.currentVersion = activeVersion;
-  if (!isGuest) await idbPutProject(p);
+  if (!isGuest) await persistProject(p);
 
   const stateSel = $('review-state');
   const activeVerObj = (p.versions || []).find(v => v.id === activeVersion);
@@ -2268,13 +2208,11 @@ async function openReview(id, versionOverride) {
   await loadVideoForVersion(p, activeVersion);
   renderComments();
 }
-function closeReview() {
-  location.hash = '';
-}
+function closeReview() { location.hash = ''; }
 $('btn-back').addEventListener('click', closeReview);
 
 /* =========================================================
-   16 · VERSIÓN
+   17 · VERSIÓN
    ========================================================= */
 $('review-version').addEventListener('change', async e => {
   const p = getActiveProject();
@@ -2288,20 +2226,19 @@ $('review-version').addEventListener('change', async e => {
     p.versions.push({ id: newId, state: 'sin-empezar', youtubeId: '', duration: 0 });
     p.currentVersion = newId;
     p.updatedAt = Date.now();
-    await idbPutProject(p);
-    await refreshProjects();
+    await persistProject(p);
     location.hash = '#/p/' + p.id + '/' + newId;
     showToast('Versión ' + newId + ' creada ✔');
     return;
   }
   p.currentVersion = val;
   p.updatedAt = Date.now();
-  await idbPutProject(p);
+  await persistProject(p);
   location.hash = '#/p/' + p.id + '/' + val;
 });
 
 /* =========================================================
-   17 · ESTADO
+   18 · ESTADO
    ========================================================= */
 $('review-state').addEventListener('change', async e => {
   const p = getActiveProject();
@@ -2313,13 +2250,12 @@ $('review-state').addEventListener('change', async e => {
   if (vObj) vObj.state = val;
   p.state = val;
   p.updatedAt = Date.now();
-  await idbPutProject(p);
-  await refreshProjects();
+  await persistProject(p);
   showToast('Estado: ' + STATE_LABELS[val]);
 });
 
 /* =========================================================
-   18 · COMENTARIOS
+   19 · COMENTARIOS
    ========================================================= */
 const commentsList = $('comments-list');
 const inputTime = $('comment-input-time');
@@ -2440,7 +2376,7 @@ function buildCommentItem(c, index) {
     const target = (proj.comments || []).find(x => x.id === c.id);
     if (!target) return;
     target.resolved = !target.resolved;
-    if (!isGuest) { await idbPutProject(proj); await refreshProjects(); }
+    if (!isGuest) await persistProject(proj);
     renderComments();
   });
   item.querySelector('[data-role="delete"]').addEventListener('click', async e => {
@@ -2448,7 +2384,7 @@ function buildCommentItem(c, index) {
     if (!confirm('¿Eliminar este comentario?')) return;
     const proj = getActiveProject();
     proj.comments = (proj.comments || []).filter(x => x.id !== c.id);
-    if (!isGuest) { await idbPutProject(proj); await refreshProjects(); }
+    if (!isGuest) await persistProject(proj);
     renderComments();
     showToast('Comentario eliminado');
   });
@@ -2460,9 +2396,9 @@ function buildCommentItem(c, index) {
     target.text = textEl.innerText.trim();
     clearTimeout(item._saveTimer);
     item._saveTimer = setTimeout(async () => {
-      if (!isGuest) await idbPutProject(proj);
+      if (!isGuest) await persistProject(proj);
       renderMarkers();
-    }, 500);
+    }, 700);
   });
   textEl.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); textEl.blur(); }
@@ -2485,10 +2421,7 @@ async function addComment() {
     text, resolved: false, version,
     createdAt: new Date().toISOString()
   });
-  if (!isGuest) {
-    await idbPutProject(p);
-    await refreshProjects();
-  }
+  if (!isGuest) await persistProject(p);
   try { localStorage.setItem('kevirago_last_author', inputAuthor.value.trim()); } catch (err) {}
   inputText.value = '';
   if (video) lockedCommentTime = video.currentTime || 0;
@@ -2508,7 +2441,7 @@ try {
 } catch (err) {}
 
 /* =========================================================
-   19 · MARCADORES
+   20 · MARCADORES
    ========================================================= */
 function renderMarkers() {
   if (!vcMarkersEl) return;
@@ -2533,7 +2466,7 @@ function renderMarkers() {
 }
 
 /* =========================================================
-   20 · FILTROS
+   21 · FILTROS
    ========================================================= */
 document.querySelectorAll('.tab-btn[data-filter]').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -2549,7 +2482,7 @@ function updateFilterTabs() {
 }
 
 /* =========================================================
-   21 · INIT
+   22 · INIT
    ========================================================= */
 async function init() {
   await refreshProjects();
@@ -2563,7 +2496,7 @@ async function init() {
 init();
 
 /* =========================================================
-   22 · ATAJOS
+   23 · ATAJOS
    ========================================================= */
 document.addEventListener('keydown', e => {
   const inReview = $('review-view').classList.contains('active');
