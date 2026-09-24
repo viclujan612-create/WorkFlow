@@ -900,13 +900,50 @@
     .vc-bar { padding: 28px 10px 10px; gap: 8px; }
     .vc-btn { width: 34px; height: 34px; }
 
-    /* --- Header principal (proyectos): ahora replica el comportamiento móvil de facturero.html --- */
+    /* ============================================================
+       Header de proyectos — reorganizado para móvil (grid 2×2)
+       Fila 1: Inicio .......................... logo + "Revisor"
+       Fila 2: [Sort ▾] ......................... [Filter ▾]
+       Fila 3: [⊞ ☰] ............................ [+ nuevo proyecto]
+       ============================================================ */
+    .app-header {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 12px 14px;
+      gap: 10px;
+    }
+    .header-brand {
+      width: 100%;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .header-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      width: 100%;
+      flex: initial;
+      justify-content: initial;
+    }
+    .ctrl-select { width: 100%; }
+    .ctrl-select select {
+      width: 100%;
+      padding: 9px 28px 9px 12px;
+      font-size: 12px;
+    }
+    .view-toggle { justify-self: start; }
+    .btn-new-project {
+      justify-self: end;
+      padding: 8px 12px;
+      font-size: 11.5px;
+      gap: 6px;
+    }
+    .btn-new-project svg { width: 13px; height: 13px; }
+
     .btn-home span { display: none; }
     .btn-home { padding: 10px 12px; }
     .brand-lockup .brand-logo { height: 26px; }
     .brand-suffix { font-size: 17px; }
-    .app-header { padding: 12px 14px; gap: 12px; }
-    .header-brand { gap: 10px; }
     .brand-lockup { padding-left: 10px; gap: 8px; }
   }
 </style>
