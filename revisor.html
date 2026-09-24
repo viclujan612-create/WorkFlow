@@ -56,9 +56,12 @@
     transform: translateY(-1px);
     box-shadow: 0 8px 20px rgba(255, 42, 0, .35);
   }
+  .btn-home:focus-visible {
+    outline: 2px solid var(--brand); outline-offset: 3px;
+    background: var(--brand); border-color: var(--brand); color: #fff;
+  }
   .btn-home svg { width: 15px; height: 15px; }
 
-  /* ============ APP HEADER ============ */
   .app-header {
     display: flex; align-items: center; justify-content: space-between;
     gap: 20px; flex-wrap: wrap;
@@ -75,15 +78,14 @@
     opacity: .4; pointer-events: none;
   }
   .header-brand {
-    width: 100%;
-    justify-content: flex-start;
-    gap: 10px;
+    display: flex; align-items: center; gap: 14px;
+    flex: 0 0 auto; min-width: 0;
   }
   .brand-lockup {
-    padding-left: 0;
-    border-left: 0;
-    gap: 8px;
-    margin-right: auto;
+    display: flex; align-items: center; gap: 12px;
+    padding-left: 14px;
+    border-left: 1px solid var(--border-2);
+    min-width: 0;
   }
   .brand-lockup .brand-logo { height: 42px; flex-shrink: 0; }
   .brand-suffix {
@@ -110,6 +112,7 @@
     max-width: 1400px; margin: 0 auto;
     padding: 28px clamp(16px, 3vw, 40px) 60px;
   }
+  .projects-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .ctrl-select { position: relative; }
   .ctrl-select select {
     padding: 10px 34px 10px 14px;
@@ -118,17 +121,15 @@
     font-size: 13px; font-weight: 600;
     outline: none; cursor: pointer;
     -webkit-appearance: none; appearance: none;
-    transition: border-color .2s, background .2s, color .2s;
+    transition: border-color .2s;
   }
-  .ctrl-select select:hover { border-color: var(--brand); color: var(--brand); }
+  .ctrl-select select:hover { border-color: var(--border-2); }
   .ctrl-select select:focus { border-color: var(--brand); }
   .ctrl-select::after {
     content: '▾'; position: absolute; right: 12px; top: 50%;
     transform: translateY(-50%); color: var(--txt-dim);
     pointer-events: none; font-size: 11px;
-    transition: color .2s;
   }
-  .ctrl-select:hover::after { color: var(--brand); }
   .view-toggle {
     display: inline-flex; align-items: center;
     background: var(--panel-2); border: 1px solid var(--border);
@@ -141,9 +142,8 @@
     border: 0; border-radius: 8px;
     transition: background .2s, color .2s;
   }
-  .view-toggle button:hover { color: var(--brand); }
+  .view-toggle button:hover { color: var(--txt); }
   .view-toggle button.active { background: var(--brand); color: #fff; }
-  .view-toggle button.active:hover { color: #fff; }
   .view-toggle svg { width: 15px; height: 15px; }
   .btn-new-project {
     display: inline-flex; align-items: center; gap: 8px;
@@ -154,7 +154,7 @@
     box-shadow: 0 8px 22px rgba(255, 42, 0, .32);
     transition: transform .2s, filter .2s;
   }
-  .btn-new-project:hover { transform: translateY(-1px); filter: brightness(1.1); }
+  .btn-new-project:hover { transform: translateY(-1px); filter: brightness(1.06); }
   .btn-new-project svg { width: 15px; height: 15px; }
 
   .projects-grid {
@@ -175,8 +175,8 @@
   }
   .project-card:hover {
     transform: translateY(-3px);
-    border-color: var(--brand);
-    box-shadow: 0 14px 30px rgba(255, 42, 0, .18);
+    border-color: rgba(255, 42, 0, .5);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, .55);
   }
   .project-thumb {
     position: relative;
@@ -231,16 +231,12 @@
     font-size: 15px; font-weight: 800; line-height: 1;
     transition: background .15s, color .15s;
   }
-  .project-menu-btn:hover { background: var(--panel-3); color: var(--brand); }
+  .project-menu-btn:hover { background: var(--panel-3); color: #fff; }
   .project-client {
     font-size: 12.5px; color: var(--txt-dim);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  .project-date {
-    font-size: 11.5px; color: var(--txt-dim-2);
-    display: inline-flex; align-items: center; gap: 4px;
-  }
-  .project-date::before { content: '📅'; font-size: 10px; opacity: .7; }
+  .project-date { font-size: 11.5px; color: var(--txt-dim-2); }
   .project-menu {
     position: absolute; top: 100%; right: 12px;
     margin-top: -60px;
@@ -258,7 +254,7 @@
     color: #ddd; font-size: 13px; font-weight: 600;
     transition: background .15s, color .15s;
   }
-  .project-menu button:hover { background: var(--panel-3); color: var(--brand); }
+  .project-menu button:hover { background: var(--panel-3); color: #fff; }
   .project-menu button[data-action="delete"] { color: #f87171; }
   .project-menu button[data-action="delete"]:hover { background: #3a1a1a; color: #fca5a5; }
 
@@ -293,29 +289,6 @@
   .new-card-icon svg { width: 22px; height: 22px; }
   .new-card-label { font-size: 13.5px; font-weight: 700; color: #c0c0c4; }
 
-  /* Spinner */
-  .spinner {
-    width: 38px; height: 38px;
-    border: 3px solid rgba(255, 42, 0, .2);
-    border-top-color: var(--brand);
-    border-radius: 50%;
-    animation: spin .9s linear infinite;
-    flex-shrink: 0;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .projects-loading {
-    grid-column: 1 / -1;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 14px;
-    padding: 80px 20px;
-    color: var(--txt-dim);
-    font-size: 13px;
-  }
-  .projects-loading .txt { font-weight: 700; color: #c8c8cc; letter-spacing: .3px; }
-
-  /* Review header */
   .review-header {
     display: flex; align-items: center; gap: 12px;
     padding: 12px clamp(12px, 2vw, 22px);
@@ -323,15 +296,16 @@
     border-bottom: 1px solid var(--border);
     flex-shrink: 0; min-height: 70px; flex-wrap: wrap;
   }
+  .review-header .brand-logo { height: 26px; flex-shrink: 0; }
   .btn-back {
     flex: 0 0 auto;
     width: 38px; height: 38px; padding: 0;
     display: flex; align-items: center; justify-content: center;
     background: var(--panel-2); color: var(--txt);
     border: 1px solid var(--border); border-radius: 10px;
-    transition: background .2s, border-color .2s, color .2s;
+    transition: background .2s, border-color .2s;
   }
-  .btn-back:hover { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .btn-back:hover { background: var(--panel-3); border-color: var(--border-2); }
   .btn-back svg { width: 17px; height: 17px; }
   .review-info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
   .review-project-name {
@@ -342,7 +316,7 @@
   .review-client {
     font-size: 12px; font-weight: 600; color: var(--txt-dim);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    display: flex; align-items: center; gap: 8px;
   }
   .guest-badge {
     display: inline-flex; align-items: center; gap: 4px;
@@ -354,21 +328,7 @@
     font-size: 9.5px; font-weight: 800;
     letter-spacing: .6px; text-transform: uppercase;
   }
-  .version-badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 2px 8px;
-    background: rgba(255, 42, 0, .18);
-    border: 1px solid rgba(255, 42, 0, .55);
-    color: #ff8a5c;
-    border-radius: 5px;
-    font-size: 9.5px; font-weight: 800;
-    letter-spacing: .6px; text-transform: uppercase;
-  }
-  .review-header-controls {
-    display: flex; align-items: center; gap: 8px;
-    flex-shrink: 0; flex-wrap: wrap;
-    justify-content: flex-end;
-  }
+  .review-header-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
   .state-select-wrap, .version-select-wrap { position: relative; }
   .state-select, .version-select {
     padding: 9px 32px 9px 14px;
@@ -380,10 +340,9 @@
     -webkit-appearance: none; appearance: none;
     transition: border-color .2s, background .2s, color .2s;
   }
-  .state-select:hover, .version-select:hover { background: var(--panel-3); border-color: var(--brand); color: var(--brand); }
+  .state-select:hover, .version-select:hover { background: var(--panel-3); border-color: var(--border-2); }
   .state-select:focus, .version-select:focus { border-color: var(--brand); }
-  .state-select:disabled, .version-select:disabled { opacity: .55; cursor: not-allowed; }
-  .state-select:disabled:hover, .version-select:disabled:hover { background: var(--panel-2); border-color: var(--border); color: #fff; }
+  .state-select:disabled, .version-select:disabled { opacity: .5; cursor: not-allowed; }
   .state-select-wrap::after, .version-select-wrap::after {
     content: '▾'; position: absolute; right: 12px; top: 50%;
     transform: translateY(-50%); color: var(--txt-dim);
@@ -400,25 +359,29 @@
     padding: 10px 16px; border-radius: 10px;
     font-size: 13px; font-weight: 700;
     border: 0;
-    transition: transform .15s, filter .2s, background .2s, border-color .2s, color .2s;
-    white-space: nowrap;
+    transition: transform .15s, filter .2s, background .2s, border-color .2s;
   }
-  .btn-action-top svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .btn-action-top svg { width: 15px; height: 15px; }
+  .btn-upload-top {
+    background: var(--grad); color: #fff;
+    box-shadow: 0 6px 18px rgba(255, 42, 0, .35);
+  }
+  .btn-upload-top:hover { transform: translateY(-1px); filter: brightness(1.06); }
   .btn-share {
     background: var(--panel-2); color: #fff;
     border: 1px solid var(--border);
   }
-  .btn-share:hover { background: var(--brand); border-color: var(--brand); color: #fff; }
-  .btn-delete-version {
-    flex: 0 0 auto;
-    width: 38px; height: 38px; padding: 0;
-    display: inline-flex; align-items: center; justify-content: center;
-    background: var(--panel-2); color: #f87171;
-    border: 1px solid var(--border); border-radius: 10px;
-    transition: background .2s, border-color .2s, color .2s, transform .15s;
+  .btn-share:hover { background: var(--panel-3); border-color: var(--border-2); }
+  .btn-return {
+    background: var(--grad-green); color: #fff;
+    box-shadow: 0 6px 18px rgba(22, 163, 74, .35);
   }
-  .btn-delete-version:hover { background: var(--brand); border-color: var(--brand); color: #fff; }
-  .btn-delete-version svg { width: 16px; height: 16px; }
+  .btn-return:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .btn-import {
+    background: var(--grad-blue); color: #fff;
+    box-shadow: 0 6px 18px rgba(79, 70, 229, .35);
+  }
+  .btn-import:hover { transform: translateY(-1px); filter: brightness(1.06); }
 
   .review-main {
     flex: 1 1 auto; display: flex;
@@ -469,19 +432,6 @@
   .video-empty .icon { font-size: 44px; opacity: .35; }
   .video-empty .title { font-size: 16px; font-weight: 800; color: #c8c8cc; }
   .video-empty .sub { font-size: 12.5px; max-width: 400px; line-height: 1.5; }
-  .video-empty .btn-add-link {
-    margin-top: 4px;
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 18px;
-    background: var(--grad); color: #fff;
-    border: 0; border-radius: 10px;
-    font-size: 12.5px; font-weight: 700;
-    box-shadow: 0 8px 20px rgba(255, 42, 0, .35);
-    transition: transform .15s, filter .2s;
-  }
-  .video-empty .btn-add-link:hover { transform: translateY(-1px); filter: brightness(1.08); }
-  .video-empty .btn-add-link svg { width: 14px; height: 14px; }
-
   .video-loading {
     position: absolute; inset: 0;
     display: flex; flex-direction: column;
@@ -490,8 +440,26 @@
     color: var(--txt-dim); font-size: 13px;
     z-index: 3;
   }
-  .video-loading .label { color: #c8c8cc; font-weight: 700; letter-spacing: .3px; }
-  .video-loading .sub { font-size: 11.5px; color: var(--txt-dim-2); }
+  .video-loading .spinner {
+    width: 38px; height: 38px;
+    border: 3px solid rgba(255, 42, 0, .2);
+    border-top-color: var(--brand);
+    border-radius: 50%;
+    animation: spin .9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .btn-upload-video {
+    margin-top: 4px;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 20px;
+    background: var(--grad); color: #fff;
+    border: 0; border-radius: 11px;
+    font-size: 13px; font-weight: 700;
+    box-shadow: 0 8px 22px rgba(255, 42, 0, .35);
+    transition: transform .15s, filter .2s;
+  }
+  .btn-upload-video:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .btn-upload-video svg { width: 15px; height: 15px; }
 
   .vc-bar {
     position: absolute; left: 0; right: 0; bottom: 0;
@@ -511,7 +479,7 @@
     transition: background .2s, transform .1s;
     backdrop-filter: blur(6px);
   }
-  .vc-btn:hover { background: var(--brand); }
+  .vc-btn:hover { background: rgba(255, 255, 255, .22); }
   .vc-btn:active { transform: scale(.94); }
   .vc-btn svg { width: 18px; height: 18px; }
   .vc-timeline {
@@ -639,13 +607,9 @@
     font-size: 11.5px; font-weight: 700;
     letter-spacing: .4px; text-transform: lowercase;
     transition: background .2s, color .2s, border-color .2s;
-    white-space: nowrap;
-    overflow: hidden; text-overflow: ellipsis;
-    min-width: 0;
   }
-  .tab-btn:hover { color: var(--brand); background: var(--panel-2); border-color: var(--brand); }
+  .tab-btn:hover { color: #fff; background: var(--panel-2); }
   .tab-btn.active { background: var(--panel-3); color: #fff; border-color: var(--border-2); }
-  .tab-btn.active:hover { color: #fff; border-color: var(--border-2); }
   .tab-count {
     display: inline-block; margin-left: 6px;
     padding: 1px 6px;
@@ -693,7 +657,7 @@
   .comment-item.resolved { opacity: .6; border-left-color: #16a34a; }
   .comment-item.resolved .comment-text { text-decoration: line-through; text-decoration-color: rgba(255,255,255,.25); }
   .comment-item.new-by-guest { border-left-color: #6366f1; }
-  .comment-head { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; flex-wrap: wrap; }
+  .comment-head { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
   .comment-time-btn {
     display: inline-flex; align-items: center; gap: 4px;
     padding: 3px 9px;
@@ -709,7 +673,6 @@
     font-size: 11px; font-weight: 700; color: var(--txt-dim);
     text-transform: uppercase; letter-spacing: .4px;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    max-width: 130px;
   }
   .comment-new-badge {
     display: inline-flex;
@@ -735,9 +698,9 @@
     border: 1px solid var(--border); border-radius: 6px;
     transition: background .2s, color .2s, border-color .2s;
   }
-  .comment-btn:hover { background: var(--panel-3); color: var(--brand); border-color: var(--brand); }
-  .comment-btn.check:hover { color: #16a34a; border-color: #16a34a; background: rgba(22,163,74,.12); }
-  .comment-btn.del:hover { color: #f87171; border-color: #f87171; background: rgba(248,113,113,.12); }
+  .comment-btn:hover { background: var(--panel-3); color: #fff; }
+  .comment-btn.check:hover { color: #16a34a; border-color: #16a34a; }
+  .comment-btn.del:hover { color: #f87171; border-color: #f87171; }
   .comment-btn svg { width: 12px; height: 12px; }
   .comment-text {
     font-size: 13px; line-height: 1.55;
@@ -821,7 +784,7 @@
     box-shadow: 0 6px 16px rgba(255, 42, 0, .35);
     transition: transform .12s, filter .2s;
   }
-  .btn-send-comment:hover { transform: translateY(-1px); filter: brightness(1.1); }
+  .btn-send-comment:hover { transform: translateY(-1px); filter: brightness(1.06); }
   .btn-send-comment svg { width: 16px; height: 16px; }
 
   .modal-overlay {
@@ -872,39 +835,6 @@
   }
   .config-field:focus { border-color: var(--brand); }
   .config-field::placeholder { color: var(--txt-dim-2); font-weight: 500; }
-  .config-field-label {
-    display: block;
-    font-size: 10.5px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: .8px;
-    color: var(--txt-dim);
-    margin: 4px 0 6px;
-  }
-
-  /* Custom date input */
-  .date-input-wrap { position: relative; margin-bottom: 10px; }
-  .date-input-wrap .config-field { margin-bottom: 0; padding-right: 52px; }
-  .date-picker-btn {
-    position: absolute; right: 5px; top: 5px; bottom: 5px;
-    width: 42px; height: auto;
-    display: flex; align-items: center; justify-content: center;
-    background: transparent; color: #fff;
-    border: 0; border-radius: 8px;
-    cursor: pointer;
-    overflow: hidden;
-    transition: background .15s, color .15s;
-  }
-  .date-picker-btn:hover { background: rgba(255, 42, 0, .18); color: var(--brand); }
-  .date-picker-btn svg { width: 17px; height: 17px; pointer-events: none; transition: transform .15s; }
-  .date-picker-btn:hover svg { transform: scale(1.1); }
-  .date-picker-btn input[type="date"] {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    opacity: 0; cursor: pointer; border: 0; padding: 0;
-    -webkit-appearance: none; appearance: none;
-  }
-  .date-picker-btn input[type="date"]::-webkit-calendar-picker-indicator {
-    opacity: 0; cursor: pointer; width: 100%; height: 100%;
-  }
-
   .config-actions {
     display: flex; justify-content: flex-end; gap: 8px;
     margin-top: 8px;
@@ -914,15 +844,15 @@
     border-radius: 10px;
     font-size: 13px; font-weight: 700;
     border: 0;
-    transition: background .2s, transform .12s, filter .2s, color .2s;
+    transition: background .2s, transform .12s, filter .2s;
   }
   .btn-cancel { background: transparent; color: var(--txt-dim); }
-  .btn-cancel:hover { background: rgba(255,42,0,.12); color: var(--brand); }
+  .btn-cancel:hover { background: rgba(255,255,255,.06); color: #fff; }
   .btn-save {
     background: var(--grad); color: #fff;
     box-shadow: 0 6px 16px rgba(255, 42, 0, .35);
   }
-  .btn-save:hover { transform: translateY(-1px); filter: brightness(1.1); }
+  .btn-save:hover { transform: translateY(-1px); filter: brightness(1.06); }
 
   .share-link-box {
     width: 100%;
@@ -957,107 +887,27 @@
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
   .toast.error { background: #fee2e2; color: #991b1b; }
 
-  /* ============ RESPONSIVE ============ */
-  @media (max-width: 720px) {
-    /* === App header (proyectos) === */
-    .app-header {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 12px;
-      padding: 12px 14px;
-    }
-    .header-brand {
-      width: 100%;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .brand-lockup { padding-left: 0; border-left: 0; gap: 8px; }
-    .brand-lockup .brand-logo { height: 34px; }
-    .brand-suffix { font-size: 18px; }
-    .btn-home { padding: 10px 12px; }
-    .btn-home span { display: none; }
-    .header-controls {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1fr auto;
-      gap: 8px;
-      align-items: stretch;
-      justify-content: stretch;
-    }
-    .header-controls > .ctrl-select { min-width: 0; }
-    .header-controls > .ctrl-select > select { width: 100%; padding: 10px 28px 10px 10px; font-size: 12px; }
-    .header-controls > .view-toggle { grid-column: 3; }
-    .header-controls > .btn-new-project {
-      grid-column: 1 / -1;
-      justify-content: center;
-      padding: 12px 16px;
-      font-size: 13px;
-    }
-
-    /* === Review header === */
-    .review-header {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      grid-template-areas:
-        "back info"
-        "controls controls";
-      gap: 10px;
-      padding: 10px 12px;
-      min-height: auto;
-    }
-    .btn-back { grid-area: back; width: 38px; height: 38px; align-self: start; }
-    .review-info { grid-area: info; min-width: 0; }
-    .review-project-name { font-size: 16px; }
-    .review-client { font-size: 11px; gap: 6px; }
-    .guest-badge, .version-badge { font-size: 8.5px; padding: 2px 6px; }
-
-    .review-header-controls {
-      grid-area: controls;
-      display: grid;
-      grid-template-columns: 1fr 1fr auto;
-      gap: 6px;
-      width: 100%;
-    }
-    .state-select-wrap { grid-column: 1; min-width: 0; }
-    .version-select-wrap { grid-column: 2; min-width: 0; }
-    .btn-delete-version { grid-column: 3; width: 38px; height: 38px; flex: 0 0 auto; }
-    .state-select, .version-select {
-      width: 100%;
-      padding: 9px 24px 9px 10px;
-      font-size: 10.5px;
-      text-align: center;
-      letter-spacing: .3px;
-    }
-    .state-select-wrap::after, .version-select-wrap::after { right: 8px; }
-    .btn-share {
-      grid-column: 1 / -1;
-      justify-content: center;
-      padding: 10px 14px;
-      font-size: 12.5px;
-    }
-    .btn-share span { display: inline; }
-
-    /* Reproductor */
-    .vc-bar { padding: 26px 10px 10px; gap: 8px; }
-    .vc-btn { width: 34px; height: 34px; }
-    .vc-time { font-size: 11px; }
-    .vc-volume-wrap { display: none; }
-
-    /* Modal */
-    .modal-box { padding: 18px; border-radius: 16px; }
-    .config-field { font-size: 13.5px; padding: 11px 12px; }
-  }
-
-  @media (max-width: 420px) {
-    .tab-btn { font-size: 10.5px; padding: 8px 6px; }
-    .tab-count { margin-left: 3px; padding: 1px 4px; font-size: 9px; }
-    .state-select, .version-select { font-size: 10px; padding: 8px 22px 8px 8px; }
-    .review-header { padding: 8px 10px; gap: 8px; }
+  @media (max-width: 640px) {
+    .review-header { padding: 10px 12px; gap: 8px; min-height: 62px; }
+    .review-header .brand-logo { height: 22px; }
+    .review-project-name { font-size: 15px; }
+    .review-client { font-size: 11px; }
+    .btn-action-top span { display: none; }
+    .btn-action-top { padding: 9px 12px; }
+    .state-select, .version-select { padding: 7px 26px 7px 10px; font-size: 11px; }
     .btn-back { width: 34px; height: 34px; }
     .btn-back svg { width: 15px; height: 15px; }
-    .btn-delete-version { width: 34px; height: 34px; }
-    .btn-share { font-size: 11.5px; padding: 9px 10px; }
-    .review-project-name { font-size: 15px; }
+    .vc-bar { padding: 28px 10px 10px; gap: 8px; }
+    .vc-btn { width: 34px; height: 34px; }
+
+    /* --- Header principal (proyectos): ahora replica el comportamiento móvil de facturero.html --- */
+    .btn-home span { display: none; }
+    .btn-home { padding: 10px 12px; }
+    .brand-lockup .brand-logo { height: 26px; }
+    .brand-suffix { font-size: 17px; }
+    .app-header { padding: 12px 14px; gap: 12px; }
+    .header-brand { gap: 10px; }
+    .brand-lockup { padding-left: 10px; gap: 8px; }
   }
 </style>
 </head>
@@ -1126,6 +976,7 @@
 <!-- ================= REVIEW ================= -->
 <section id="review-view" class="view">
   <header class="review-header">
+    <div class="logo-slot-small"></div>
     <button class="btn-back" id="btn-back" type="button" aria-label="Volver">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
@@ -1134,7 +985,6 @@
       <span class="review-client" id="review-client">
         <span id="review-client-text"></span>
         <span class="guest-badge" id="guest-badge" style="display:none">👤 Invitado</span>
-        <span class="version-badge" id="version-badge" style="display:none">v1</span>
       </span>
     </div>
     <div class="review-header-controls">
@@ -1149,19 +999,28 @@
       <div class="version-select-wrap">
         <select class="version-select" id="review-version" aria-label="Versión"></select>
       </div>
-      <button class="btn-delete-version" id="btn-delete-version" type="button" title="Eliminar versión actual" aria-label="Eliminar versión">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-          <path d="M10 11v6M14 11v6"/>
-        </svg>
+      <button class="btn-action-top btn-upload-top" id="btn-upload-top" type="button" title="Añadir enlace de video de YouTube">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        <span id="btn-upload-label">Añadir video</span>
       </button>
       <button class="btn-action-top btn-share" id="btn-share" type="button" title="Compartir">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
           <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>
         </svg>
-        <span id="btn-share-label">Compartir</span>
+        <span>Compartir</span>
+      </button>
+      <button class="btn-action-top btn-return" id="btn-return" type="button" style="display:none" title="Devolver comentarios al autor">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+        <span>Devolver</span>
+      </button>
+      <button class="btn-action-top btn-import" id="btn-import" type="button" style="display:none" title="Importar comentarios del cliente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>
+        </svg>
+        <span>Importar</span>
       </button>
     </div>
   </header>
@@ -1204,20 +1063,7 @@
     <h3 class="modal-title" id="config-title">crear nuevo proyecto</h3>
     <input type="text" class="config-field" id="config-name" placeholder="nombre del proyecto" maxlength="80">
     <input type="text" class="config-field" id="config-client" placeholder="cliente" maxlength="80">
-    <div class="date-input-wrap">
-      <input type="text" class="config-field" id="config-date" placeholder="dd/mm/aaaa" maxlength="10" inputmode="numeric" autocomplete="off">
-      <div class="date-picker-btn" title="Abrir calendario" aria-label="Abrir calendario">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-          <line x1="16" y1="2" x2="16" y2="6"/>
-          <line x1="8" y1="2" x2="8" y2="6"/>
-          <line x1="3" y1="10" x2="21" y2="10"/>
-        </svg>
-        <input type="date" id="config-date-native" tabindex="-1" aria-hidden="true">
-      </div>
-    </div>
-    <label class="config-field-label" id="config-url-label">video de YouTube (opcional)</label>
-    <input type="text" class="config-field" id="config-url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
+    <input type="date" class="config-field" id="config-date">
     <div class="config-actions">
       <button class="btn-cancel" id="config-cancel" type="button">cancelar</button>
       <button class="btn-save" id="config-save" type="button">guardar</button>
@@ -1244,7 +1090,7 @@
 <!-- ================= YOUTUBE URL MODAL ================= -->
 <div class="modal-overlay" id="yt-modal">
   <div class="modal-box" role="dialog" aria-modal="true">
-    <h3 class="modal-title" id="yt-modal-title">Añadir video de YouTube</h3>
+    <h3 class="modal-title">Añadir video de YouTube</h3>
     <p class="modal-hint">
       Pega el enlace del video. Puede ser <strong>público</strong> o <strong>no listado</strong> (no privado).
       Ejemplo: <code>https://www.youtube.com/watch?v=XXXXXXXXXXX</code>
@@ -1283,7 +1129,7 @@
 
 <script>
 /* =========================================================
-   0 · CONFIGURACIÓN API
+   0 · CONFIGURACIÓN API (👉 EDITA ESTAS DOS LÍNEAS)
    ========================================================= */
 const API_URL = 'https://script.google.com/macros/s/AKfycbw-KS60jeS-QhcyM6aM5Q-FenysK2r0Vw0-MDsEiBBNR39LINIrvPyth8rCIQQujoMm/exec';
 const API_KEY = 'kevirago_2026_revisor_9f3a7b21c4e8d5a6';
@@ -1315,44 +1161,11 @@ function parseTime(str) {
   if (parts.length === 2) return parts[0] * 60 + parts[1];
   return parts[0] || 0;
 }
-/* Sanitiza una cadena de fecha: acepta ISO completo o YYYY-MM-DD y devuelve YYYY-MM-DD */
-function sanitizeIsoDate(iso) {
-  if (!iso) return '';
-  const s = String(iso).trim();
-  // Si viene con T (ISO completo), cortamos
-  const cut = s.split('T')[0].split(' ')[0];
-  // Verifica que sea YYYY-MM-DD
-  if (/^\d{4}-\d{2}-\d{2}$/.test(cut)) return cut;
-  // Intenta parsear Date
-  const d = new Date(s);
-  if (!isNaN(d.getTime())) {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}`;
-  }
-  return '';
-}
-/* ISO -> DD/MM/YYYY */
-function isoToDisplay(iso) {
-  const clean = sanitizeIsoDate(iso);
-  if (!clean) return '';
-  const [y, m, d] = clean.split('-');
-  if (!y || !m || !d) return '';
-  return `${d}/${m}/${y}`;
-}
-/* DD/MM/YYYY -> ISO */
-function displayToIso(dmy) {
-  if (!dmy) return '';
-  const m = String(dmy).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (!m) return '';
-  const d = m[1].padStart(2, '0');
-  const mo = m[2].padStart(2, '0');
-  const y = m[3];
-  return `${y}-${mo}-${d}`;
-}
 function fmtDateDisplay(iso) {
-  return isoToDisplay(iso);
+  if (!iso) return '';
+  const [y, m, d] = String(iso).split('-');
+  if (!y || !m || !d) return iso;
+  return `${d}/${m}/${y}`;
 }
 function getYouTubeId(input) {
   if (!input) return null;
@@ -1367,7 +1180,6 @@ function getYouTubeId(input) {
   }
   return null;
 }
-function todayIso() { return new Date().toISOString().slice(0,10); }
 
 let toastTimer;
 function showToast(msg, duration = 3000, isError = false) {
@@ -1397,46 +1209,9 @@ async function copyToClipboard(text) {
     return true;
   } catch (err) { return false; }
 }
-
-/* ---------- Compresión de payload ---------- */
-function compactPayload(p) {
-  const v = (p.versions || []).find(x => x.id === (p.currentVersion || 'v1')) || {};
-  return {
-    p: p.id,
-    n: p.name || '',
-    c: p.client || '',
-    d: sanitizeIsoDate(p.date) || '',
-    s: (v.state) || p.state || 'sin-empezar',
-    v: p.currentVersion || 'v1',
-    y: v.youtubeId || '',
-    m: (p.comments || []).map(c => ([
-      c.id,
-      c.time,
-      c.author,
-      c.text,
-      c.resolved ? 1 : 0,
-      c.version || 'v1',
-      c.createdAt || ''
-    ]))
-  };
-}
-function expandPayload(x) {
-  if (x && Array.isArray(x.m)) {
-    return {
-      pid: x.p, name: x.n, client: x.c, date: x.d,
-      state: x.s, version: x.v, youtubeId: x.y,
-      comments: x.m.map(a => Array.isArray(a) ? {
-        id: a[0], time: a[1], author: a[2], text: a[3],
-        resolved: !!a[4], version: a[5], createdAt: a[6]
-      } : a)
-    };
-  }
-  return x;
-}
 function encodeShare(payload) {
   try {
-    const compact = compactPayload(payload);
-    return btoa(unescape(encodeURIComponent(JSON.stringify(compact))))
+    return btoa(unescape(encodeURIComponent(JSON.stringify(payload))))
       .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   } catch (err) { return ''; }
 }
@@ -1444,11 +1219,9 @@ function decodeShare(str) {
   try {
     const pad = str.length % 4 === 0 ? '' : '='.repeat(4 - (str.length % 4));
     const b64 = str.replace(/-/g, '+').replace(/_/g, '/') + pad;
-    const raw = JSON.parse(decodeURIComponent(escape(atob(b64))));
-    return expandPayload(raw);
+    return JSON.parse(decodeURIComponent(escape(atob(b64))));
   } catch (err) { return null; }
 }
-
 const STATE_LABELS = {
   'sin-empezar': 'Sin empezar',
   'en-edicion':  'En edición',
@@ -1457,7 +1230,7 @@ const STATE_LABELS = {
 };
 
 /* =========================================================
-   2 · API
+   2 · API (Google Apps Script)
    ========================================================= */
 async function apiGet(params = {}) {
   const qs = new URLSearchParams({ key: API_KEY, ...params }).toString();
@@ -1470,6 +1243,7 @@ async function apiGet(params = {}) {
 async function apiPost(body) {
   const res = await fetch(`${API_URL}?key=${encodeURIComponent(API_KEY)}`, {
     method: 'POST',
+    // OJO: text/plain para evitar preflight OPTIONS (Apps Script no lo maneja)
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(body)
   });
@@ -1494,11 +1268,7 @@ let isGuest = false;
 let guestProject = null;
 let guestPayload = null;
 let guestOriginalCommentIds = new Set();
-
-/* Flag: cuando se crea una versión nueva, abrimos modal YouTube después de que openReview termine */
-let pendingOpenModalForVersion = null;
-/* Flag: para que el modal de YouTube recuerde a qué versión aplicar */
-let pendingVersionForYT = null;
+let isReturnToHost = false;
 
 function getProject(id) { return projects.find(p => p.id === id); }
 function getActiveProject() { return isGuest ? guestProject : getProject(currentProjectId); }
@@ -1515,6 +1285,7 @@ async function refreshProjects() {
 async function persistProject(p) {
   try {
     await apiPost({ action: 'saveProject', project: p });
+    // actualizamos la lista local
     const idx = projects.findIndex(x => x.id === p.id);
     if (idx >= 0) projects[idx] = p; else projects.push(p);
   } catch (err) {
@@ -1536,7 +1307,7 @@ async function removeProject(id) {
    ========================================================= */
 (function injectLogo() {
   const tpl = $('logo-tpl').content;
-  document.querySelectorAll('.logo-slot').forEach(slot => {
+  document.querySelectorAll('.logo-slot, .logo-slot-small').forEach(slot => {
     slot.appendChild(tpl.cloneNode(true));
   });
 })();
@@ -1553,16 +1324,6 @@ function showView(name) {
 /* =========================================================
    6 · PROYECTOS · RENDER
    ========================================================= */
-function renderProjectsLoading() {
-  const cont = $('projects-container');
-  cont.className = 'projects-grid';
-  cont.innerHTML = `
-    <div class="projects-loading">
-      <div class="spinner"></div>
-      <div class="txt">Cargando proyectos…</div>
-    </div>
-  `;
-}
 function getSortedProjects() {
   let list = [...projects];
   if (currentStateFilter !== 'all') {
@@ -1595,7 +1356,6 @@ function buildProjectCard(p) {
   const thumbHTML = p.thumb
     ? `<img src="${esc(p.thumb)}" alt="">`
     : `<div class="thumb-placeholder"><div class="icon">🎬</div><div>sin video</div></div>`;
-  const fechaTxt = fmtDateDisplay(p.date) || fmtDateDisplay(new Date(p.createdAt || Date.now()).toISOString().slice(0,10));
   card.innerHTML = `
     <div class="project-thumb">
       ${thumbHTML}
@@ -1608,7 +1368,7 @@ function buildProjectCard(p) {
         <button class="project-menu-btn" type="button" aria-label="Opciones" data-menu-trigger>⋯</button>
       </div>
       <div class="project-client">${esc(p.client || 'Sin cliente')}</div>
-      <div class="project-date">${esc(fechaTxt)}</div>
+      <div class="project-date">${esc(fmtDateDisplay(p.date))}</div>
     </div>
     <div class="project-menu" role="menu">
       <button type="button" data-action="config">Configuración</button>
@@ -1696,24 +1456,6 @@ $('btn-new-project').addEventListener('click', e => {
    ========================================================= */
 let configMode = 'create';
 let configProjectId = null;
-
-function setupDateInput() {
-  const inp = $('config-date');
-  const native = $('config-date-native');
-
-  inp.addEventListener('input', () => {
-    let v = inp.value.replace(/\D/g, '').slice(0, 8);
-    if (v.length >= 5) v = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
-    else if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2);
-    inp.value = v;
-  });
-
-  native.addEventListener('change', () => {
-    if (native.value) inp.value = isoToDisplay(native.value);
-  });
-}
-setupDateInput();
-
 function openConfig(mode, id) {
   configMode = mode;
   configProjectId = id || null;
@@ -1721,25 +1463,18 @@ function openConfig(mode, id) {
   const nameEl = $('config-name');
   const cliEl = $('config-client');
   const dateEl = $('config-date');
-  const urlEl = $('config-url');
-  const urlLabel = $('config-url-label');
   if (mode === 'edit') {
     const p = getProject(id);
     if (!p) { showToast('Proyecto no encontrado'); return; }
     titleEl.textContent = 'Configuración de proyecto';
     nameEl.value = p.name || '';
     cliEl.value = p.client || '';
-    dateEl.value = isoToDisplay(p.date) || isoToDisplay(todayIso());
-    urlEl.style.display = 'none';
-    urlLabel.style.display = 'none';
+    dateEl.value = p.date || new Date().toISOString().slice(0,10);
   } else {
     titleEl.textContent = 'crear nuevo proyecto';
     nameEl.value = '';
     cliEl.value = '';
-    dateEl.value = isoToDisplay(todayIso());
-    urlEl.value = '';
-    urlEl.style.display = '';
-    urlLabel.style.display = '';
+    dateEl.value = new Date().toISOString().slice(0,10);
   }
   $('config-modal').classList.add('open');
   setTimeout(() => nameEl.focus(), 60);
@@ -1752,39 +1487,26 @@ $('config-modal').addEventListener('click', e => {
 async function saveConfig() {
   const name = $('config-name').value.trim();
   const client = $('config-client').value.trim();
-  const dateIso = displayToIso($('config-date').value.trim()) || todayIso();
+  const date = $('config-date').value || new Date().toISOString().slice(0,10);
   if (!name) { showToast('Ponle un nombre al proyecto'); $('config-name').focus(); return; }
   if (configMode === 'create') {
     const now = Date.now();
-    let youtubeId = '';
-    let thumb = '';
-    const urlRaw = $('config-url').value.trim();
-    if (urlRaw) {
-      const id = getYouTubeId(urlRaw);
-      if (id) {
-        youtubeId = id;
-        thumb = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
-      } else {
-        showToast('URL de YouTube inválida, se ignora');
-      }
-    }
-    const initialState = youtubeId ? 'en-edicion' : 'sin-empezar';
     const p = {
-      id: uid(), name, client, date: dateIso,
-      state: initialState,
+      id: uid(), name, client, date,
+      state: 'sin-empezar',
       currentVersion: 'v1',
-      versions: [{ id: 'v1', state: initialState, youtubeId, duration: 0 }],
-      comments: [], thumb,
+      versions: [{ id: 'v1', state: 'sin-empezar', youtubeId: '', duration: 0 }],
+      comments: [], thumb: '',
       createdAt: now, updatedAt: now
     };
     await persistProject(p);
     closeConfig();
+    renderProjects();
     showToast('Proyecto creado ✔');
-    location.hash = '#/p/' + p.id + '/v1';
   } else {
     const p = getProject(configProjectId);
     if (!p) return;
-    p.name = name; p.client = client; p.date = dateIso;
+    p.name = name; p.client = client; p.date = date;
     p.updatedAt = Date.now();
     await persistProject(p);
     closeConfig();
@@ -1793,13 +1515,10 @@ async function saveConfig() {
   }
 }
 $('config-save').addEventListener('click', saveConfig);
-['config-name','config-client','config-url'].forEach(id => {
+['config-name','config-client','config-date'].forEach(id => {
   $(id).addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); saveConfig(); }
   });
-});
-$('config-date').addEventListener('keydown', e => {
-  if (e.key === 'Enter') { e.preventDefault(); saveConfig(); }
 });
 
 /* =========================================================
@@ -1823,7 +1542,7 @@ function loadYouTubeAPI() {
 }
 
 /* =========================================================
-   11 · REPRODUCTOR
+   11 · REPRODUCTOR (wrapper sobre YT.Player)
    ========================================================= */
 let ytPlayer = null;
 let ytReady = false;
@@ -1860,43 +1579,34 @@ function destroyPlayer() {
   video = null;
 }
 
-function buildLoadingState(label) {
+function buildLoadingState() {
   videoContainer.innerHTML = `
     <div class="video-loading">
       <div class="spinner"></div>
-      <div class="label">${esc(label || 'Cargando video…')}</div>
-      <div class="sub">Preparando el reproductor</div>
+      <div>Cargando reproductor de YouTube…</div>
     </div>
   `;
   video = null; vcBar = null;
 }
 
-function buildEmptyState(canAddLink) {
+function buildEmptyState(version) {
   const guestMsg = isGuest
-    ? 'El autor no compartió el enlace del video en esta versión. Pídeselo para poder revisar.'
-    : (canAddLink ? 'Añade el enlace del video de YouTube para empezar a revisar.' : 'Esta versión no tiene video todavía.');
-  const btnHtml = (!isGuest && canAddLink)
-    ? `<button class="btn-add-link" id="btn-add-link-empty" type="button">
-         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-         Añadir enlace de YouTube
-       </button>`
-    : '';
+    ? 'El autor no compartió el enlace del video. Pídeselo para poder revisar.'
+    : 'Pega el enlace del video de YouTube para empezar a revisar y dejar comentarios.';
   videoContainer.innerHTML = `
     <div class="video-empty" id="video-empty">
       <div class="icon">🎬</div>
       <div class="title">Sin video para esta versión</div>
       <div class="sub">${guestMsg}</div>
-      ${btnHtml}
+      <button class="btn-upload-video" id="btn-upload-video" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Añadir enlace de YouTube
+      </button>
     </div>
   `;
   video = null; vcBar = null;
-  const btn = $('btn-add-link-empty');
-  if (btn) {
-    btn.addEventListener('click', () => {
-      const p = getActiveProject();
-      if (p) openYouTubeModal(p.currentVersion || 'v1', { title: 'Añadir video a la versión ' + (p.currentVersion || 'v1') });
-    });
-  }
+  const btn = $('btn-upload-video');
+  if (btn) btn.addEventListener('click', () => openYouTubeModal(version));
 }
 
 function buildVideoPlayer() {
@@ -2019,7 +1729,7 @@ function setupYouTubePlayer(videoId) {
       }
     });
   }).catch(() => {
-    buildEmptyState(true);
+    buildEmptyState(getActiveProject()?.currentVersion || 'v1');
     showToast('No se pudo cargar YouTube');
   });
 }
@@ -2041,7 +1751,7 @@ function onPlayerReady(event) {
   const p = getActiveProject();
   if (p && !isGuest) {
     const vObj = (p.versions || []).find(v => v.id === (p.currentVersion || 'v1'));
-    if (vObj && !vObj.duration) {
+    if (vObj) {
       vObj.duration = duration || 0;
       persistProject(p).catch(() => {});
     }
@@ -2116,26 +1826,23 @@ function showControls() {
 }
 
 /* =========================================================
-   12 · CARGA DE VIDEO (con animación mínima)
+   12 · CARGA DE VIDEO
    ========================================================= */
-async function loadVideoForVersion(p, version, opts = {}) {
+async function loadVideoForVersion(p, version) {
   destroyPlayer();
 
   const vObj = (p.versions || []).find(v => v.id === version);
   const youtubeId = vObj && vObj.youtubeId;
-  const label = opts.label || ('Cargando ' + (version || ''));
 
   if (!youtubeId) {
-    buildEmptyState(true);
+    buildEmptyState(version);
     return;
   }
-  buildLoadingState(label);
+  buildLoadingState();
   try {
-    // Mínimo de 350ms para que la animación sea visible
-    const minDelay = new Promise(r => setTimeout(r, 350));
-    await Promise.all([loadYouTubeAPI(), minDelay]);
+    await loadYouTubeAPI();
   } catch (e) {
-    buildEmptyState(true);
+    buildEmptyState(version);
     showToast('No se pudo cargar YouTube');
     return;
   }
@@ -2146,16 +1853,21 @@ async function loadVideoForVersion(p, version, opts = {}) {
 /* =========================================================
    13 · MODAL YOUTUBE URL
    ========================================================= */
-function openYouTubeModal(versionId, opts = {}) {
+let pendingVersionForYT = null;
+function openYouTubeModal(versionId) {
   pendingVersionForYT = versionId || null;
   const inp = $('yt-url-input');
   inp.value = '';
-  $('yt-modal-title').textContent = opts.title || 'Añadir video de YouTube';
   $('yt-modal').classList.add('open');
   setTimeout(() => inp.focus(), 60);
 }
 function closeYouTubeModal() { $('yt-modal').classList.remove('open'); }
 
+$('btn-upload-top').addEventListener('click', () => {
+  const p = getActiveProject();
+  if (!p) return;
+  openYouTubeModal(p.currentVersion || 'v1');
+});
 $('yt-cancel').addEventListener('click', closeYouTubeModal);
 $('yt-modal').addEventListener('click', e => {
   if (e.target === $('yt-modal')) closeYouTubeModal();
@@ -2167,7 +1879,7 @@ $('yt-save').addEventListener('click', saveYouTubeUrl);
 
 async function saveYouTubeUrl() {
   const p = getActiveProject();
-  if (!p) { showToast('Proyecto no encontrado'); return; }
+  if (!p) return;
   const url = $('yt-url-input').value.trim();
   const id = getYouTubeId(url);
   if (!id) { showToast('URL de YouTube inválida'); return; }
@@ -2187,7 +1899,7 @@ async function saveYouTubeUrl() {
   }
   closeYouTubeModal();
   showToast('Video añadido ✔');
-  await loadVideoForVersion(p, version, { label: 'Cargando ' + version });
+  await loadVideoForVersion(p, version);
   renderComments();
 
   const stateSel = $('review-state');
@@ -2203,18 +1915,16 @@ async function saveYouTubeUrl() {
 function buildSharePayload(p) {
   const version = p.currentVersion || 'v1';
   const vObj = (p.versions || []).find(v => v.id === version);
-  // Solo se comparten los comentarios de la versión que se comparte
-  const filteredComments = (p.comments || []).filter(c => (c.version || 'v1') === version);
   return {
     v: 1,
     pid: p.id,
     name: p.name || '',
     client: p.client || '',
-    date: sanitizeIsoDate(p.date) || '',
+    date: p.date || '',
     state: (vObj && vObj.state) || p.state || 'sin-empezar',
     version,
     youtubeId: (vObj && vObj.youtubeId) || '',
-    comments: filteredComments.map(c => ({
+    comments: (p.comments || []).map(c => ({
       id: c.id,
       time: c.time,
       author: c.author,
@@ -2232,23 +1942,6 @@ function openShareModal() {
   const encoded = encodeShare(payload);
   if (!encoded) { showToast('No se pudo generar el enlace'); return; }
   const url = `${location.origin}${location.pathname}#/g/${encoded}`;
-  $('share-title').textContent = 'Compartir con el cliente';
-  $('share-hint').innerHTML = `Se compartirá la <strong>versión ${esc(p.currentVersion || 'v1')}</strong> con sus comentarios. Copia el enlace y envíalo junto con el video.`;
-  $('share-link-box').textContent = url;
-  $('share-modal').classList.add('open');
-  copyToClipboard(url).then(ok => {
-    if (ok) showToast('Enlace copiado ✔');
-  });
-}
-function openGuestCopyLink() {
-  const p = getActiveProject();
-  if (!p) return;
-  const payload = buildSharePayload(p);
-  const encoded = encodeShare(payload);
-  if (!encoded) { showToast('No se pudo generar el enlace'); return; }
-  const url = `${location.origin}${location.pathname}#/g/${encoded}`;
-  $('share-title').textContent = 'Copiar enlace para devolver';
-  $('share-hint').innerHTML = 'Copia este enlace y mándalo de vuelta al autor. Al abrirlo, tus comentarios se integrarán automáticamente.';
   $('share-link-box').textContent = url;
   $('share-modal').classList.add('open');
   copyToClipboard(url).then(ok => {
@@ -2257,10 +1950,7 @@ function openGuestCopyLink() {
 }
 function closeShareModal() { $('share-modal').classList.remove('open'); }
 
-$('btn-share').addEventListener('click', () => {
-  if (isGuest) openGuestCopyLink();
-  else openShareModal();
-});
+$('btn-share').addEventListener('click', openShareModal);
 $('share-close').addEventListener('click', closeShareModal);
 $('share-modal').addEventListener('click', e => {
   if (e.target === $('share-modal')) closeShareModal();
@@ -2271,32 +1961,30 @@ $('share-copy').addEventListener('click', async () => {
   showToast(ok ? 'Enlace copiado ✔' : 'No se pudo copiar');
 });
 
-function enterGuestModeFromPayload(payload) {
+function enterGuestModeFromPayload(payload, isReturn) {
   isGuest = true;
+  isReturnToHost = isReturn;
   guestPayload = payload;
   guestOriginalCommentIds = new Set((payload.comments || []).map(c => c.id));
-
-  // Sanitiza el youtubeId por si las dudas
-  const ytId = (payload.youtubeId && /^[a-zA-Z0-9_-]{11}$/.test(payload.youtubeId))
-    ? payload.youtubeId
-    : '';
 
   guestProject = {
     id: payload.pid || uid(),
     name: payload.name || 'Proyecto',
     client: payload.client || '',
-    date: sanitizeIsoDate(payload.date) || '',
+    date: payload.date || '',
     state: payload.state || 'sin-empezar',
     currentVersion: payload.version || 'v1',
     versions: [{
       id: payload.version || 'v1',
       state: payload.state || 'sin-empezar',
-      youtubeId: ytId,
+      youtubeId: payload.youtubeId || '',
       duration: 0
     }],
     comments: (payload.comments || []).map(c => ({ ...c })),
-    thumb: ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : '',
-    _isGuest: true
+    thumb: '',
+    _isGuest: true,
+    _originalIds: new Set((payload.comments || []).map(c => c.id)),
+    _returning: isReturn
   };
   currentProjectId = guestProject.id;
   openReview(guestProject.id, guestProject.currentVersion);
@@ -2304,51 +1992,96 @@ function enterGuestModeFromPayload(payload) {
 
 function updateGuestControlsUI() {
   const guestBadge = $('guest-badge');
-  const versionBadge = $('version-badge');
   const btnShare = $('btn-share');
-  const btnShareLabel = $('btn-share-label');
+  const btnReturn = $('btn-return');
+  const btnImport = $('btn-import');
+  const btnUploadTop = $('btn-upload-top');
   const stateSel = $('review-state');
   const versionSel = $('review-version');
   const backBtn = $('btn-back');
-  const delVerBtn = $('btn-delete-version');
 
   if (isGuest) {
     guestBadge.style.display = 'inline-flex';
+    btnShare.style.display = 'none';
     stateSel.disabled = true;
     versionSel.disabled = true;
     backBtn.style.display = 'none';
-    delVerBtn.style.display = 'none';
-    btnShare.style.display = 'inline-flex';
-    if (btnShareLabel) btnShareLabel.textContent = 'Copiar enlace';
 
-    // Muestra la versión compartida
-    const curVer = (guestProject && guestProject.currentVersion) || 'v1';
-    if (versionBadge) {
-      versionBadge.textContent = 'Compartida: ' + curVer;
-      versionBadge.style.display = 'inline-flex';
+    if (isReturnToHost) {
+      btnReturn.style.display = 'none';
+      btnImport.style.display = 'inline-flex';
+      btnUploadTop.style.display = 'none';
+      $('shared-note').textContent = '📥 Comentarios recibidos — pulsa "Importar" para mergear';
+    } else {
+      btnReturn.style.display = 'inline-flex';
+      btnImport.style.display = 'none';
+      btnUploadTop.style.display = (guestProject.versions[0].youtubeId) ? 'none' : 'inline-flex';
+      $('shared-note').textContent = '👤 Modo invitado · solo ves este proyecto';
     }
-    $('shared-note').textContent = `👤 Modo invitado · estás viendo la versión ${curVer}`;
   } else {
     guestBadge.style.display = 'none';
-    if (versionBadge) versionBadge.style.display = 'none';
+    btnShare.style.display = 'inline-flex';
+    btnReturn.style.display = 'none';
+    btnImport.style.display = 'none';
+    btnUploadTop.style.display = 'inline-flex';
     stateSel.disabled = false;
     versionSel.disabled = false;
     backBtn.style.display = 'flex';
-    btnShare.style.display = 'inline-flex';
-    if (btnShareLabel) btnShareLabel.textContent = 'Compartir';
-    delVerBtn.style.display = currentVersions.length > 1 ? 'inline-flex' : 'none';
     $('shared-note').textContent = '💬 Los comentarios se comparten entre todas las versiones';
   }
 }
 
-async function mergeReturnedComments(localProject, payload) {
-  const incoming = payload.comments || [];
+$('btn-return').addEventListener('click', async () => {
+  if (!isGuest || isReturnToHost) return;
+  const p = getActiveProject();
+  if (!p) return;
+
+  const vObj = (p.versions || []).find(v => v.id === (p.currentVersion || 'v1'));
+  const payload = {
+    v: 1,
+    pid: p.id,
+    name: p.name,
+    client: p.client,
+    date: p.date,
+    state: p.state,
+    version: p.currentVersion || 'v1',
+    youtubeId: (vObj && vObj.youtubeId) || '',
+    comments: (p.comments || []).map(c => ({
+      id: c.id, time: c.time, author: c.author, text: c.text,
+      resolved: !!c.resolved, version: c.version || 'v1',
+      createdAt: c.createdAt || new Date().toISOString()
+    }))
+  };
+  const encoded = encodeShare(payload);
+  const url = `${location.origin}${location.pathname}#/g/${encoded}`;
+  const ok = await copyToClipboard(url);
+
+  $('share-title').textContent = 'Enviar comentarios al autor';
+  $('share-hint').innerHTML = 'Copia este enlace y mándalo de vuelta al autor. Él podrá importar todos tus comentarios a su proyecto.';
+  $('share-link-box').textContent = url;
+  $('share-modal').classList.add('open');
+
+  showToast(ok ? 'Enlace listo para devolver ✔' : 'Copia el enlace manualmente');
+});
+
+$('btn-import').addEventListener('click', async () => {
+  if (!isReturnToHost) return;
+  const incoming = guestProject;
+  if (!incoming) return;
+
+  const localProject = getProject(incoming.id);
+  if (!localProject) {
+    showToast('Proyecto no encontrado');
+    return;
+  }
+
+  if (!confirm(`¿Importar ${incoming.comments.length} comentarios al proyecto "${localProject.name}"?`)) return;
+
+  const existingIds = new Set((localProject.comments || []).map(c => c.id));
   let added = 0, updated = 0;
 
-  if (!localProject.comments) localProject.comments = [];
-
-  incoming.forEach(inc => {
-    const local = localProject.comments.find(c => c.id === inc.id);
+  incoming.comments.forEach(inc => {
+    const local = (localProject.comments || []).find(c => c.id === inc.id);
     if (local) {
       if (local.text !== inc.text) { local.text = inc.text; updated++; }
       if (local.resolved !== inc.resolved) { local.resolved = inc.resolved; updated++; }
@@ -2370,11 +2103,17 @@ async function mergeReturnedComments(localProject, payload) {
 
   localProject.updatedAt = Date.now();
   await persistProject(localProject);
-  return { added, updated };
-}
+  await refreshProjects();
+
+  showToast(`Importado: +${added} nuevos, ${updated} actualizados`);
+
+  exitGuestMode();
+  location.hash = '#/p/' + localProject.id + '/' + (localProject.currentVersion || 'v1');
+});
 
 function exitGuestMode() {
   isGuest = false;
+  isReturnToHost = false;
   guestProject = null;
   guestPayload = null;
   guestOriginalCommentIds.clear();
@@ -2385,7 +2124,7 @@ function exitGuestMode() {
 /* =========================================================
    15 · ROUTER
    ========================================================= */
-async function applyHashRoute() {
+function applyHashRoute() {
   const hash = location.hash || '';
 
   const gm = hash.match(/^#\/g\/(.+)$/);
@@ -2397,14 +2136,8 @@ async function applyHashRoute() {
       return;
     }
     const localProject = getProject(payload.pid);
-    if (localProject) {
-      const { added, updated } = await mergeReturnedComments(localProject, payload);
-      await refreshProjects();
-      showToast(`Comentarios importados: +${added} nuevos, ${updated} actualizados ✔`, 4000);
-      location.hash = '#/p/' + localProject.id + '/' + (localProject.currentVersion || 'v1');
-      return;
-    }
-    enterGuestModeFromPayload(payload);
+    const isReturn = !!localProject;
+    enterGuestModeFromPayload(payload, isReturn);
     return;
   }
 
@@ -2474,17 +2207,8 @@ async function openReview(id, versionOverride) {
 
   updateGuestControlsUI();
 
-  await loadVideoForVersion(p, activeVersion, { label: 'Cargando ' + activeVersion });
+  await loadVideoForVersion(p, activeVersion);
   renderComments();
-
-  // Abrimos el modal de YouTube si acabamos de crear esta versión
-  if (!isGuest && pendingOpenModalForVersion && pendingOpenModalForVersion === activeVersion) {
-    const targetVer = pendingOpenModalForVersion;
-    pendingOpenModalForVersion = null;
-    setTimeout(() => {
-      openYouTubeModal(targetVer, { title: 'Añadir video a la versión ' + targetVer });
-    }, 350);
-  }
 }
 function closeReview() { location.hash = ''; }
 $('btn-back').addEventListener('click', closeReview);
@@ -2505,18 +2229,7 @@ $('review-version').addEventListener('change', async e => {
     p.currentVersion = newId;
     p.updatedAt = Date.now();
     await persistProject(p);
-
-    // Marca para abrir modal después de que openReview termine
-    pendingOpenModalForVersion = newId;
-
-    // Fuerza el cambio de hash (aunque sea la misma ruta)
-    const newHash = '#/p/' + p.id + '/' + newId;
-    if (location.hash === newHash) {
-      // Si ya estábamos en esa ruta, forzamos manualmente
-      await openReview(p.id, newId);
-    } else {
-      location.hash = newHash;
-    }
+    location.hash = '#/p/' + p.id + '/' + newId;
     showToast('Versión ' + newId + ' creada ✔');
     return;
   }
@@ -2524,25 +2237,6 @@ $('review-version').addEventListener('change', async e => {
   p.updatedAt = Date.now();
   await persistProject(p);
   location.hash = '#/p/' + p.id + '/' + val;
-});
-
-/* ---------- Eliminar versión ---------- */
-$('btn-delete-version').addEventListener('click', async () => {
-  const p = getActiveProject();
-  if (!p || isGuest) return;
-  const versions = p.versions || [];
-  if (versions.length <= 1) { showToast('No puedes eliminar la única versión'); return; }
-  const cur = p.currentVersion || 'v1';
-  if (!confirm(`¿Eliminar la versión ${cur}? Los comentarios asociados a esa versión se eliminarán también.`)) return;
-
-  p.versions = versions.filter(v => v.id !== cur);
-  p.comments = (p.comments || []).filter(c => (c.version || 'v1') !== cur);
-  const newVer = p.versions[p.versions.length - 1].id;
-  p.currentVersion = newVer;
-  p.updatedAt = Date.now();
-  await persistProject(p);
-  showToast('Versión eliminada');
-  location.hash = '#/p/' + p.id + '/' + newVer;
 });
 
 /* =========================================================
@@ -2793,13 +2487,10 @@ function updateFilterTabs() {
    22 · INIT
    ========================================================= */
 async function init() {
+  await refreshProjects();
   if (location.hash) {
-    renderProjectsLoading();
-    await refreshProjects();
     applyHashRoute();
   } else {
-    renderProjectsLoading();
-    await refreshProjects();
     showView('projects');
     renderProjects();
   }
