@@ -35,7 +35,6 @@
     display: flex; align-items: center; justify-content: space-between;
     gap: 20px; flex-wrap: wrap;
     align-self: stretch;
-    /* Los márgenes negativos permiten que el header ocupe el 100% del ancho ignorando el padding del body */
     margin-top: calc(-1 * clamp(14px, 3vw, 40px));
     margin-left: calc(-1 * clamp(10px, 3vw, 20px));
     margin-right: calc(-1 * clamp(10px, 3vw, 20px));
@@ -69,7 +68,6 @@
     height: 42px; 
     flex-shrink: 0;
   }
-  /* Forzamos el color blanco del logo ya que el header es siempre oscuro */
   .brand-lockup .brand-logo .st0 { fill: #f0f0f0 !important; }
 
   .brand-suffix {
@@ -97,6 +95,7 @@
     font-size: 13px; font-weight: 700;
     text-decoration: none;
     transition: background .2s, border-color .2s, transform .15s, color .2s, box-shadow .2s;
+    white-space: nowrap;
   }
   .btn-home:hover {
     background: var(--brand);
@@ -105,9 +104,9 @@
     transform: translateY(-1px);
     box-shadow: 0 8px 20px rgba(255, 42, 0, .35);
   }
-  .btn-home svg { width: 15px; height: 15px; }
+  .btn-home svg { width: 15px; height: 15px; flex-shrink: 0; }
 
-  /* Navegación y Botones (Pestañas del facturero adaptadas al diseño oscuro) */
+  /* Navegación y Botones */
   .main-nav {
     display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px;
     flex: 1 1 auto; min-width: 0;
@@ -119,6 +118,7 @@
     font-family: inherit; font-size: 12.5px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .8px; cursor: pointer;
     transition: background .25s, transform .25s, box-shadow .25s, border-color .25s, color .25s;
+    white-space: nowrap;
   }
   .tab-btn.active {
     background: var(--brand); border-color: var(--brand); color: #fff;
@@ -182,7 +182,6 @@
   .currency-select:hover, .btn-toggle-doc:hover {
     background: rgba(255, 255, 255, .12); border-color: #fff;
   }
-  /* --- Botón WhatsApp --- */
   .btn-toggle-doc.btn-wa { border-color: rgba(37, 211, 102, .75); }
   .btn-toggle-doc.btn-wa:hover {
     background: rgba(37, 211, 102, .18);
@@ -206,7 +205,7 @@
   .btn-download:hover { background: var(--brand-hover); transform: translateY(-1px); }
   .btn-download:disabled { opacity: .6; cursor: wait; transform: none; }
 
-  /* ====== DROPDOWN DE EXPORTACIÓN (un solo botón, varias opciones) ====== */
+  /* ====== DROPDOWN DE EXPORTACIÓN ====== */
   .export-dropdown { position: relative; flex-shrink: 0; }
   .export-trigger {
     display: inline-flex; align-items: center; gap: 6px;
@@ -493,7 +492,6 @@
   .info-section.payment-info p { margin: 5px 0; font-size: 13px; color: #333; }
   .info-section.payment-info p.muted { color: #888; font-style: italic; }
 
-  /* ====== BLOQUE DE ABONOS / PAGOS PARCIALES ====== */
   .payments-block { margin-bottom: 26px; }
   .payments-block-head {
     display: flex; align-items: center; justify-content: space-between;
@@ -764,33 +762,63 @@
   body.dark .modal-actions { border-top-color: #2a2a2a; }
   body.dark .toast { background: #f0f0f0; color: #111; }
 
+  /* ============================================================
+     RESPONSIVE
+     ============================================================ */
+
+  /* Tablet / ajustes generales */
+  @media (max-width: 900px) {
+    .app-header { gap: 14px; }
+    .tab-btn { padding: 10px 16px; font-size: 11.5px; letter-spacing: .6px; }
+  }
+
+  /* Ocultar atajos y reducir toggles */
   @media (max-width: 700px) {
     .theme-toggle { width: 50px; height: 50px; font-size: 20px; bottom: 18px; right: 18px; }
     .tab-btn .kbd-hint { display: none; }
   }
+
+  /* ============================================================
+     MÓVIL — reorganización limpia del header
+     Fila 1: [Inicio] [Logo] facturero   (todo a la izquierda)
+     Fila 2: [Cotización] [Factura] [Nota]  (3 columnas iguales)
+     ============================================================ */
   @media (max-width: 640px) {
-    /* Header se reorganiza en dos filas:
-       Fila 1: [Inicio + texto] [Logo] [facturero]   ← todo a la izquierda
-       Fila 2: [Cotización] [Factura] [Nota]         ← 3 botones a todo lo ancho
-    */
     .app-header {
       flex-direction: column;
       align-items: stretch;
       padding: 12px 14px;
-      gap: 12px;
+      gap: 10px;
     }
+
+    /* --- Fila 1: marca completa a la izquierda, sin wrap --- */
     .header-brand {
       width: 100%;
       justify-content: flex-start;
-      flex-wrap: wrap;
-      gap: 10px;
+      flex-wrap: nowrap;
+      gap: 8px;
+      align-items: center;
+      min-width: 0;
     }
-    .btn-home { padding: 9px 12px; }
+    .btn-home {
+      padding: 8px 12px;
+      font-size: 12px;
+      gap: 6px;
+      flex: 0 0 auto;
+    }
     .btn-home span { display: inline; }
-    .brand-lockup .brand-logo { height: 26px; }
-    .brand-suffix { font-size: 17px; }
-    .brand-lockup { padding-left: 10px; gap: 8px; }
+    .btn-home svg { width: 14px; height: 14px; }
 
+    .brand-lockup {
+      padding-left: 10px;
+      gap: 8px;
+      min-width: 0;
+      flex: 0 0 auto;
+    }
+    .brand-lockup .brand-logo { height: 26px; }
+    .brand-suffix { font-size: 17px; letter-spacing: -.3px; }
+
+    /* --- Fila 2: los 3 tabs ocupan ancho completo, distribuidos --- */
     .header-controls {
       width: 100%;
       justify-content: stretch;
@@ -798,14 +826,20 @@
     .main-nav {
       width: 100%;
       justify-content: stretch;
-      gap: 8px;
+      gap: 6px;
+      flex-wrap: nowrap;
     }
     .tab-btn {
       flex: 1 1 0;
-      padding: 11px 8px;
       min-width: 0;
+      padding: 11px 6px;
+      font-size: 10.5px;
+      letter-spacing: .4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
+
   @media (max-width: 620px) {
     .header { flex-direction: column; }
     .doc-title { margin-left: 0; text-align: left; }
@@ -824,15 +858,31 @@
     .thumb-icon { font-size: 24px; }
     .payments-block-head { flex-direction: column; align-items: flex-start; }
   }
+
   @media (max-width: 560px) {
     .pay-config-row { grid-template-columns: 1fr auto; }
     .pay-config-row .pay-cfg-label  { grid-area: 1 / 1; }
     .pay-config-row .pay-cfg-del    { grid-area: 1 / 2 / 3 / 3; align-self: center; }
     .pay-config-row .pay-cfg-detail { grid-area: 2 / 1; }
   }
+
+  /* --- Móvil muy pequeño: mantener 3 tabs en una fila --- */
   @media (max-width: 420px) {
-    .tab-btn { flex: 1 1 100%; font-size: 11.5px; padding: 11px 12px; }
-    .btn-home { justify-content: center; width: auto; }
+    .app-header { padding: 10px 12px; gap: 8px; }
+
+    .btn-home { padding: 7px 10px; font-size: 11px; gap: 5px; }
+    .btn-home svg { width: 13px; height: 13px; }
+
+    .brand-lockup { padding-left: 8px; gap: 6px; }
+    .brand-lockup .brand-logo { height: 22px; }
+    .brand-suffix { font-size: 15px; }
+
+    .main-nav { gap: 5px; }
+    .tab-btn {
+      padding: 10px 4px;
+      font-size: 9.5px;
+      letter-spacing: .2px;
+    }
   }
 </style>
 </head>
@@ -877,7 +927,7 @@
 </template>
 
 <!-- =========================================================
-     BARRA SUPERIOR · BOTÓN INICIO + PESTAÑAS (Estilo Revisor)
+     BARRA SUPERIOR · BOTÓN INICIO + PESTAÑAS
      ========================================================= -->
 <header class="app-header">
   <div class="header-brand">
@@ -889,7 +939,6 @@
       <span>Inicio</span>
     </a>
     <div class="brand-lockup">
-      <!-- Se mantiene la misma clase que usa el script de facturero para inyectar el logo -->
       <div class="brand-logo-slot"></div>
       <span class="brand-suffix">facturero</span>
     </div>
@@ -897,7 +946,6 @@
 
   <div class="header-controls">
     <nav class="main-nav">
-      <!-- Aquí están tus 3 botones originales -->
       <button class="tab-btn active" data-tab="cot" type="button">Cotización <span class="kbd-hint">Ctrl+1</span></button>
       <button class="tab-btn" data-tab="fac" type="button">Factura / Recibo <span class="kbd-hint">Ctrl+2</span></button>
       <button class="tab-btn" data-tab="ent" type="button">Nota de Entrega <span class="kbd-hint">Ctrl+3</span></button>
@@ -1030,7 +1078,6 @@
     <div class="panel-actions">
       <div class="counter-badge">Facturas: <span id="counter-fac">0</span></div>
 
-      <!-- ÚNICO BOTÓN DE EXPORTACIÓN CON MENÚ DESPLEGABLE (PDF / PNG) -->
       <div class="export-dropdown" id="fac-export-dropdown">
         <button class="btn-download export-trigger" type="button" aria-haspopup="true" aria-expanded="false" title="Guardar documento (Ctrl+S PDF · Ctrl+Shift+S PNG)">
           Guardar <span class="caret" aria-hidden="true">▾</span>
@@ -1464,10 +1511,6 @@ function createModule(cfg) {
     }
   }
 
-  /* ---------------------------------------------------------
-     EXPORTACIÓN — format: 'pdf' (por defecto) | 'png'
-     btnEl: botón que disparó la acción (para el estado "Generando…")
-     --------------------------------------------------------- */
   async function exportDoc(format, btnEl) {
     format = format || cfg.exportType;
 
@@ -1738,9 +1781,7 @@ const modules = {
   })
 };
 
-/* Wrapper del export de Factura para ajustar el nombre del archivo
-   según sea "Cuenta de Cobro" o "Recibo de Pago".
-   Reenvía los argumentos (format, btnEl). */
+/* Wrapper del export de Factura para ajustar el nombre del archivo */
 const originalFacExport = modules.fac.export;
 modules.fac.export = function (...args) {
   const title = document.getElementById('fac-doctitle').textContent.trim();
@@ -1766,10 +1807,9 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 /* =========================================================
-   6 · BOTONES DE EXPORTACIÓN (standalone, fuera del dropdown)
+   6 · BOTONES DE EXPORTACIÓN
    ========================================================= */
 document.querySelectorAll('[data-export]').forEach(btn => {
-  /* Los items del menú desplegable se manejan aparte */
   if (btn.closest('.export-menu')) return;
   btn.addEventListener('click', () => {
     modules[btn.dataset.export].export(btn.dataset.format || 'pdf', btn);
@@ -1777,8 +1817,7 @@ document.querySelectorAll('[data-export]').forEach(btn => {
 });
 
 /* =========================================================
-   6.1 · DROPDOWN DE EXPORTACIÓN (Factura / Recibo)
-   Un solo botón "Guardar ▾" que abre PDF / PNG
+   6.1 · DROPDOWN DE EXPORTACIÓN
    ========================================================= */
 (() => {
   const dropdown = document.getElementById('fac-export-dropdown');
@@ -1983,14 +2022,10 @@ document.getElementById('ent-markall').addEventListener('click', () => {
 
 /* =========================================================
    13 · ATAJOS DE TECLADO
-   Ctrl+S         → PDF
-   Ctrl+Shift+S   → PNG (solo Factura / Recibo)
-   Alt+Inicio     → Volver al index (WorkFlow KB)
    ========================================================= */
 document.addEventListener('keydown', e => {
   const isMod = e.ctrlKey || e.metaKey;
 
-  /* Alt + Home → volver al inicio */
   if (e.altKey && e.key === 'Home') {
     e.preventDefault();
     window.location.href = 'index.html';
