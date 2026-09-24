@@ -56,10 +56,6 @@
     transform: translateY(-1px);
     box-shadow: 0 8px 20px rgba(255, 42, 0, .35);
   }
-  .btn-home:focus-visible {
-    outline: 2px solid var(--brand); outline-offset: 3px;
-    background: var(--brand); border-color: var(--brand); color: #fff;
-  }
   .btn-home svg { width: 15px; height: 15px; }
 
   .app-header {
@@ -112,7 +108,6 @@
     max-width: 1400px; margin: 0 auto;
     padding: 28px clamp(16px, 3vw, 40px) 60px;
   }
-  .projects-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .ctrl-select { position: relative; }
   .ctrl-select select {
     padding: 10px 34px 10px 14px;
@@ -121,15 +116,17 @@
     font-size: 13px; font-weight: 600;
     outline: none; cursor: pointer;
     -webkit-appearance: none; appearance: none;
-    transition: border-color .2s;
+    transition: border-color .2s, background .2s, color .2s;
   }
-  .ctrl-select select:hover { border-color: var(--border-2); }
+  .ctrl-select select:hover { border-color: var(--brand); color: var(--brand); }
   .ctrl-select select:focus { border-color: var(--brand); }
   .ctrl-select::after {
     content: '▾'; position: absolute; right: 12px; top: 50%;
     transform: translateY(-50%); color: var(--txt-dim);
     pointer-events: none; font-size: 11px;
+    transition: color .2s;
   }
+  .ctrl-select:hover::after { color: var(--brand); }
   .view-toggle {
     display: inline-flex; align-items: center;
     background: var(--panel-2); border: 1px solid var(--border);
@@ -142,8 +139,9 @@
     border: 0; border-radius: 8px;
     transition: background .2s, color .2s;
   }
-  .view-toggle button:hover { color: var(--txt); }
+  .view-toggle button:hover { color: var(--brand); }
   .view-toggle button.active { background: var(--brand); color: #fff; }
+  .view-toggle button.active:hover { color: #fff; }
   .view-toggle svg { width: 15px; height: 15px; }
   .btn-new-project {
     display: inline-flex; align-items: center; gap: 8px;
@@ -154,7 +152,7 @@
     box-shadow: 0 8px 22px rgba(255, 42, 0, .32);
     transition: transform .2s, filter .2s;
   }
-  .btn-new-project:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .btn-new-project:hover { transform: translateY(-1px); filter: brightness(1.1); }
   .btn-new-project svg { width: 15px; height: 15px; }
 
   .projects-grid {
@@ -175,8 +173,8 @@
   }
   .project-card:hover {
     transform: translateY(-3px);
-    border-color: rgba(255, 42, 0, .5);
-    box-shadow: 0 14px 30px rgba(0, 0, 0, .55);
+    border-color: var(--brand);
+    box-shadow: 0 14px 30px rgba(255, 42, 0, .18);
   }
   .project-thumb {
     position: relative;
@@ -231,7 +229,7 @@
     font-size: 15px; font-weight: 800; line-height: 1;
     transition: background .15s, color .15s;
   }
-  .project-menu-btn:hover { background: var(--panel-3); color: #fff; }
+  .project-menu-btn:hover { background: var(--panel-3); color: var(--brand); }
   .project-client {
     font-size: 12.5px; color: var(--txt-dim);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
@@ -258,7 +256,7 @@
     color: #ddd; font-size: 13px; font-weight: 600;
     transition: background .15s, color .15s;
   }
-  .project-menu button:hover { background: var(--panel-3); color: #fff; }
+  .project-menu button:hover { background: var(--panel-3); color: var(--brand); }
   .project-menu button[data-action="delete"] { color: #f87171; }
   .project-menu button[data-action="delete"]:hover { background: #3a1a1a; color: #fca5a5; }
 
@@ -293,7 +291,7 @@
   .new-card-icon svg { width: 22px; height: 22px; }
   .new-card-label { font-size: 13.5px; font-weight: 700; color: #c0c0c4; }
 
-  /* Loading spinner genérico */
+  /* Spinner */
   .spinner {
     width: 38px; height: 38px;
     border: 3px solid rgba(255, 42, 0, .2);
@@ -315,6 +313,7 @@
   }
   .projects-loading .txt { font-weight: 700; color: #c8c8cc; letter-spacing: .3px; }
 
+  /* Review header */
   .review-header {
     display: flex; align-items: center; gap: 12px;
     padding: 12px clamp(12px, 2vw, 22px);
@@ -328,9 +327,9 @@
     display: flex; align-items: center; justify-content: center;
     background: var(--panel-2); color: var(--txt);
     border: 1px solid var(--border); border-radius: 10px;
-    transition: background .2s, border-color .2s;
+    transition: background .2s, border-color .2s, color .2s;
   }
-  .btn-back:hover { background: var(--panel-3); border-color: var(--border-2); }
+  .btn-back:hover { background: var(--brand); border-color: var(--brand); color: #fff; }
   .btn-back svg { width: 17px; height: 17px; }
   .review-info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
   .review-project-name {
@@ -369,9 +368,10 @@
     -webkit-appearance: none; appearance: none;
     transition: border-color .2s, background .2s, color .2s;
   }
-  .state-select:hover, .version-select:hover { background: var(--panel-3); border-color: var(--border-2); }
+  .state-select:hover, .version-select:hover { background: var(--panel-3); border-color: var(--brand); color: var(--brand); }
   .state-select:focus, .version-select:focus { border-color: var(--brand); }
   .state-select:disabled, .version-select:disabled { opacity: .5; cursor: not-allowed; }
+  .state-select:disabled:hover, .version-select:disabled:hover { background: var(--panel-2); border-color: var(--border); color: #fff; }
   .state-select-wrap::after, .version-select-wrap::after {
     content: '▾'; position: absolute; right: 12px; top: 50%;
     transform: translateY(-50%); color: var(--txt-dim);
@@ -388,7 +388,7 @@
     padding: 10px 16px; border-radius: 10px;
     font-size: 13px; font-weight: 700;
     border: 0;
-    transition: transform .15s, filter .2s, background .2s, border-color .2s;
+    transition: transform .15s, filter .2s, background .2s, border-color .2s, color .2s;
     white-space: nowrap;
   }
   .btn-action-top svg { width: 15px; height: 15px; flex-shrink: 0; }
@@ -396,16 +396,16 @@
     background: var(--panel-2); color: #fff;
     border: 1px solid var(--border);
   }
-  .btn-share:hover { background: var(--panel-3); border-color: var(--border-2); }
+  .btn-share:hover { background: var(--brand); border-color: var(--brand); color: #fff; }
   .btn-delete-version {
     flex: 0 0 auto;
     width: 38px; height: 38px; padding: 0;
     display: inline-flex; align-items: center; justify-content: center;
     background: var(--panel-2); color: #f87171;
     border: 1px solid var(--border); border-radius: 10px;
-    transition: background .2s, border-color .2s, color .2s;
+    transition: background .2s, border-color .2s, color .2s, transform .15s;
   }
-  .btn-delete-version:hover { background: #3a1a1a; border-color: #7f1d1d; color: #fca5a5; }
+  .btn-delete-version:hover { background: var(--brand); border-color: var(--brand); color: #fff; }
   .btn-delete-version svg { width: 16px; height: 16px; }
 
   .review-main {
@@ -465,18 +465,6 @@
     color: var(--txt-dim); font-size: 13px;
     z-index: 3;
   }
-  .btn-upload-video {
-    margin-top: 4px;
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 11px 20px;
-    background: var(--grad); color: #fff;
-    border: 0; border-radius: 11px;
-    font-size: 13px; font-weight: 700;
-    box-shadow: 0 8px 22px rgba(255, 42, 0, .35);
-    transition: transform .15s, filter .2s;
-  }
-  .btn-upload-video:hover { transform: translateY(-1px); filter: brightness(1.06); }
-  .btn-upload-video svg { width: 15px; height: 15px; }
 
   .vc-bar {
     position: absolute; left: 0; right: 0; bottom: 0;
@@ -496,7 +484,7 @@
     transition: background .2s, transform .1s;
     backdrop-filter: blur(6px);
   }
-  .vc-btn:hover { background: rgba(255, 255, 255, .22); }
+  .vc-btn:hover { background: var(--brand); }
   .vc-btn:active { transform: scale(.94); }
   .vc-btn svg { width: 18px; height: 18px; }
   .vc-timeline {
@@ -628,8 +616,9 @@
     overflow: hidden; text-overflow: ellipsis;
     min-width: 0;
   }
-  .tab-btn:hover { color: #fff; background: var(--panel-2); }
+  .tab-btn:hover { color: var(--brand); background: var(--panel-2); border-color: var(--brand); }
   .tab-btn.active { background: var(--panel-3); color: #fff; border-color: var(--border-2); }
+  .tab-btn.active:hover { color: #fff; border-color: var(--border-2); }
   .tab-count {
     display: inline-block; margin-left: 6px;
     padding: 1px 6px;
@@ -719,9 +708,9 @@
     border: 1px solid var(--border); border-radius: 6px;
     transition: background .2s, color .2s, border-color .2s;
   }
-  .comment-btn:hover { background: var(--panel-3); color: #fff; }
-  .comment-btn.check:hover { color: #16a34a; border-color: #16a34a; }
-  .comment-btn.del:hover { color: #f87171; border-color: #f87171; }
+  .comment-btn:hover { background: var(--panel-3); color: var(--brand); border-color: var(--brand); }
+  .comment-btn.check:hover { color: #16a34a; border-color: #16a34a; background: rgba(22,163,74,.12); }
+  .comment-btn.del:hover { color: #f87171; border-color: #f87171; background: rgba(248,113,113,.12); }
   .comment-btn svg { width: 12px; height: 12px; }
   .comment-text {
     font-size: 13px; line-height: 1.55;
@@ -805,7 +794,7 @@
     box-shadow: 0 6px 16px rgba(255, 42, 0, .35);
     transition: transform .12s, filter .2s;
   }
-  .btn-send-comment:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .btn-send-comment:hover { transform: translateY(-1px); filter: brightness(1.1); }
   .btn-send-comment svg { width: 16px; height: 16px; }
 
   .modal-overlay {
@@ -863,6 +852,32 @@
     color: var(--txt-dim);
     margin: 4px 0 6px;
   }
+
+  /* Custom date input */
+  .date-input-wrap { position: relative; margin-bottom: 10px; }
+  .date-input-wrap .config-field { margin-bottom: 0; padding-right: 52px; }
+  .date-picker-btn {
+    position: absolute; right: 5px; top: 5px; bottom: 5px;
+    width: 42px; height: auto;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; color: #fff;
+    border: 0; border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: background .15s, color .15s;
+  }
+  .date-picker-btn:hover { background: rgba(255, 42, 0, .18); color: var(--brand); }
+  .date-picker-btn svg { width: 17px; height: 17px; pointer-events: none; transition: transform .15s; }
+  .date-picker-btn:hover svg { transform: scale(1.1); }
+  .date-picker-btn input[type="date"] {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer; border: 0; padding: 0;
+    -webkit-appearance: none; appearance: none;
+  }
+  .date-picker-btn input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+
   .config-actions {
     display: flex; justify-content: flex-end; gap: 8px;
     margin-top: 8px;
@@ -872,15 +887,15 @@
     border-radius: 10px;
     font-size: 13px; font-weight: 700;
     border: 0;
-    transition: background .2s, transform .12s, filter .2s;
+    transition: background .2s, transform .12s, filter .2s, color .2s;
   }
   .btn-cancel { background: transparent; color: var(--txt-dim); }
-  .btn-cancel:hover { background: rgba(255,255,255,.06); color: #fff; }
+  .btn-cancel:hover { background: rgba(255,42,0,.12); color: var(--brand); }
   .btn-save {
     background: var(--grad); color: #fff;
     box-shadow: 0 6px 16px rgba(255, 42, 0, .35);
   }
-  .btn-save:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .btn-save:hover { transform: translateY(-1px); filter: brightness(1.1); }
 
   .share-link-box {
     width: 100%;
@@ -915,37 +930,9 @@
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
   .toast.error { background: #fee2e2; color: #991b1b; }
 
+  /* ============ MÓVIL ============ */
   @media (max-width: 720px) {
-    .review-header {
-      padding: 10px 12px; gap: 8px; min-height: 60px;
-      flex-wrap: wrap;
-    }
-    .review-info { flex: 1 1 100%; order: -1; }
-    .review-header-controls {
-      width: 100%;
-      justify-content: space-between;
-      gap: 6px;
-    }
-    .state-select-wrap, .version-select-wrap { flex: 1 1 0; min-width: 0; }
-    .state-select, .version-select {
-      width: 100%;
-      padding: 8px 24px 8px 10px;
-      font-size: 10.5px;
-      text-align: center;
-    }
-    .state-select-wrap::after, .version-select-wrap::after { right: 8px; }
-    .btn-delete-version { width: 34px; height: 34px; flex: 0 0 auto; }
-    .btn-share { padding: 8px 12px; font-size: 11px; }
-    .btn-share span { display: none; }
-    .btn-back { width: 34px; height: 34px; }
-    .btn-back svg { width: 15px; height: 15px; }
-
-    .vc-bar { padding: 28px 10px 10px; gap: 8px; }
-    .vc-btn { width: 34px; height: 34px; }
-    .vc-time { font-size: 11px; }
-    .vc-volume-wrap { display: none; }
-    .vc-fullscreen { display: none; }
-
+    /* Header de proyectos */
     .btn-home span { display: none; }
     .btn-home { padding: 10px 12px; }
     .brand-lockup .brand-logo { height: 32px; }
@@ -953,11 +940,72 @@
     .app-header { padding: 12px 14px; gap: 12px; }
     .header-brand { gap: 10px; }
     .brand-lockup { padding-left: 10px; gap: 8px; }
+
+    /* Header de review con back arriba */
+    .review-header {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-areas:
+        "back info"
+        "controls controls";
+      gap: 10px;
+      padding: 10px 12px;
+      min-height: auto;
+    }
+    .btn-back { grid-area: back; width: 38px; height: 38px; align-self: start; }
+    .review-info { grid-area: info; min-width: 0; }
+    .review-project-name { font-size: 16px; }
+    .review-client { font-size: 11px; }
+    .review-header-controls {
+      grid-area: controls;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      width: 100%;
+      justify-content: stretch;
+    }
+    .state-select-wrap { flex: 1 1 calc(50% - 3px); min-width: 0; }
+    .version-select-wrap { flex: 1 1 calc(50% - 3px); min-width: 0; }
+    .state-select, .version-select {
+      width: 100%;
+      padding: 9px 24px 9px 10px;
+      font-size: 10.5px;
+      text-align: center;
+      letter-spacing: .3px;
+    }
+    .state-select-wrap::after, .version-select-wrap::after { right: 8px; }
+    .btn-delete-version {
+      flex: 0 0 38px; width: 38px; height: 38px;
+    }
+    .btn-share {
+      flex: 1 1 auto;
+      justify-content: center;
+      padding: 9px 12px;
+      font-size: 12px;
+    }
+    .btn-share span { display: inline; }
+    .guest-badge { font-size: 8.5px; padding: 2px 6px; }
+
+    /* Reproductor */
+    .vc-bar { padding: 26px 10px 10px; gap: 8px; }
+    .vc-btn { width: 34px; height: 34px; }
+    .vc-time { font-size: 11px; }
+    .vc-volume-wrap { display: none; }
+
+    /* Modal */
+    .modal-box { padding: 18px; border-radius: 16px; }
+    .config-field { font-size: 13.5px; padding: 11px 12px; }
   }
 
   @media (max-width: 420px) {
     .tab-btn { font-size: 10.5px; padding: 8px 6px; }
     .tab-count { margin-left: 3px; padding: 1px 4px; font-size: 9px; }
+    .state-select, .version-select { font-size: 10px; padding: 8px 22px 8px 8px; }
+    .review-header { padding: 8px 10px; gap: 8px; }
+    .btn-back { width: 34px; height: 34px; }
+    .btn-back svg { width: 15px; height: 15px; }
+    .btn-delete-version { flex: 0 0 34px; width: 34px; height: 34px; }
+    .btn-share { font-size: 11px; padding: 8px 10px; }
   }
 </style>
 </head>
@@ -1060,7 +1108,7 @@
           <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
           <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>
         </svg>
-        <span>Compartir</span>
+        <span id="btn-share-label">Compartir</span>
       </button>
     </div>
   </header>
@@ -1103,7 +1151,18 @@
     <h3 class="modal-title" id="config-title">crear nuevo proyecto</h3>
     <input type="text" class="config-field" id="config-name" placeholder="nombre del proyecto" maxlength="80">
     <input type="text" class="config-field" id="config-client" placeholder="cliente" maxlength="80">
-    <input type="date" class="config-field" id="config-date">
+    <div class="date-input-wrap">
+      <input type="text" class="config-field" id="config-date" placeholder="dd/mm/aaaa" maxlength="10" inputmode="numeric" autocomplete="off">
+      <div class="date-picker-btn" title="Abrir calendario" aria-label="Abrir calendario">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <input type="date" id="config-date-native" tabindex="-1" aria-hidden="true">
+      </div>
+    </div>
     <label class="config-field-label" id="config-url-label">video de YouTube (opcional)</label>
     <input type="text" class="config-field" id="config-url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
     <div class="config-actions">
@@ -1132,7 +1191,7 @@
 <!-- ================= YOUTUBE URL MODAL ================= -->
 <div class="modal-overlay" id="yt-modal">
   <div class="modal-box" role="dialog" aria-modal="true">
-    <h3 class="modal-title">Añadir video de YouTube</h3>
+    <h3 class="modal-title" id="yt-modal-title">Añadir video de YouTube</h3>
     <p class="modal-hint">
       Pega el enlace del video. Puede ser <strong>público</strong> o <strong>no listado</strong> (no privado).
       Ejemplo: <code>https://www.youtube.com/watch?v=XXXXXXXXXXX</code>
@@ -1203,6 +1262,23 @@ function parseTime(str) {
   if (parts.length === 2) return parts[0] * 60 + parts[1];
   return parts[0] || 0;
 }
+/* ISO -> DD/MM/YYYY */
+function isoToDisplay(iso) {
+  if (!iso) return '';
+  const [y, m, d] = String(iso).split('-');
+  if (!y || !m || !d) return iso;
+  return `${d}/${m}/${y}`;
+}
+/* DD/MM/YYYY -> ISO */
+function displayToIso(dmy) {
+  if (!dmy) return '';
+  const m = String(dmy).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!m) return '';
+  const d = m[1].padStart(2, '0');
+  const mo = m[2].padStart(2, '0');
+  const y = m[3];
+  return `${y}-${mo}-${d}`;
+}
 function fmtDateDisplay(iso) {
   if (!iso) return '';
   const [y, m, d] = String(iso).split('-');
@@ -1222,6 +1298,7 @@ function getYouTubeId(input) {
   }
   return null;
 }
+function todayIso() { return new Date().toISOString().slice(0,10); }
 
 let toastTimer;
 function showToast(msg, duration = 3000, isError = false) {
@@ -1285,7 +1362,6 @@ function expandPayload(x) {
       }))
     };
   }
-  // Back-compat con formato antiguo
   return x;
 }
 function encodeShare(payload) {
@@ -1546,6 +1622,25 @@ $('btn-new-project').addEventListener('click', e => {
    ========================================================= */
 let configMode = 'create';
 let configProjectId = null;
+
+/* Auto-formato del input de fecha (dd/mm/aaaa) */
+function setupDateInput() {
+  const inp = $('config-date');
+  const native = $('config-date-native');
+
+  inp.addEventListener('input', () => {
+    let v = inp.value.replace(/\D/g, '').slice(0, 8);
+    if (v.length >= 5) v = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
+    else if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2);
+    inp.value = v;
+  });
+
+  native.addEventListener('change', () => {
+    if (native.value) inp.value = isoToDisplay(native.value);
+  });
+}
+setupDateInput();
+
 function openConfig(mode, id) {
   configMode = mode;
   configProjectId = id || null;
@@ -1561,14 +1656,14 @@ function openConfig(mode, id) {
     titleEl.textContent = 'Configuración de proyecto';
     nameEl.value = p.name || '';
     cliEl.value = p.client || '';
-    dateEl.value = p.date || new Date().toISOString().slice(0,10);
+    dateEl.value = isoToDisplay(p.date || todayIso());
     urlEl.style.display = 'none';
     urlLabel.style.display = 'none';
   } else {
     titleEl.textContent = 'crear nuevo proyecto';
     nameEl.value = '';
     cliEl.value = '';
-    dateEl.value = new Date().toISOString().slice(0,10);
+    dateEl.value = isoToDisplay(todayIso());
     urlEl.value = '';
     urlEl.style.display = '';
     urlLabel.style.display = '';
@@ -1584,7 +1679,7 @@ $('config-modal').addEventListener('click', e => {
 async function saveConfig() {
   const name = $('config-name').value.trim();
   const client = $('config-client').value.trim();
-  const date = $('config-date').value || new Date().toISOString().slice(0,10);
+  const dateIso = displayToIso($('config-date').value.trim()) || todayIso();
   if (!name) { showToast('Ponle un nombre al proyecto'); $('config-name').focus(); return; }
   if (configMode === 'create') {
     const now = Date.now();
@@ -1602,7 +1697,7 @@ async function saveConfig() {
     }
     const initialState = youtubeId ? 'en-edicion' : 'sin-empezar';
     const p = {
-      id: uid(), name, client, date,
+      id: uid(), name, client, date: dateIso,
       state: initialState,
       currentVersion: 'v1',
       versions: [{ id: 'v1', state: initialState, youtubeId, duration: 0 }],
@@ -1612,12 +1707,11 @@ async function saveConfig() {
     await persistProject(p);
     closeConfig();
     showToast('Proyecto creado ✔');
-    // Ir directo al modo revisión/comentario
     location.hash = '#/p/' + p.id + '/v1';
   } else {
     const p = getProject(configProjectId);
     if (!p) return;
-    p.name = name; p.client = client; p.date = date;
+    p.name = name; p.client = client; p.date = dateIso;
     p.updatedAt = Date.now();
     await persistProject(p);
     closeConfig();
@@ -1626,10 +1720,13 @@ async function saveConfig() {
   }
 }
 $('config-save').addEventListener('click', saveConfig);
-['config-name','config-client','config-date','config-url'].forEach(id => {
+['config-name','config-client','config-url'].forEach(id => {
   $(id).addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); saveConfig(); }
   });
+});
+$('config-date').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); saveConfig(); }
 });
 
 /* =========================================================
@@ -1700,10 +1797,10 @@ function buildLoadingState() {
   video = null; vcBar = null;
 }
 
-function buildEmptyState(version) {
+function buildEmptyState() {
   const guestMsg = isGuest
     ? 'El autor no compartió el enlace del video. Pídeselo para poder revisar.'
-    : 'El proyecto fue creado sin video. Puedes añadirlo desde la configuración del proyecto.';
+    : 'No hay video en esta versión todavía.';
   videoContainer.innerHTML = `
     <div class="video-empty" id="video-empty">
       <div class="icon">🎬</div>
@@ -1739,7 +1836,7 @@ function buildVideoPlayer() {
           <div class="vc-volume-fill" id="vc-volume-fill" style="width:100%"></div>
         </div>
       </div>
-      <button class="vc-btn vc-fullscreen" id="vc-fullscreen" aria-label="Pantalla completa">
+      <button class="vc-btn" id="vc-fullscreen" aria-label="Pantalla completa">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
       </button>
     </div>
@@ -1834,7 +1931,7 @@ function setupYouTubePlayer(videoId) {
       }
     });
   }).catch(() => {
-    buildEmptyState(getActiveProject()?.currentVersion || 'v1');
+    buildEmptyState();
     showToast('No se pudo cargar YouTube');
   });
 }
@@ -1940,14 +2037,14 @@ async function loadVideoForVersion(p, version) {
   const youtubeId = vObj && vObj.youtubeId;
 
   if (!youtubeId) {
-    buildEmptyState(version);
+    buildEmptyState();
     return;
   }
   buildLoadingState();
   try {
     await loadYouTubeAPI();
   } catch (e) {
-    buildEmptyState(version);
+    buildEmptyState();
     showToast('No se pudo cargar YouTube');
     return;
   }
@@ -1959,10 +2056,11 @@ async function loadVideoForVersion(p, version) {
    13 · MODAL YOUTUBE URL
    ========================================================= */
 let pendingVersionForYT = null;
-function openYouTubeModal(versionId) {
+function openYouTubeModal(versionId, opts = {}) {
   pendingVersionForYT = versionId || null;
   const inp = $('yt-url-input');
   inp.value = '';
+  $('yt-modal-title').textContent = opts.title || 'Añadir video de YouTube';
   $('yt-modal').classList.add('open');
   setTimeout(() => inp.focus(), 60);
 }
@@ -2015,6 +2113,8 @@ async function saveYouTubeUrl() {
 function buildSharePayload(p) {
   const version = p.currentVersion || 'v1';
   const vObj = (p.versions || []).find(v => v.id === version);
+  // En modo invitado solo ve los comentarios de su versión
+  const filteredComments = (p.comments || []).filter(c => (c.version || 'v1') === version);
   return {
     v: 1,
     pid: p.id,
@@ -2024,7 +2124,7 @@ function buildSharePayload(p) {
     state: (vObj && vObj.state) || p.state || 'sin-empezar',
     version,
     youtubeId: (vObj && vObj.youtubeId) || '',
-    comments: (p.comments || []).map(c => ({
+    comments: filteredComments.map(c => ({
       id: c.id,
       time: c.time,
       author: c.author,
@@ -2050,40 +2150,25 @@ function openShareModal() {
     if (ok) showToast('Enlace copiado ✔');
   });
 }
-function openGuestReturnShare() {
+function openGuestCopyLink() {
   const p = getActiveProject();
   if (!p) return;
-  const vObj = (p.versions || []).find(v => v.id === (p.currentVersion || 'v1'));
-  const payload = {
-    v: 1,
-    pid: p.id,
-    name: p.name,
-    client: p.client,
-    date: p.date,
-    state: p.state,
-    version: p.currentVersion || 'v1',
-    youtubeId: (vObj && vObj.youtubeId) || '',
-    comments: (p.comments || []).map(c => ({
-      id: c.id, time: c.time, author: c.author, text: c.text,
-      resolved: !!c.resolved, version: c.version || 'v1',
-      createdAt: c.createdAt || new Date().toISOString()
-    }))
-  };
+  const payload = buildSharePayload(p);
   const encoded = encodeShare(payload);
   if (!encoded) { showToast('No se pudo generar el enlace'); return; }
   const url = `${location.origin}${location.pathname}#/g/${encoded}`;
-  $('share-title').textContent = 'Devolver comentarios al autor';
-  $('share-hint').innerHTML = 'Copia este enlace y mándalo de vuelta al autor. Al abrirlo, tus comentarios se integrarán automáticamente.';
+  $('share-title').textContent = 'Copiar enlace';
+  $('share-hint').innerHTML = 'Copia este enlace y mándalo de vuelta al autor. Al abrirlo, tus comentarios se integrarán automáticamente en el proyecto.';
   $('share-link-box').textContent = url;
   $('share-modal').classList.add('open');
   copyToClipboard(url).then(ok => {
-    if (ok) showToast('Enlace listo para devolver ✔');
+    if (ok) showToast('Enlace copiado ✔');
   });
 }
 function closeShareModal() { $('share-modal').classList.remove('open'); }
 
 $('btn-share').addEventListener('click', () => {
-  if (isGuest) openGuestReturnShare();
+  if (isGuest) openGuestCopyLink();
   else openShareModal();
 });
 $('share-close').addEventListener('click', closeShareModal);
@@ -2125,7 +2210,7 @@ function enterGuestModeFromPayload(payload) {
 function updateGuestControlsUI() {
   const guestBadge = $('guest-badge');
   const btnShare = $('btn-share');
-  const btnShareSpan = btnShare.querySelector('span');
+  const btnShareLabel = $('btn-share-label');
   const stateSel = $('review-state');
   const versionSel = $('review-version');
   const backBtn = $('btn-back');
@@ -2135,18 +2220,18 @@ function updateGuestControlsUI() {
     guestBadge.style.display = 'inline-flex';
     stateSel.disabled = true;
     versionSel.disabled = true;
-    backBtn.style.display = 'none';
-    delVerBtn.style.display = 'none';
+    backBtn.style.display = 'none';           // sin acceso a la página principal
+    delVerBtn.style.display = 'none';         // no puede eliminar versiones
     btnShare.style.display = 'inline-flex';
-    if (btnShareSpan) btnShareSpan.textContent = 'Devolver';
-    $('shared-note').textContent = '👤 Modo invitado · tus comentarios se enviarán al autor';
+    if (btnShareLabel) btnShareLabel.textContent = 'Copiar enlace';
+    $('shared-note').textContent = '👤 Modo invitado · tus comentarios se guardarán al copiar el enlace';
   } else {
     guestBadge.style.display = 'none';
     stateSel.disabled = false;
     versionSel.disabled = false;
     backBtn.style.display = 'flex';
     btnShare.style.display = 'inline-flex';
-    if (btnShareSpan) btnShareSpan.textContent = 'Compartir';
+    if (btnShareLabel) btnShareLabel.textContent = 'Compartir';
     delVerBtn.style.display = currentVersions.length > 1 ? 'inline-flex' : 'none';
     $('shared-note').textContent = '💬 Los comentarios se comparten entre todas las versiones';
   }
@@ -2309,6 +2394,8 @@ $('review-version').addEventListener('change', async e => {
     p.updatedAt = Date.now();
     await persistProject(p);
     location.hash = '#/p/' + p.id + '/' + newId;
+    // Abrir modal de YouTube para la nueva versión
+    setTimeout(() => openYouTubeModal(newId, { title: 'Añadir video a la versión ' + newId }), 400);
     showToast('Versión ' + newId + ' creada ✔');
     return;
   }
@@ -2586,7 +2673,6 @@ function updateFilterTabs() {
    ========================================================= */
 async function init() {
   if (location.hash) {
-    // Si vamos a una ruta directa, primero cargamos los proyectos
     renderProjectsLoading();
     await refreshProjects();
     applyHashRoute();
