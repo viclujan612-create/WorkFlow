@@ -431,9 +431,31 @@
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0, 0, 0, .8);
   }
-  .video-container video {
-    width: 100%; height: 100%; display: block;
-    object-fit: contain; background: #000;
+  /* ====== Reproductor YouTube ====== */
+  #yt-player-host {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 1;
+  }
+  .video-container iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: #000;
+  }
+  #yt-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    cursor: pointer;
+    background: transparent;
   }
   .video-empty {
     position: absolute; inset: 0;
@@ -442,10 +464,27 @@
     color: var(--txt-dim); font-size: 13.5px;
     text-align: center; padding: 30px;
     background: radial-gradient(ellipse at center, #151515 0%, #050505 100%);
+    z-index: 3;
   }
   .video-empty .icon { font-size: 44px; opacity: .35; }
   .video-empty .title { font-size: 16px; font-weight: 800; color: #c8c8cc; }
   .video-empty .sub { font-size: 12.5px; max-width: 400px; line-height: 1.5; }
+  .video-loading {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px;
+    background: radial-gradient(ellipse at center, #151515 0%, #050505 100%);
+    color: var(--txt-dim); font-size: 13px;
+    z-index: 3;
+  }
+  .video-loading .spinner {
+    width: 38px; height: 38px;
+    border: 3px solid rgba(255, 42, 0, .2);
+    border-top-color: var(--brand);
+    border-radius: 50%;
+    animation: spin .9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
   .btn-upload-video {
     margin-top: 4px;
     display: inline-flex; align-items: center; gap: 8px;
@@ -894,37 +933,6 @@
     margin-bottom: 10px;
   }
 
-  .upload-file-name {
-    font-size: 13px; color: var(--txt);
-    margin-bottom: 4px; word-break: break-all;
-    font-weight: 600;
-  }
-  .upload-file-size {
-    font-size: 11.5px; color: var(--txt-dim-2);
-    margin-bottom: 16px;
-  }
-  .upload-file-size.warn { color: #fbbf24; }
-  .progress-track {
-    width: 100%; height: 8px;
-    background: var(--panel-3);
-    border-radius: 999px;
-    overflow: hidden;
-    margin-bottom: 10px;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--grad);
-    width: 0%;
-    border-radius: 999px;
-    transition: width .15s linear;
-  }
-  .progress-label {
-    display: flex; justify-content: space-between;
-    font-size: 12px; font-weight: 700;
-    color: var(--txt-dim);
-  }
-  .progress-label .pct { color: #fff; }
-
   .toast {
     position: fixed; left: 50%; bottom: 30px;
     transform: translate(-50%, 20px);
@@ -1052,9 +1060,9 @@
       <div class="version-select-wrap">
         <select class="version-select" id="review-version" aria-label="Versión"></select>
       </div>
-      <button class="btn-action-top btn-upload-top" id="btn-upload-top" type="button" title="Subir video para esta versión">
+      <button class="btn-action-top btn-upload-top" id="btn-upload-top" type="button" title="Añadir enlace de video de YouTube">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-        <span id="btn-upload-label">Subir video</span>
+        <span id="btn-upload-label">Añadir video</span>
       </button>
       <button class="btn-action-top btn-share" id="btn-share" type="button" title="Compartir">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -1140,16 +1148,18 @@
   </div>
 </div>
 
-<!-- ================= UPLOAD MODAL ================= -->
-<div class="modal-overlay" id="upload-modal">
+<!-- ================= YOUTUBE URL MODAL ================= -->
+<div class="modal-overlay" id="yt-modal">
   <div class="modal-box" role="dialog" aria-modal="true">
-    <h3 class="modal-title">Subiendo video</h3>
-    <div class="upload-file-name" id="upload-file-name">—</div>
-    <div class="upload-file-size" id="upload-file-size">—</div>
-    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
-    <div class="progress-label">
-      <span id="progress-status">Preparando…</span>
-      <span class="pct" id="progress-pct">0%</span>
+    <h3 class="modal-title">Añadir video de YouTube</h3>
+    <p class="modal-hint">
+      Pega el enlace del video. Puede ser <strong>público</strong> o <strong>no listado</strong> (no privado).
+      Ejemplo: <code>https://www.youtube.com/watch?v=XXXXXXXXXXX</code>
+    </p>
+    <input type="text" class="config-field" id="yt-url-input" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
+    <div class="config-actions">
+      <button class="btn-cancel" id="yt-cancel" type="button">cancelar</button>
+      <button class="btn-save" id="yt-save" type="button">añadir</button>
     </div>
   </div>
 </div>
@@ -1212,13 +1222,21 @@ function fmtDateDisplay(iso) {
   if (!y || !m || !d) return iso;
   return `${d}/${m}/${y}`;
 }
-function fmtBytes(b) {
-  if (!b) return '0 B';
-  if (b < 1024) return b + ' B';
-  if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB';
-  if (b < 1024 * 1024 * 1024) return (b / 1024 / 1024).toFixed(1) + ' MB';
-  return (b / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+/** Extrae el ID de cualquier URL/formato de YouTube. Devuelve null si no es válido. */
+function getYouTubeId(input) {
+  if (!input) return null;
+  const s = String(input).trim();
+  if (/^[a-zA-Z0-9_-]{11}$/.test(s)) return s;
+  const patterns = [
+    /(?:youtube\.com\/watch\?(?:.*&)?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/
+  ];
+  for (const p of patterns) {
+    const m = s.match(p);
+    if (m) return m[1];
+  }
+  return null;
 }
+
 let toastTimer;
 function showToast(msg, duration = 3000) {
   const el = $('toast');
@@ -1272,7 +1290,6 @@ const STATE_LABELS = {
 const DB_NAME = 'kevirago_local_db';
 const DB_VER = 1;
 const STORE_PROJECTS = 'projects';
-const STORE_VIDEOS = 'videos';
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -1281,9 +1298,6 @@ function openDB() {
       const db = req.result;
       if (!db.objectStoreNames.contains(STORE_PROJECTS)) {
         db.createObjectStore(STORE_PROJECTS, { keyPath: 'id' });
-      }
-      if (!db.objectStoreNames.contains(STORE_VIDEOS)) {
-        db.createObjectStore(STORE_VIDEOS);
       }
     };
     req.onsuccess = () => resolve(req.result);
@@ -1317,33 +1331,6 @@ async function idbDeleteProject(id) {
     tx.onerror = () => reject(tx.error);
   });
 }
-async function idbPutVideo(key, blob) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_VIDEOS, 'readwrite');
-    tx.objectStore(STORE_VIDEOS).put(blob, key);
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
-}
-async function idbGetVideo(key) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_VIDEOS, 'readonly');
-    const rq = tx.objectStore(STORE_VIDEOS).get(key);
-    rq.onsuccess = () => resolve(rq.result);
-    rq.onerror = () => reject(rq.error);
-  });
-}
-async function idbDeleteVideo(key) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_VIDEOS, 'readwrite');
-    tx.objectStore(STORE_VIDEOS).delete(key);
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
-}
 
 /* =========================================================
    2 · ESTADO
@@ -1355,7 +1342,6 @@ let currentSort = 'recent';
 let currentStateFilter = 'all';
 let currentViewMode = 'grid';
 let currentVersions = [];
-let objectUrlInUse = null;
 
 let isGuest = false;
 let guestProject = null;
@@ -1484,9 +1470,6 @@ async function deleteProject(id) {
   const p = getProject(id);
   if (!p) return;
   if (!confirm(`¿Eliminar "${p.name || 'Sin nombre'}" y todos sus comentarios?`)) return;
-  for (const v of (p.versions || [])) {
-    if (v.videoKey) { try { await idbDeleteVideo(v.videoKey); } catch (e) {} }
-  }
   await idbDeleteProject(id);
   await refreshProjects();
   renderProjects();
@@ -1563,7 +1546,7 @@ async function saveConfig() {
       id: uid(), name, client, date,
       state: 'sin-empezar',
       currentVersion: 'v1',
-      versions: [{ id: 'v1', state: 'sin-empezar', videoKey: '', duration: 0 }],
+      versions: [{ id: 'v1', state: 'sin-empezar', youtubeId: '', duration: 0 }],
       comments: [], thumb: '',
       createdAt: now, updatedAt: now
     };
@@ -1592,10 +1575,34 @@ $('config-save').addEventListener('click', saveConfig);
 });
 
 /* =========================================================
-   9 · REPRODUCTOR
+   9 · YOUTUBE IFRAME API
    ========================================================= */
+let ytApiPromise = null;
+function loadYouTubeAPI() {
+  if (window.YT && window.YT.Player) return Promise.resolve(window.YT);
+  if (ytApiPromise) return ytApiPromise;
+  ytApiPromise = new Promise(resolve => {
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => {
+      if (typeof prev === 'function') { try { prev(); } catch (e) {} }
+      resolve(window.YT);
+    };
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+  });
+  return ytApiPromise;
+}
+
+/* =========================================================
+   10 · REPRODUCTOR (wrapper sobre YT.Player)
+   ========================================================= */
+let ytPlayer = null;
+let ytReady = false;
+let timePollTimer = null;
+
 const videoContainer = $('video-container');
-let video = null;
+let video = null; // wrapper cuando hay reproductor; null si no hay
 let vcBar, vcPlay, vcPlayIcon, vcTimeline, vcProgress, vcMarkersEl, vcCurrent, vcTotal;
 let vcMute, vcMuteIcon, vcVolume, vcVolumeFill, vcFullscreen;
 
@@ -1605,9 +1612,61 @@ const ICON_VOL   = `<path d="M3 9v6h4l5 5V4L7 9H3z"/>`;
 const ICON_MUTE  = `<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3l3.5-3.5-1-1L15.5 11 12 7.5l-1 1L14.5 12 11 15.5l1 1L15.5 13l3.5 3.5 1-1z"/>`;
 let controlsHideTimer = null;
 
+/** Wrapper con la misma interfaz que el <video> original, sobre YT.Player */
+const ytWrap = {
+  get currentTime() { return ytReady && ytPlayer ? (ytPlayer.getCurrentTime() || 0) : 0; },
+  set currentTime(t) { if (ytReady && ytPlayer) ytPlayer.seekTo(Number(t) || 0, true); },
+  get duration() { return ytReady && ytPlayer ? (ytPlayer.getDuration() || 0) : 0; },
+  get paused() { return !(ytReady && ytPlayer && ytPlayer.getPlayerState() === 1); },
+  get muted() { return ytReady && ytPlayer ? !!ytPlayer.isMuted() : false; },
+  set muted(v) { if (ytReady && ytPlayer) { v ? ytPlayer.mute() : ytPlayer.unMute(); } },
+  get volume() { return ytReady && ytPlayer ? (ytPlayer.getVolume() / 100) : 1; },
+  set volume(v) { if (ytReady && ytPlayer) ytPlayer.setVolume(Math.round(Math.max(0, Math.min(1, v)) * 100)); },
+  play() { if (ytReady && ytPlayer) ytPlayer.playVideo(); },
+  pause() { if (ytReady && ytPlayer) ytPlayer.pauseVideo(); },
+};
+
+function destroyPlayer() {
+  if (ytPlayer) { try { ytPlayer.destroy(); } catch (e) {} ytPlayer = null; }
+  ytReady = false;
+  stopTimePolling();
+  video = null;
+}
+
+function buildLoadingState() {
+  videoContainer.innerHTML = `
+    <div class="video-loading">
+      <div class="spinner"></div>
+      <div>Cargando reproductor de YouTube…</div>
+    </div>
+  `;
+  video = null; vcBar = null;
+}
+
+function buildEmptyState(version) {
+  const guestMsg = isGuest
+    ? 'El autor no compartió el enlace del video en este enlace. Pídeselo para poder revisar.'
+    : 'Pega el enlace del video de YouTube para empezar a revisar y dejar comentarios.';
+  videoContainer.innerHTML = `
+    <div class="video-empty" id="video-empty">
+      <div class="icon">🎬</div>
+      <div class="title">Sin video para esta versión</div>
+      <div class="sub">${guestMsg}</div>
+      <button class="btn-upload-video" id="btn-upload-video" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Añadir enlace de YouTube
+      </button>
+    </div>
+  `;
+  video = null; vcBar = null;
+  const btn = $('btn-upload-video');
+  if (btn) btn.addEventListener('click', () => openYouTubeModal(version));
+}
+
 function buildVideoPlayer() {
   videoContainer.innerHTML = `
-    <video id="review-video" playsinline preload="metadata" crossorigin="anonymous"></video>
+    <div id="yt-player-host"></div>
+    <div id="yt-overlay"></div>
     <div class="vc-bar hidden" id="vc-bar">
       <button class="vc-btn" id="vc-play" aria-label="Reproducir">
         <svg id="vc-play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -1634,7 +1693,6 @@ function buildVideoPlayer() {
       </button>
     </div>
   `;
-  video = $('review-video');
   vcBar = $('vc-bar');
   vcPlay = $('vc-play');
   vcPlayIcon = $('vc-play-icon');
@@ -1648,66 +1706,50 @@ function buildVideoPlayer() {
   vcVolume = $('vc-volume');
   vcVolumeFill = $('vc-volume-fill');
   vcFullscreen = $('vc-fullscreen');
-  bindVideoEvents();
+  bindControlsEvents();
+  video = ytWrap;
 }
-function bindVideoEvents() {
-  if (!video) return;
-  video.addEventListener('play', () => { updatePlayIcon(); scheduleControlsHide(); });
-  video.addEventListener('pause', () => { updatePlayIcon(); showControls(); });
-  video.addEventListener('ended', () => { updatePlayIcon(); showControls(); });
-  video.addEventListener('loadedmetadata', () => {
-    vcBar.classList.remove('hidden');
-    vcTotal.textContent = fmtTime(video.duration);
-    const p = getActiveProject();
-    if (p) {
-      const vObj = (p.versions || []).find(v => v.id === (p.currentVersion || 'v1'));
-      if (vObj) {
-        vObj.duration = video.duration || 0;
-        if (!isGuest) idbPutProject(p).catch(() => {});
-      }
-    }
-    renderMarkers();
-    updateCommentInputTime();
-  });
-  video.addEventListener('timeupdate', () => {
-    if (video.duration) {
-      vcProgress.style.width = (video.currentTime / video.duration * 100) + '%';
-    }
-    vcCurrent.textContent = fmtTime(video.currentTime);
-    updateCommentInputTime();
-  });
-  video.addEventListener('volumechange', () => {
-    vcVolumeFill.style.width = (video.volume * 100) + '%';
-    updateMuteIcon();
-  });
+
+function bindControlsEvents() {
+  // Overlay sobre el iframe: captura clics para play/pause
+  const overlay = $('yt-overlay');
+  if (overlay) {
+    overlay.addEventListener('click', () => {
+      if (!video) return;
+      if (video.paused) video.play(); else video.pause();
+    });
+  }
   vcPlay.addEventListener('click', e => {
     e.stopPropagation();
-    if (video.paused) video.play().catch(() => {}); else video.pause();
-  });
-  video.addEventListener('click', () => {
-    if (video.paused) video.play().catch(() => {}); else video.pause();
+    if (video.paused) video.play(); else video.pause();
   });
   vcTimeline.addEventListener('click', e => {
     if (e.target.closest('.vc-marker')) return;
-    if (!video.duration) return;
+    const d = video.duration;
+    if (!d) return;
     const rect = vcTimeline.getBoundingClientRect();
     const padding = 6;
     const usableW = rect.width - padding * 2;
     const x = e.clientX - rect.left - padding;
     const pct = Math.max(0, Math.min(1, x / usableW));
-    video.currentTime = pct * video.duration;
+    video.currentTime = pct * d;
     video.pause();
   });
-  vcMute.addEventListener('click', () => { video.muted = !video.muted; updateMuteIcon(); });
+  vcMute.addEventListener('click', e => {
+    e.stopPropagation();
+    video.muted = !video.muted;
+    updateMuteIcon();
+  });
   vcVolume.addEventListener('click', e => {
     const rect = vcVolume.getBoundingClientRect();
     const v = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     video.volume = v;
-    video.muted = v === 0;
+    video.muted = (v === 0);
     vcVolumeFill.style.width = (v * 100) + '%';
     updateMuteIcon();
   });
-  vcFullscreen.addEventListener('click', () => {
+  vcFullscreen.addEventListener('click', e => {
+    e.stopPropagation();
     if (!document.fullscreenElement) videoContainer.requestFullscreen?.().catch(() => {});
     else document.exitFullscreen?.();
   });
@@ -1720,13 +1762,115 @@ function bindVideoEvents() {
   updatePlayIcon();
   updateMuteIcon();
 }
+
+function setupYouTubePlayer(videoId) {
+  loadYouTubeAPI().then(YT => {
+    ytPlayer = new YT.Player('yt-player-host', {
+      videoId: videoId,
+      playerVars: {
+        controls: 0,
+        modestbranding: 1,
+        rel: 0,
+        disablekb: 1,
+        playsinline: 1,
+        fs: 0,
+        iv_load_policy: 3,
+        cc_load_policy: 0,
+      },
+      events: {
+        onReady: onPlayerReady,
+        onStateChange: onPlayerStateChange,
+        onError: onPlayerError,
+      }
+    });
+  }).catch(() => {
+    buildEmptyState(getActiveProject()?.currentVersion || 'v1');
+    showToast('No se pudo cargar YouTube');
+  });
+}
+
+function onPlayerReady(event) {
+  ytReady = true;
+  const iframe = event.target.getIframe();
+  if (iframe) {
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.position = 'absolute';
+    iframe.style.inset = '0';
+    iframe.style.border = '0';
+  }
+  const duration = (ytPlayer.getDuration && ytPlayer.getDuration()) || 0;
+  if (vcTotal) vcTotal.textContent = fmtTime(duration);
+  if (vcBar) vcBar.classList.remove('hidden');
+
+  // Guardar duración en el proyecto
+  const p = getActiveProject();
+  if (p && !isGuest) {
+    const vObj = (p.versions || []).find(v => v.id === (p.currentVersion || 'v1'));
+    if (vObj) {
+      vObj.duration = duration || 0;
+      idbPutProject(p).catch(() => {});
+    }
+  }
+
+  renderMarkers();
+  updateCommentInputTime();
+  updatePlayIcon();
+  updateMuteIcon();
+}
+
+function onPlayerStateChange(event) {
+  const state = event.data;
+  updatePlayIcon();
+  if (state === 1) { // playing
+    startTimePolling();
+    scheduleControlsHide();
+  } else {
+    stopTimePolling();
+    // una última actualización
+    if (ytReady && ytPlayer) {
+      const t = ytPlayer.getCurrentTime() || 0;
+      const d = ytPlayer.getDuration() || 0;
+      if (d && vcProgress) vcProgress.style.width = (t / d * 100) + '%';
+      if (vcCurrent) vcCurrent.textContent = fmtTime(t);
+      updateCommentInputTime();
+    }
+    if (state === 0 || state === 2) showControls();
+  }
+}
+
+function onPlayerError() {
+  showToast('No se pudo reproducir este video (puede ser privado o no permitir inserción)');
+}
+
+function startTimePolling() {
+  if (timePollTimer) return;
+  timePollTimer = setInterval(pollTime, 100);
+}
+function stopTimePolling() {
+  if (timePollTimer) { clearInterval(timePollTimer); timePollTimer = null; }
+}
+function pollTime() {
+  if (!ytReady || !ytPlayer) return;
+  const t = ytPlayer.getCurrentTime() || 0;
+  const d = ytPlayer.getDuration() || 0;
+  if (d && vcProgress) vcProgress.style.width = (t / d * 100) + '%';
+  if (vcCurrent) vcCurrent.textContent = fmtTime(t);
+  if (!inputText.matches(':focus')) {
+    lockedCommentTime = t;
+    if (inputTime) inputTime.textContent = fmtTime(lockedCommentTime);
+  }
+}
+
 function updatePlayIcon() {
-  if (!vcPlayIcon || !video) return;
-  vcPlayIcon.innerHTML = video.paused ? ICON_PLAY : ICON_PAUSE;
+  if (!vcPlayIcon) return;
+  const paused = !video || video.paused;
+  vcPlayIcon.innerHTML = paused ? ICON_PLAY : ICON_PAUSE;
 }
 function updateMuteIcon() {
-  if (!vcMuteIcon || !video) return;
-  vcMuteIcon.innerHTML = (video.muted || video.volume === 0) ? ICON_MUTE : ICON_VOL;
+  if (!vcMuteIcon) return;
+  const muted = !video || video.muted || video.volume === 0;
+  vcMuteIcon.innerHTML = muted ? ICON_MUTE : ICON_VOL;
 }
 function scheduleControlsHide() {
   clearTimeout(controlsHideTimer);
@@ -1739,197 +1883,92 @@ function showControls() {
 }
 
 /* =========================================================
-   10 · CARGA DE VIDEO
+   11 · CARGA DE VIDEO (YouTube)
    ========================================================= */
-function buildEmptyState(version) {
-  const guestMsg = isGuest
-    ? 'Sube tu copia del video (el mismo archivo que te envió el autor) para poder revisarlo con marcadores.'
-    : 'Sube un archivo de video para empezar a revisar y dejar comentarios.';
-  videoContainer.innerHTML = `
-    <div class="video-empty" id="video-empty">
-      <div class="icon">🎬</div>
-      <div class="title">Sin video para esta versión</div>
-      <div class="sub">${guestMsg}</div>
-      <button class="btn-upload-video" id="btn-upload-video" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-        Subir video
-      </button>
-    </div>
-  `;
-  video = null;
-  vcBar = null;
-  const btn = $('btn-upload-video');
-  if (btn) btn.addEventListener('click', () => triggerUpload(version));
-}
 async function loadVideoForVersion(p, version) {
-  if (objectUrlInUse) { try { URL.revokeObjectURL(objectUrlInUse); } catch (e) {} objectUrlInUse = null; }
-  if (video) { try { video.pause(); } catch (e) {} }
+  destroyPlayer();
 
   const vObj = (p.versions || []).find(v => v.id === version);
+  const youtubeId = vObj && vObj.youtubeId;
 
-  let videoKey;
-  if (isGuest) {
-    videoKey = 'guest_' + p.id;
-  } else {
-    videoKey = vObj && vObj.videoKey;
-  }
-
-  if (!videoKey) {
+  if (!youtubeId) {
     buildEmptyState(version);
     return;
   }
-
+  buildLoadingState();
   try {
-    const blob = await idbGetVideo(videoKey);
-    if (!blob) { buildEmptyState(version); return; }
-    buildVideoPlayer();
-    const url = URL.createObjectURL(blob);
-    objectUrlInUse = url;
-    video.src = url;
-    try { video.load(); } catch (e) {}
-  } catch (err) {
+    await loadYouTubeAPI();
+  } catch (e) {
     buildEmptyState(version);
+    showToast('No se pudo cargar YouTube');
+    return;
   }
+  buildVideoPlayer();
+  setupYouTubePlayer(youtubeId);
 }
 
 /* =========================================================
-   11 · UPLOAD
+   12 · MODAL YOUTUBE URL
    ========================================================= */
-function triggerUpload(versionId) {
-  const p = getActiveProject();
-  if (!p) return;
-  const version = versionId || p.currentVersion || 'v1';
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'video/*';
-  input.addEventListener('change', e => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-    handleVideoUpload(file, version);
-  });
-  input.click();
+let pendingVersionForYT = null;
+function openYouTubeModal(versionId) {
+  pendingVersionForYT = versionId || null;
+  const inp = $('yt-url-input');
+  inp.value = '';
+  $('yt-modal').classList.add('open');
+  setTimeout(() => inp.focus(), 60);
 }
+function closeYouTubeModal() { $('yt-modal').classList.remove('open'); }
+
 $('btn-upload-top').addEventListener('click', () => {
   const p = getActiveProject();
   if (!p) return;
-  triggerUpload(p.currentVersion || 'v1');
+  openYouTubeModal(p.currentVersion || 'v1');
 });
-async function handleVideoUpload(file, version) {
+$('yt-cancel').addEventListener('click', closeYouTubeModal);
+$('yt-modal').addEventListener('click', e => {
+  if (e.target === $('yt-modal')) closeYouTubeModal();
+});
+$('yt-url-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); saveYouTubeUrl(); }
+});
+$('yt-save').addEventListener('click', saveYouTubeUrl);
+
+async function saveYouTubeUrl() {
   const p = getActiveProject();
   if (!p) return;
+  const url = $('yt-url-input').value.trim();
+  const id = getYouTubeId(url);
+  if (!id) { showToast('URL de YouTube inválida'); return; }
+  const version = pendingVersionForYT || p.currentVersion || 'v1';
+  const vObj = (p.versions || []).find(v => v.id === version);
+  if (!vObj) { showToast('Versión no encontrada'); return; }
 
-  $('upload-file-name').textContent = file.name;
-  const sizeEl = $('upload-file-size');
-  sizeEl.textContent = fmtBytes(file.size) + (file.size > 200 * 1024 * 1024 ? ' · ⚠ archivo grande, puede tardar' : '');
-  sizeEl.classList.toggle('warn', file.size > 200 * 1024 * 1024);
-  $('progress-fill').style.width = '0%';
-  $('progress-pct').textContent = '0%';
-  $('progress-status').textContent = 'Leyendo archivo…';
-  $('upload-modal').classList.add('open');
+  vObj.youtubeId = id;
+  vObj.duration = 0;
+  if (vObj.state === 'sin-empezar') vObj.state = 'en-edicion';
+  p.thumb = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+  if (p.state === 'sin-empezar') p.state = 'en-edicion';
+  p.updatedAt = Date.now();
 
-  try {
-    const blob = await readFileWithProgress(file, pct => {
-      $('progress-fill').style.width = pct + '%';
-      $('progress-pct').textContent = Math.round(pct) + '%';
-    });
-    $('progress-status').textContent = 'Guardando…';
-    $('progress-fill').style.width = '100%';
-    $('progress-pct').textContent = '100%';
-
-    if (isGuest) {
-      const key = 'guest_' + p.id;
-      await idbPutVideo(key, blob);
-      $('progress-status').textContent = 'Generando miniatura…';
-      const tmpUrl = URL.createObjectURL(blob);
-      const thumb = await generateThumb(tmpUrl);
-      URL.revokeObjectURL(tmpUrl);
-      if (thumb) p.thumb = thumb;
-      $('upload-modal').classList.remove('open');
-      showToast('Video cargado ✔');
-      await loadVideoForVersion(p, version);
-      renderComments();
-      return;
-    }
-
-    const oldVObj = (p.versions || []).find(v => v.id === version);
-    const oldKey = oldVObj && oldVObj.videoKey;
-    const key = `v_${p.id}_${version}_${Date.now()}`;
-    await idbPutVideo(key, blob);
-    $('progress-status').textContent = 'Generando miniatura…';
-    const tmpUrl = URL.createObjectURL(blob);
-    const thumb = await generateThumb(tmpUrl);
-    URL.revokeObjectURL(tmpUrl);
-    if (oldKey && oldKey !== key) { try { await idbDeleteVideo(oldKey); } catch (e) {} }
-    if (oldVObj) {
-      oldVObj.videoKey = key;
-      oldVObj.duration = 0;
-      if (oldVObj.state === 'sin-empezar') oldVObj.state = 'en-edicion';
-    }
-    if (thumb) p.thumb = thumb;
-    if (p.state === 'sin-empezar') p.state = 'en-edicion';
-    p.updatedAt = Date.now();
+  if (!isGuest) {
     await idbPutProject(p);
     await refreshProjects();
-    $('upload-modal').classList.remove('open');
-    showToast('Video subido ✔');
-    await loadVideoForVersion(p, version);
-    const stateSel = $('review-state');
-    const vObj = (p.versions || []).find(v => v.id === version);
-    if (vObj) {
-      stateSel.value = vObj.state || p.state;
-      stateSel.dataset.state = stateSel.value;
-    }
-    renderComments();
-  } catch (err) {
-    console.error(err);
-    $('upload-modal').classList.remove('open');
-    showToast('Error al subir el video');
   }
-}
-function readFileWithProgress(file, onProgress) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onprogress = e => {
-      if (e.lengthComputable) onProgress((e.loaded / e.total) * 100);
-    };
-    reader.onload = () => {
-      const blob = new Blob([reader.result], { type: file.type });
-      resolve(blob);
-    };
-    reader.onerror = () => reject(reader.error);
-    reader.readAsArrayBuffer(file);
-  });
-}
-function generateThumb(url) {
-  return new Promise(resolve => {
-    const v = document.createElement('video');
-    v.muted = true;
-    v.preload = 'metadata';
-    v.crossOrigin = 'anonymous';
-    let done = false;
-    const finish = val => { if (!done) { done = true; resolve(val); } };
-    v.addEventListener('loadeddata', () => {
-      try { v.currentTime = Math.min(0.2, (v.duration || 1) / 10); }
-      catch (e) { try { v.currentTime = 0; } catch (e2) {} }
-    });
-    v.addEventListener('seeked', () => {
-      try {
-        const w = 480;
-        const h = Math.round(w * (v.videoHeight || 9) / (v.videoWidth || 16));
-        const c = document.createElement('canvas');
-        c.width = w; c.height = h;
-        c.getContext('2d').drawImage(v, 0, 0, w, h);
-        finish(c.toDataURL('image/jpeg', 0.72));
-      } catch (err) { finish(''); }
-    });
-    v.addEventListener('error', () => finish(''));
-    setTimeout(() => finish(''), 4000);
-    v.src = url;
-  });
+  closeYouTubeModal();
+  showToast('Video añadido ✔');
+  await loadVideoForVersion(p, version);
+  renderComments();
+
+  const stateSel = $('review-state');
+  if (stateSel) {
+    stateSel.value = vObj.state || p.state;
+    stateSel.dataset.state = stateSel.value;
+  }
 }
 
 /* =========================================================
-   12 · SHARE / GUEST MODE
+   13 · SHARE / GUEST MODE
    ========================================================= */
 function buildSharePayload(p) {
   const version = p.currentVersion || 'v1';
@@ -1942,6 +1981,7 @@ function buildSharePayload(p) {
     date: p.date || '',
     state: (vObj && vObj.state) || p.state || 'sin-empezar',
     version,
+    youtubeId: (vObj && vObj.youtubeId) || '',
     comments: (p.comments || []).map(c => ({
       id: c.id,
       time: c.time,
@@ -1995,7 +2035,7 @@ function enterGuestModeFromPayload(payload, isReturn) {
     versions: [{
       id: payload.version || 'v1',
       state: payload.state || 'sin-empezar',
-      videoKey: '',
+      youtubeId: payload.youtubeId || '',
       duration: 0
     }],
     comments: (payload.comments || []).map(c => ({ ...c })),
@@ -2013,7 +2053,7 @@ function updateGuestControlsUI() {
   const btnShare = $('btn-share');
   const btnReturn = $('btn-return');
   const btnImport = $('btn-import');
-  const btnUploadLabel = $('btn-upload-label');
+  const btnUploadTop = $('btn-upload-top');
   const stateSel = $('review-state');
   const versionSel = $('review-version');
   const backBtn = $('btn-back');
@@ -2022,27 +2062,27 @@ function updateGuestControlsUI() {
     guestBadge.style.display = 'inline-flex';
     btnShare.style.display = 'none';
     stateSel.disabled = true;
+    versionSel.disabled = true;
+    backBtn.style.display = 'none';
 
     if (isReturnToHost) {
       btnReturn.style.display = 'none';
       btnImport.style.display = 'inline-flex';
-      btnUploadLabel.textContent = 'Ver mi video';
+      btnUploadTop.style.display = 'none';
       $('shared-note').textContent = '📥 Comentarios recibidos — pulsa "Importar" para mergear';
     } else {
       btnReturn.style.display = 'inline-flex';
       btnImport.style.display = 'none';
-      btnUploadLabel.textContent = 'Subir mi copia';
+      // El invitado puede pegar la URL si el autor no la compartió:
+      btnUploadTop.style.display = (guestProject.versions[0].youtubeId) ? 'none' : 'inline-flex';
       $('shared-note').textContent = '👤 Modo invitado · solo ves este proyecto';
     }
-
-    versionSel.disabled = true;
-    backBtn.style.display = 'none';
   } else {
     guestBadge.style.display = 'none';
     btnShare.style.display = 'inline-flex';
     btnReturn.style.display = 'none';
     btnImport.style.display = 'none';
-    btnUploadLabel.textContent = 'Subir video';
+    btnUploadTop.style.display = 'inline-flex';
     stateSel.disabled = false;
     versionSel.disabled = false;
     backBtn.style.display = 'flex';
@@ -2055,6 +2095,7 @@ $('btn-return').addEventListener('click', async () => {
   const p = getActiveProject();
   if (!p) return;
 
+  const vObj = (p.versions || []).find(v => v.id === (p.currentVersion || 'v1'));
   const payload = {
     v: 1,
     pid: p.id,
@@ -2063,6 +2104,7 @@ $('btn-return').addEventListener('click', async () => {
     date: p.date,
     state: p.state,
     version: p.currentVersion || 'v1',
+    youtubeId: (vObj && vObj.youtubeId) || '',
     comments: (p.comments || []).map(c => ({
       id: c.id, time: c.time, author: c.author, text: c.text,
       resolved: !!c.resolved, version: c.version || 'v1',
@@ -2094,7 +2136,6 @@ $('btn-import').addEventListener('click', async () => {
 
   if (!confirm(`¿Importar ${incoming.comments.length} comentarios al proyecto "${localProject.name}"?`)) return;
 
-  const existingIds = new Set((localProject.comments || []).map(c => c.id));
   let added = 0, updated = 0;
 
   incoming.comments.forEach(inc => {
@@ -2134,13 +2175,12 @@ function exitGuestMode() {
   guestProject = null;
   guestPayload = null;
   guestOriginalCommentIds.clear();
-  if (objectUrlInUse) { try { URL.revokeObjectURL(objectUrlInUse); } catch (e) {} objectUrlInUse = null; }
-  if (video) { try { video.pause(); } catch (e) {} }
+  destroyPlayer();
   updateGuestControlsUI();
 }
 
 /* =========================================================
-   13 · ROUTER
+   14 · ROUTER
    ========================================================= */
 function applyHashRoute() {
   const hash = location.hash || '';
@@ -2176,15 +2216,14 @@ function applyHashRoute() {
 
   if (isGuest) exitGuestMode();
   currentProjectId = null;
-  if (objectUrlInUse) { try { URL.revokeObjectURL(objectUrlInUse); } catch (e) {} objectUrlInUse = null; }
-  if (video) { try { video.pause(); } catch (e) {} }
+  destroyPlayer();
   showView('projects');
   renderProjects();
 }
 window.addEventListener('hashchange', applyHashRoute);
 
 /* =========================================================
-   14 · REVIEW
+   15 · REVIEW
    ========================================================= */
 async function openReview(id, versionOverride) {
   const p = isGuest ? guestProject : getProject(id);
@@ -2230,16 +2269,12 @@ async function openReview(id, versionOverride) {
   renderComments();
 }
 function closeReview() {
-  if (isGuest) {
-    location.hash = '';
-    return;
-  }
   location.hash = '';
 }
 $('btn-back').addEventListener('click', closeReview);
 
 /* =========================================================
-   15 · VERSIÓN
+   16 · VERSIÓN
    ========================================================= */
 $('review-version').addEventListener('change', async e => {
   const p = getActiveProject();
@@ -2250,7 +2285,7 @@ $('review-version').addEventListener('change', async e => {
     let n = 1;
     while (existing.includes('v' + n)) n++;
     const newId = 'v' + n;
-    p.versions.push({ id: newId, state: 'sin-empezar', videoKey: '', duration: 0 });
+    p.versions.push({ id: newId, state: 'sin-empezar', youtubeId: '', duration: 0 });
     p.currentVersion = newId;
     p.updatedAt = Date.now();
     await idbPutProject(p);
@@ -2266,7 +2301,7 @@ $('review-version').addEventListener('change', async e => {
 });
 
 /* =========================================================
-   16 · ESTADO
+   17 · ESTADO
    ========================================================= */
 $('review-state').addEventListener('change', async e => {
   const p = getActiveProject();
@@ -2284,7 +2319,7 @@ $('review-state').addEventListener('change', async e => {
 });
 
 /* =========================================================
-   17 · COMENTARIOS
+   18 · COMENTARIOS
    ========================================================= */
 const commentsList = $('comments-list');
 const inputTime = $('comment-input-time');
@@ -2473,7 +2508,7 @@ try {
 } catch (err) {}
 
 /* =========================================================
-   18 · MARCADORES
+   19 · MARCADORES
    ========================================================= */
 function renderMarkers() {
   if (!vcMarkersEl) return;
@@ -2491,15 +2526,14 @@ function renderMarkers() {
     m.setAttribute('aria-label', `Comentario en ${fmtTime(c.time)}`);
     m.addEventListener('click', ev => {
       ev.stopPropagation();
-      video.currentTime = c.time;
-      video.pause();
+      if (video) { video.currentTime = c.time; video.pause(); }
     });
     vcMarkersEl.appendChild(m);
   });
 }
 
 /* =========================================================
-   19 · FILTROS
+   20 · FILTROS
    ========================================================= */
 document.querySelectorAll('.tab-btn[data-filter]').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -2515,7 +2549,7 @@ function updateFilterTabs() {
 }
 
 /* =========================================================
-   20 · INIT
+   21 · INIT
    ========================================================= */
 async function init() {
   await refreshProjects();
@@ -2529,7 +2563,7 @@ async function init() {
 init();
 
 /* =========================================================
-   21 · ATAJOS
+   22 · ATAJOS
    ========================================================= */
 document.addEventListener('keydown', e => {
   const inReview = $('review-view').classList.contains('active');
@@ -2539,19 +2573,20 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if ($('config-modal').classList.contains('open')) { closeConfig(); return; }
     if ($('share-modal').classList.contains('open')) { closeShareModal(); return; }
+    if ($('yt-modal').classList.contains('open')) { closeYouTubeModal(); return; }
     if (document.fullscreenElement) return;
     if (inReview && !isGuest) { closeReview(); return; }
     return;
   }
   if ($('config-modal').classList.contains('open') ||
       $('share-modal').classList.contains('open') ||
-      $('upload-modal').classList.contains('open')) return;
+      $('yt-modal').classList.contains('open')) return;
   if (!inReview) return;
   if (!video) return;
 
   if (e.key === ' ' && !editing) {
     e.preventDefault();
-    if (video.paused) video.play().catch(() => {}); else video.pause();
+    if (video.paused) video.play(); else video.pause();
   }
   if (e.key === 'ArrowRight' && !editing) {
     e.preventDefault();
