@@ -3,2267 +3,261 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kevirago — Revisión de Video</title>
+<title>WorkFlow KB — Inicio</title>
+
 <style>
   :root {
     --brand: #ff2a00;
-    --brand-2: #ff6b3d;
-    --grad: linear-gradient(135deg, #ff2a00 0%, #ff6b3d 100%);
-    --ink: #0a0a0a;
-    --panel: #141414;
-    --panel-2: #1c1c1c;
-    --panel-3: #262626;
-    --border: #2a2a2a;
-    --border-2: #353535;
-    --txt: #f4f4f5;
-    --txt-dim: #8b8b8f;
-    --txt-dim-2: #6a6a6e;
-
-    --st-pending: #6b7280;
-    --st-editing: #ff2a00;
-    --st-review:  #6366f1;
-    --st-approved:#16a34a;
+    --brand-hover: #e02500;
+    --ink: #111111;
+    --line: #e5e5e5;
+    --radius: 12px;
   }
   *, *::before, *::after { box-sizing: border-box; }
-  html, body { height: 100%; }
   html { -webkit-text-size-adjust: 100%; }
   body {
     margin: 0; min-height: 100vh;
-    background: var(--ink); color: var(--txt);
+    padding: clamp(20px, 5vw, 60px) clamp(14px, 4vw, 30px);
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center;
+    background: #f4f4f4; color: var(--ink);
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-size: 15px; line-height: 1.45;
-    overflow-x: hidden;
+    transition: background .3s, color .3s;
   }
-  button, input, select, textarea { font-family: inherit; }
-  button { cursor: pointer; }
 
-  .view { display: none; min-height: 100vh; }
-  .view.active { display: block; }
-  #review-view.active { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+  /* ====== TARJETA CENTRAL ====== */
+  .home-card {
+    width: 100%; max-width: 720px;
+    padding: clamp(30px, 6vw, 55px) clamp(22px, 5vw, 50px);
+    background: #fff; color: var(--ink);
+    border: 1px solid var(--line); border-top: 6px solid var(--brand);
+    border-radius: var(--radius);
+    box-shadow: 0 12px 34px rgba(0, 0, 0, .12);
+    text-align: center;
+    transition: background .3s, color .3s, border-color .3s, box-shadow .3s;
+    animation: fadeIn .5s ease both;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+  }
 
-  .brand-logo { display: block; height: 30px; width: auto; }
-  .brand-logo .st0 { fill: #f0f0f0; }
+  /* ====== LOGO ====== */
+  .logo-wrap {
+    display: flex; justify-content: center; align-items: center;
+    margin-bottom: clamp(20px, 4vw, 32px);
+  }
+  .brand-logo {
+    display: block;
+    height: clamp(48px, 9vw, 66px);
+    width: auto; max-width: 100%;
+  }
+  .brand-logo .st0 { fill: #111; transition: fill .3s; }
+  body.dark .brand-logo .st0 { fill: #f0f0f0; }
   .brand-logo .st1 { fill: var(--brand); }
 
-  /* ============ PROJECTS ============ */
-  .app-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px clamp(16px, 3vw, 40px) 0;
-    max-width: 1400px; margin: 0 auto;
+  /* ====== TÍTULO ====== */
+  .home-title {
+    margin: 0 0 8px;
+    font-size: clamp(22px, 4.5vw, 32px);
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--ink);
+    transition: color .3s;
   }
-  .projects-body {
-    max-width: 1400px; margin: 0 auto;
-    padding: 22px clamp(16px, 3vw, 40px) 60px;
-  }
-  .projects-title-row {
-    display: flex; flex-wrap: wrap; align-items: center;
-    justify-content: space-between; gap: 16px;
-    margin-bottom: 22px;
-  }
-  .projects-title {
-    margin: 0; font-size: clamp(30px, 4.5vw, 42px);
-    font-weight: 800; letter-spacing: -.8px; color: #fff;
-  }
+  .home-title .accent { color: var(--brand); }
 
-  .projects-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .home-subtitle {
+    margin: 0 auto clamp(30px, 5vw, 44px);
+    max-width: 460px;
+    font-size: clamp(12.5px, 1.5vw, 14px);
+    line-height: 1.6;
+    color: #666;
+    transition: color .3s;
+  }
+  body.dark .home-subtitle { color: #999; }
 
-  .ctrl-select { position: relative; }
-  .ctrl-select select {
-    padding: 10px 34px 10px 14px;
-    background: var(--panel-2); color: var(--txt);
-    border: 1px solid var(--border); border-radius: 10px;
-    font-size: 13px; font-weight: 600;
-    outline: none; cursor: pointer;
-    -webkit-appearance: none; appearance: none;
-    transition: border-color .2s;
+  /* ====== BOTONES CUADRADOS ====== */
+  .menu-grid {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: clamp(14px, 2.5vw, 22px);
   }
-  .ctrl-select select:hover { border-color: var(--border-2); }
-  .ctrl-select select:focus { border-color: var(--brand); }
-  .ctrl-select::after {
-    content: '▾'; position: absolute; right: 12px; top: 50%;
-    transform: translateY(-50%); color: var(--txt-dim); pointer-events: none;
-    font-size: 11px;
-  }
-
-  .view-toggle {
-    display: inline-flex; align-items: center;
-    background: var(--panel-2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 3px; gap: 2px;
-  }
-  .view-toggle button {
-    width: 32px; height: 32px; padding: 0;
-    display: inline-flex; align-items: center; justify-content: center;
-    background: transparent; color: var(--txt-dim);
-    border: 0; border-radius: 8px;
-    transition: background .2s, color .2s;
-  }
-  .view-toggle button:hover { color: var(--txt); }
-  .view-toggle button.active { background: var(--brand); color: #fff; }
-  .view-toggle svg { width: 15px; height: 15px; }
-
-  .btn-new-project {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 11px 20px;
-    background: var(--grad); color: #fff;
-    border: 0; border-radius: 11px;
-    font-size: 13.5px; font-weight: 700;
-    box-shadow: 0 8px 22px rgba(255, 42, 0, .32);
-    transition: transform .2s, filter .2s;
-  }
-  .btn-new-project:hover { transform: translateY(-1px); filter: brightness(1.06); }
-  .btn-new-project svg { width: 15px; height: 15px; }
-
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 18px;
-  }
-  .projects-list { display: flex; flex-direction: column; gap: 10px; }
-
-  .project-card {
-    position: relative;
-    display: flex; flex-direction: column;
-    padding: 12px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    cursor: pointer;
-    transition: transform .18s, border-color .18s, box-shadow .18s;
-  }
-  .project-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(255, 42, 0, .5);
-    box-shadow: 0 14px 30px rgba(0, 0, 0, .55);
-  }
-
-  .project-thumb {
-    position: relative;
-    width: 100%; aspect-ratio: 16/10;
-    background: #1a1a1a;
-    border-radius: 12px;
-    overflow: hidden; margin-bottom: 12px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .project-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .thumb-placeholder {
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    color: #444; font-size: 11px;
-  }
-  .thumb-placeholder .icon { font-size: 34px; opacity: .45; }
-
-  .project-version-badge {
-    position: absolute; top: 8px; left: 8px;
-    padding: 3px 9px;
-    background: var(--grad); color: #fff;
-    border-radius: 6px;
-    font-size: 10px; font-weight: 800;
-    letter-spacing: .6px; text-transform: uppercase;
-    box-shadow: 0 2px 8px rgba(255, 42, 0, .4);
-  }
-  .project-state-badge {
-    position: absolute; top: 8px; right: 8px;
-    padding: 3px 9px;
-    border-radius: 6px;
-    font-size: 9.5px; font-weight: 800;
-    letter-spacing: .5px; text-transform: uppercase;
-    backdrop-filter: blur(6px);
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,.4);
-  }
-  .project-state-badge.state-sin-empezar { background: rgba(107, 114, 128, .9); }
-  .project-state-badge.state-en-edicion  { background: rgba(255, 42, 0, .9); }
-  .project-state-badge.state-revision    { background: rgba(99, 102, 241, .9); }
-  .project-state-badge.state-aprobado    { background: rgba(22, 163, 74, .9); }
-
-  .project-info { display: flex; flex-direction: column; gap: 2px; }
-  .project-name-row { display: flex; align-items: flex-start; gap: 8px; }
-  .project-name {
-    flex: 1 1 auto;
-    font-size: 15px; font-weight: 800; color: #fff;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .project-menu-btn {
-    flex: 0 0 auto;
-    width: 26px; height: 26px; padding: 0;
-    display: inline-flex; align-items: center; justify-content: center;
-    background: transparent; color: var(--txt-dim);
-    border: 0; border-radius: 6px;
-    font-size: 15px; font-weight: 800; line-height: 1;
-    transition: background .15s, color .15s;
-  }
-  .project-menu-btn:hover { background: var(--panel-3); color: #fff; }
-  .project-client {
-    font-size: 12.5px; color: var(--txt-dim);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .project-date { font-size: 11.5px; color: var(--txt-dim-2); }
-
-  .project-menu {
-    position: absolute;
-    top: 100%; right: 12px;
-    margin-top: -60px;
-    min-width: 150px; padding: 6px;
-    background: #1e1e1e;
-    border: 1px solid var(--border-2);
-    border-radius: 12px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, .7);
-    z-index: 20;
-    display: none; flex-direction: column; gap: 2px;
-  }
-  .project-menu.open { display: flex; }
-  .project-menu button {
-    padding: 8px 12px; text-align: left;
-    background: transparent; border: 0; border-radius: 8px;
-    color: #ddd; font-size: 13px; font-weight: 600;
-    transition: background .15s, color .15s;
-  }
-  .project-menu button:hover { background: var(--panel-3); color: #fff; }
-  .project-menu button[data-action="delete"] { color: #f87171; }
-  .project-menu button[data-action="delete"]:hover { background: #3a1a1a; color: #fca5a5; }
-
-  .project-card.list-item {
-    flex-direction: row; align-items: center;
-    padding: 10px 14px; border-radius: 14px;
-    gap: 14px;
-  }
-  .project-card.list-item:hover { transform: none; }
-  .project-card.list-item .project-thumb {
-    flex: 0 0 130px; width: 130px; aspect-ratio: 16/10; margin-bottom: 0;
-  }
-  .project-card.list-item .project-info {
-    flex: 1 1 auto; min-width: 0;
-    flex-direction: row; align-items: center; gap: 20px;
-  }
-  .project-card.list-item .project-name-row { flex: 1 1 40%; }
-  .project-card.list-item .project-client { flex: 0 0 auto; }
-  .project-card.list-item .project-date { flex: 0 0 auto; }
-
-  .project-card.new-card {
-    border: 2px dashed var(--border-2);
-    background: transparent;
-    align-items: center; justify-content: center;
-    min-height: 240px; gap: 12px;
-  }
-  .project-card.new-card:hover { border-color: var(--brand); background: rgba(255, 42, 0, .05); transform: none; }
-  .new-card-icon {
-    width: 52px; height: 52px;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--grad); color: #fff;
-    border-radius: 50%;
-    box-shadow: 0 10px 24px rgba(255, 42, 0, .4);
-  }
-  .new-card-icon svg { width: 22px; height: 22px; }
-  .new-card-label { font-size: 13.5px; font-weight: 700; color: #c0c0c4; }
-
-  /* ============ REVIEW HEADER ============ */
-  .review-header {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px clamp(12px, 2vw, 22px);
-    background: #0d0d0d;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-    min-height: 70px;
-    flex-wrap: wrap;
-  }
-  .review-header .brand-logo { height: 26px; flex-shrink: 0; }
-
-  .btn-back {
-    flex: 0 0 auto;
-    width: 38px; height: 38px; padding: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--panel-2); color: var(--txt);
-    border: 1px solid var(--border); border-radius: 10px;
-    transition: background .2s, border-color .2s;
-  }
-  .btn-back:hover { background: var(--panel-3); border-color: var(--border-2); }
-  .btn-back svg { width: 17px; height: 17px; }
-
-  .review-info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
-  .review-project-name {
-    margin: 0;
-    font-size: clamp(17px, 2.2vw, 22px);
-    font-weight: 800; color: #fff; letter-spacing: -.3px;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .review-client {
-    font-size: 12px; font-weight: 600; color: var(--txt-dim);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-
-  .review-header-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
-
-  .state-select-wrap, .version-select-wrap { position: relative; }
-  .state-select, .version-select {
-    padding: 9px 32px 9px 14px;
-    background: var(--panel-2); color: #fff;
-    border: 1px solid var(--border); border-radius: 10px;
-    font-size: 12px; font-weight: 800;
-    letter-spacing: .5px; text-transform: uppercase;
-    cursor: pointer; outline: none;
-    -webkit-appearance: none; appearance: none;
-    transition: border-color .2s, background .2s, color .2s;
-  }
-  .state-select:hover, .version-select:hover { background: var(--panel-3); border-color: var(--border-2); }
-  .state-select:focus, .version-select:focus { border-color: var(--brand); }
-  .state-select-wrap::after, .version-select-wrap::after {
-    content: '▾'; position: absolute; right: 12px; top: 50%;
-    transform: translateY(-50%); color: var(--txt-dim); pointer-events: none;
-    font-size: 11px;
-  }
-  .state-select[data-state="sin-empezar"] { border-color: rgba(107, 114, 128, .6); color: #a0a0a6; }
-  .state-select[data-state="en-edicion"]  { border-color: rgba(255, 42, 0, .7); color: #ff6b3d; }
-  .state-select[data-state="revision"]    { border-color: rgba(99, 102, 241, .7); color: #a5b4fc; }
-  .state-select[data-state="aprobado"]    { border-color: rgba(22, 163, 74, .7); color: #6ee7b7; }
-
-  .btn-share {
-    flex: 0 0 auto;
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 10px 16px;
-    background: var(--grad); color: #fff;
-    border: 0; border-radius: 10px;
-    font-size: 13px; font-weight: 700;
-    box-shadow: 0 6px 18px rgba(255, 42, 0, .35);
-    transition: transform .15s, filter .2s;
-  }
-  .btn-share:hover { transform: translateY(-1px); filter: brightness(1.06); }
-  .btn-share svg { width: 15px; height: 15px; }
-
-  .btn-edit-drive {
-    flex: 0 0 auto;
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 10px 16px;
-    background: var(--panel-2); color: #fff;
-    border: 1px solid var(--border); border-radius: 10px;
-    font-size: 13px; font-weight: 700;
-    transition: background .2s, border-color .2s;
-  }
-  .btn-edit-drive:hover { background: var(--panel-3); border-color: var(--border-2); }
-  .btn-edit-drive svg { width: 15px; height: 15px; }
-
-  /* ============ REVIEW MAIN ============ */
-  .review-main {
-    flex: 1 1 auto; display: flex;
-    min-height: 0; overflow: hidden;
-    background: #000;
-  }
-  .video-area {
-    flex: 1 1 auto; min-width: 0;
-    display: flex; align-items: center; justify-content: center;
-    padding: clamp(12px, 2vw, 26px);
-    overflow: hidden;
-  }
-  .video-container {
-    position: relative;
-    width: 100%; max-width: 1400px; max-height: 100%;
-    aspect-ratio: 16/9;
-    background: #000;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, .8);
-  }
-  .video-container video { width: 100%; height: 100%; display: block; object-fit: contain; background: #000; }
-  .video-empty {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 14px;
-    color: var(--txt-dim); font-size: 13.5px;
-    text-align: center; padding: 30px;
-    background: radial-gradient(ellipse at center, #151515 0%, #050505 100%);
-  }
-  .video-empty .icon { font-size: 44px; opacity: .35; }
-  .video-empty .title { font-size: 16px; font-weight: 800; color: #c8c8cc; }
-  .video-empty .sub { font-size: 12.5px; max-width: 380px; line-height: 1.5; }
-  .btn-upload-video {
-    margin-top: 4px;
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 11px 20px;
-    background: var(--grad); color: #fff;
-    border: 0; border-radius: 11px;
-    font-size: 13px; font-weight: 700;
-    box-shadow: 0 8px 22px rgba(255, 42, 0, .35);
-    transition: transform .15s, filter .2s;
-  }
-  .btn-upload-video:hover { transform: translateY(-1px); filter: brightness(1.06); }
-  .btn-upload-video svg { width: 15px; height: 15px; }
-  .btn-drive-fallback {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 18px;
-    background: transparent; color: #a5b4fc;
-    border: 1px solid rgba(99, 102, 241, .4); border-radius: 10px;
-    font-size: 12.5px; font-weight: 700;
+  .menu-tile {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px;
+    width: clamp(150px, 40vw, 190px);
+    aspect-ratio: 1 / 1;
+    padding: 18px;
     text-decoration: none;
-    transition: background .2s, border-color .2s, color .2s;
-  }
-  .btn-drive-fallback:hover { background: rgba(99, 102, 241, .12); border-color: rgba(99, 102, 241, .7); color: #c7d2fe; }
-
-  /* Drive error panel */
-  .drive-error {
-    margin-top: 10px; padding: 12px 16px;
-    background: rgba(251, 191, 36, .1);
-    border: 1px solid rgba(251, 191, 36, .3);
-    border-radius: 10px;
-    max-width: 420px;
-    font-size: 12.5px; line-height: 1.5; color: #fbbf24;
-    text-align: left;
-  }
-  .drive-error strong { color: #fde68a; }
-
-  .vc-bar {
-    position: absolute; left: 0; right: 0; bottom: 0;
-    padding: 34px 16px 14px;
-    background: linear-gradient(to top, rgba(0,0,0,.9) 0%, rgba(0,0,0,.5) 55%, transparent 100%);
-    display: flex; align-items: center; gap: 12px;
-    opacity: 1; transition: opacity .25s;
-  }
-  .vc-bar.hidden { opacity: 0; pointer-events: none; }
-  .vc-btn {
-    flex: 0 0 auto;
-    width: 38px; height: 38px; padding: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(255, 255, 255, .1); color: #fff;
-    border: 0; border-radius: 10px;
-    transition: background .2s, transform .1s;
-    backdrop-filter: blur(6px);
-  }
-  .vc-btn:hover { background: rgba(255, 255, 255, .2); }
-  .vc-btn:active { transform: scale(.94); }
-  .vc-btn svg { width: 18px; height: 18px; }
-
-  .vc-timeline {
-    position: relative; flex: 1 1 auto;
-    height: 26px;
-    display: flex; align-items: center;
+    background: var(--ink); color: #fff;
+    border: 2px solid transparent; border-radius: 14px;
+    font-family: inherit; font-weight: 700;
     cursor: pointer;
-    user-select: none;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
+    transition: transform .25s ease, background .25s, border-color .25s,
+                box-shadow .25s, color .25s;
+    -webkit-tap-highlight-color: transparent;
   }
-  .vc-track {
-    position: absolute; left: 0; right: 0;
-    height: 4px;
-    background: rgba(255, 255, 255, .22);
-    border-radius: 999px;
-    transition: height .15s;
+  .menu-tile:hover {
+    background: var(--brand);
+    border-color: var(--brand);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(255, 42, 0, .35);
   }
-  .vc-timeline:hover .vc-track { height: 6px; }
-  .vc-progress {
-    position: absolute; left: 0; top: 0; bottom: 0;
-    background: var(--grad);
-    border-radius: 999px;
-    transition: width .06s linear;
+  .menu-tile:active { transform: translateY(-1px); }
+
+  .menu-tile .tile-icon {
+    font-size: clamp(30px, 6vw, 40px);
+    line-height: 1;
     pointer-events: none;
   }
-  .vc-marker {
-    position: absolute; top: 50%;
-    transform: translate(-50%, -50%);
-    width: 13px; height: 13px;
-    background: #fff;
-    border: 2px solid var(--brand);
-    border-radius: 50%;
-    transition: transform .15s, box-shadow .15s;
-    z-index: 3;
-    padding: 0;
-  }
-  .vc-marker:hover { transform: translate(-50%, -50%) scale(1.35); box-shadow: 0 0 0 5px rgba(255, 42, 0, .3); }
-  .vc-marker.resolved { background: #16a34a; border-color: #16a34a; }
-  .vc-marker::after {
-    content: attr(data-tip);
-    position: absolute;
-    bottom: calc(100% + 12px);
-    left: 50%; transform: translateX(-50%);
-    padding: 7px 11px;
-    background: #1e1e1e;
-    color: #fff;
-    border: 1px solid var(--border-2);
-    border-radius: 8px;
-    font-size: 11.5px; font-weight: 600;
-    white-space: nowrap; max-width: 260px;
-    overflow: hidden; text-overflow: ellipsis;
-    opacity: 0; pointer-events: none;
-    transition: opacity .15s;
-    box-shadow: 0 10px 24px rgba(0,0,0,.7);
-    z-index: 10;
-  }
-  .vc-marker:hover::after { opacity: 1; }
-
-  .vc-time {
-    flex: 0 0 auto; color: #d0d0d8;
-    font-size: 12.5px; font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: .3px;
-    white-space: nowrap;
-  }
-  .vc-time .vc-current { color: #fff; }
-  .vc-time .vc-sep { color: #6a6a6e; margin: 0 3px; }
-
-  .vc-volume-wrap { position: relative; display: flex; align-items: center; flex: 0 0 auto; }
-  .vc-volume {
-    width: 0; height: 4px;
-    background: rgba(255, 255, 255, .22);
-    border-radius: 999px;
-    margin-left: 0;
-    transition: width .2s, margin .2s;
-    cursor: pointer; position: relative;
-  }
-  .vc-volume-wrap:hover .vc-volume { width: 70px; margin-left: 4px; }
-  .vc-volume-fill {
-    position: absolute; left: 0; top: 0; bottom: 0;
-    background: #fff; border-radius: 999px;
-  }
-
-  /* ============ COMMENTS PANEL ============ */
-  .comments-panel {
-    flex: 0 0 380px;
-    background: var(--panel);
-    border-left: 1px solid var(--border);
-    display: flex; flex-direction: column;
-    min-height: 0;
-    height: 100%;
-  }
-  @media (max-width: 1100px) { .comments-panel { flex: 0 0 340px; } }
-  @media (max-width: 860px)  { .comments-panel { flex: 0 0 310px; } }
-  @media (max-width: 720px) {
-    .review-main { flex-direction: column; }
-    .video-area { flex: 0 0 auto; padding: 12px; }
-    .comments-panel { flex: 1 1 auto; border-left: 0; border-top: 1px solid var(--border); height: auto; }
-  }
-
-  .comments-tabs {
-    display: flex; gap: 6px;
-    padding: 12px 14px;
-    background: #0f0f0f;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .tab-btn {
-    flex: 1 1 0;
-    padding: 9px 10px;
-    background: transparent; color: var(--txt-dim);
-    border: 1px solid var(--border); border-radius: 9px;
-    font-size: 11.5px; font-weight: 700;
-    letter-spacing: .4px; text-transform: lowercase;
-    transition: background .2s, color .2s, border-color .2s;
-  }
-  .tab-btn:hover { color: #fff; background: var(--panel-2); }
-  .tab-btn.active { background: var(--panel-3); color: #fff; border-color: var(--border-2); }
-  .tab-count {
-    display: inline-block; margin-left: 6px;
-    padding: 1px 6px;
-    background: rgba(255, 255, 255, .1);
-    border-radius: 4px;
-    font-size: 10px; color: #d0d0d8;
-  }
-  .shared-note {
-    padding: 6px 14px;
-    background: rgba(99, 102, 241, .08);
-    border-bottom: 1px solid var(--border);
-    font-size: 10.5px; font-weight: 700;
-    color: #a5b4fc;
-    letter-spacing: .3px;
+  .menu-tile .tile-label {
+    font-size: clamp(13px, 1.7vw, 15px);
+    font-weight: 800;
     text-transform: uppercase;
-    text-align: center;
-    flex-shrink: 0;
+    letter-spacing: 1px;
+    pointer-events: none;
+  }
+  .menu-tile .tile-hint {
+    font-size: 10.5px;
+    font-weight: 600;
+    opacity: .65;
+    letter-spacing: .4px;
+    pointer-events: none;
   }
 
-  .comments-list {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    padding: 14px;
-    display: flex; flex-direction: column; gap: 10px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-2) transparent;
+  /* ====== PIE ====== */
+  .home-footer {
+    margin-top: clamp(28px, 5vw, 40px);
+    padding-top: 18px;
+    border-top: 1px dashed #e5e5e5;
+    font-size: 12px; color: #777;
+    transition: color .3s, border-color .3s;
   }
-  .comments-list::-webkit-scrollbar { width: 8px; }
-  .comments-list::-webkit-scrollbar-track { background: transparent; }
-  .comments-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-  .comments-list::-webkit-scrollbar-thumb:hover { background: var(--border-2); }
+  body.dark .home-footer { color: #888; border-top-color: #2a2a2a; }
+  .home-footer strong { color: var(--brand); }
 
-  .comments-empty { padding: 40px 20px; text-align: center; color: var(--txt-dim-2); font-size: 13px; font-style: italic; }
-
-  .comment-item {
-    position: relative;
-    padding: 12px 12px 12px 14px;
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--brand);
-    border-radius: 11px;
-    transition: background .2s, border-color .2s, opacity .2s;
-    cursor: pointer;
-  }
-  .comment-item.resolved { opacity: .6; border-left-color: #16a34a; }
-  .comment-item.resolved .comment-text { text-decoration: line-through; text-decoration-color: rgba(255,255,255,.25); }
-
-  .comment-head { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
-  .comment-time-btn {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 9px;
-    background: var(--panel-3); color: #fff;
-    border: 0; border-radius: 6px;
-    font-family: 'SF Mono', Menlo, Consolas, monospace;
-    font-size: 11px; font-weight: 700;
-    transition: background .2s;
-  }
-  .comment-time-btn:hover { background: var(--brand); color: #fff; }
-  .comment-author {
-    font-size: 11px; font-weight: 700; color: var(--txt-dim);
-    text-transform: uppercase; letter-spacing: .4px;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .comment-index {
-    margin-left: auto;
-    font-size: 10.5px; font-weight: 700;
-    color: var(--txt-dim-2);
-    font-variant-numeric: tabular-nums;
-  }
-  .comment-actions { display: flex; gap: 4px; margin-left: 4px; }
-  .comment-btn {
-    width: 24px; height: 24px; padding: 0;
-    display: inline-flex; align-items: center; justify-content: center;
-    background: transparent; color: var(--txt-dim);
-    border: 1px solid var(--border); border-radius: 6px;
-    transition: background .2s, color .2s, border-color .2s;
-  }
-  .comment-btn:hover { background: var(--panel-3); color: #fff; }
-  .comment-btn.check:hover { color: #16a34a; border-color: #16a34a; }
-  .comment-btn.del:hover { color: #f87171; border-color: #f87171; }
-  .comment-btn svg { width: 12px; height: 12px; }
-
-  .comment-text {
-    font-size: 13px; line-height: 1.55;
-    color: #e4e4e7;
-    outline: none;
-    padding: 3px 4px; border-radius: 6px;
-    transition: background .2s;
-    word-wrap: break-word;
-    cursor: text;
-  }
-  .comment-text:hover, .comment-text:focus { background: rgba(255, 255, 255, .05); }
-
-  .comment-input-area {
-    padding: 12px 14px;
-    background: #0f0f0f;
-    border-top: 1px solid var(--border);
-    display: flex; flex-direction: column; gap: 8px;
-    flex-shrink: 0;
-  }
-  .comment-input-row { display: flex; align-items: center; gap: 8px; }
-  .comment-input-time {
-    flex: 0 0 auto;
-    padding: 5px 10px;
-    background: var(--panel-3); color: #fff;
-    border-radius: 6px;
-    font-family: 'SF Mono', Menlo, Consolas, monospace;
-    font-size: 11px; font-weight: 700;
-    transition: background .2s;
-  }
-  .comment-input-time:hover { background: var(--brand); color: #fff; }
-  .comment-input-author {
-    flex: 1 1 auto; min-width: 0;
-    padding: 6px 10px;
-    background: transparent; color: #fff;
-    border: 0; border-bottom: 1px dashed var(--border);
-    font-size: 12px; font-weight: 600;
-    outline: none;
-    transition: border-color .2s;
-  }
-  .comment-input-author:focus { border-color: var(--brand); }
-  .comment-input-author::placeholder { color: var(--txt-dim-2); }
-
-  .comment-input-box { display: flex; gap: 8px; align-items: flex-end; }
-  .comment-input-box textarea {
-    flex: 1 1 auto;
-    min-height: 40px; max-height: 120px;
-    padding: 10px 12px;
-    background: var(--panel-2); color: #fff;
-    border: 1px solid var(--border); border-radius: 10px;
-    font-size: 13px; line-height: 1.45;
-    resize: none; outline: none;
-    transition: border-color .2s;
-  }
-  .comment-input-box textarea:focus { border-color: var(--brand); }
-  .comment-input-box textarea::placeholder { color: var(--txt-dim-2); }
-
-  .btn-send-comment {
-    flex: 0 0 auto;
-    width: 40px; height: 40px; padding: 0;
+  /* ====== BOTÓN DE TEMA (flotante) ====== */
+  .theme-toggle {
+    position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px;
+    padding: 0; border-radius: 50%; background: var(--ink); color: #fff;
+    border: 2px solid var(--brand); font-size: 24px; line-height: 1;
     display: flex; align-items: center; justify-content: center;
-    background: var(--grad); color: #fff;
-    border: 0; border-radius: 10px;
-    box-shadow: 0 6px 16px rgba(255, 42, 0, .35);
-    transition: transform .12s, filter .2s;
+    cursor: pointer; z-index: 1000;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+    transition: transform .25s ease, background .3s, box-shadow .25s;
+    -webkit-tap-highlight-color: transparent;
   }
-  .btn-send-comment:hover { transform: translateY(-1px); filter: brightness(1.06); }
-  .btn-send-comment svg { width: 16px; height: 16px; }
+  .theme-toggle:hover {
+    transform: scale(1.1) rotate(12deg);
+    box-shadow: 0 10px 28px rgba(255, 42, 0, .4);
+  }
+  .theme-toggle:active { transform: scale(.94); }
+  .theme-toggle .icon-sun, .theme-toggle .icon-moon {
+    display: block; pointer-events: none;
+  }
+  .theme-toggle .icon-sun { display: none; }
 
-  /* ============ MODAL ============ */
-  .modal-overlay {
-    position: fixed; inset: 0; z-index: 2000;
-    display: none; align-items: center; justify-content: center;
-    padding: 20px;
-    background: rgba(0, 0, 0, .75);
-    backdrop-filter: blur(6px);
-    overflow-y: auto;
+  /* ====== MODO OSCURO ====== */
+  body.dark { background: #0d0d0d; color: #eaeaea; }
+  body.dark .home-card {
+    background: #161616; color: #eaeaea;
+    border-color: #2a2a2a;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, .55);
   }
-  .modal-overlay.open { display: flex; }
-  .modal-box {
-    width: 100%; max-width: 460px;
-    padding: 22px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-top: 4px solid var(--brand);
-    border-radius: 20px;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, .7);
-    animation: pop .25s ease;
-    margin: auto;
+  body.dark .home-title { color: #f0f0f0; }
+  body.dark .menu-tile { background: #1a1a1a; color: #eaeaea; }
+  body.dark .menu-tile:hover {
+    background: var(--brand); color: #fff;
   }
-  @keyframes pop {
-    from { opacity: 0; transform: scale(.94); }
-    to   { opacity: 1; transform: scale(1); }
-  }
-  .modal-title {
-    margin: 0 0 16px;
-    font-size: 13px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 1.2px;
-    color: var(--brand);
-  }
-  .modal-hint {
-    margin: -8px 0 16px;
-    font-size: 12px; line-height: 1.55; color: var(--txt-dim);
-  }
-  .modal-hint strong { color: #fbbf24; }
+  body.dark .theme-toggle { background: #1a1a1a; color: #f0f0f0; }
+  body.dark .theme-toggle .icon-sun  { display: block; }
+  body.dark .theme-toggle .icon-moon { display: none; }
 
-  .config-field {
-    width: 100%;
-    padding: 12px 14px;
-    margin-bottom: 10px;
-    background: var(--panel-2); color: #fff;
-    border: 1px solid var(--border); border-radius: 10px;
-    font-size: 14px; font-weight: 600;
-    outline: none;
-    transition: border-color .2s;
-  }
-  .config-field:focus { border-color: var(--brand); }
-  .config-field::placeholder { color: var(--txt-dim-2); font-weight: 500; }
-
-  .config-field-label {
-    display: block;
-    margin: 4px 0 6px;
-    font-size: 10.5px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 1px;
-    color: var(--txt-dim);
-  }
-
-  .drive-input-wrap {
-    position: relative;
-    margin-bottom: 12px;
-  }
-  .drive-input-wrap .config-field { margin-bottom: 0; padding-right: 44px; }
-  .drive-input-wrap .drive-icon {
-    position: absolute; right: 12px; top: 50%;
-    transform: translateY(-50%);
-    font-size: 16px; pointer-events: none;
-  }
-  .drive-preview {
-    padding: 10px 12px;
-    background: rgba(16, 185, 129, .08);
-    border: 1px solid rgba(16, 185, 129, .3);
-    border-radius: 9px;
-    font-size: 11.5px; font-weight: 600;
-    color: #6ee7b7;
-    margin-bottom: 10px;
-    display: none;
-    word-break: break-all;
-  }
-  .drive-preview.show { display: block; }
-  .drive-preview.error {
-    background: rgba(239, 68, 68, .08);
-    border-color: rgba(239, 68, 68, .3);
-    color: #fca5a5;
-  }
-  .drive-preview .lbl { color: #a7f3d0; font-weight: 800; }
-  .drive-preview.error .lbl { color: #fecaca; }
-
-  .config-actions {
-    display: flex; justify-content: flex-end; gap: 8px;
-    margin-top: 8px;
-  }
-  .config-actions button {
-    padding: 10px 18px;
-    border-radius: 10px;
-    font-size: 13px; font-weight: 700;
-    border: 0;
-    transition: background .2s, transform .12s, filter .2s;
-  }
-  .btn-cancel { background: transparent; color: var(--txt-dim); }
-  .btn-cancel:hover { background: rgba(255,255,255,.06); color: #fff; }
-  .btn-save {
-    background: var(--grad); color: #fff;
-    box-shadow: 0 6px 16px rgba(255, 42, 0, .35);
-  }
-  .btn-save:hover { transform: translateY(-1px); filter: brightness(1.06); }
-
-  /* ============ GOODBYE ============ */
-  .goodbye-wrap {
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    min-height: 100vh; gap: 20px; padding: 40px 20px;
-    text-align: center;
-  }
-  .goodbye-wrap .brand-logo { height: 44px; margin-bottom: 8px; }
-  .goodbye-wrap h1 {
-    margin: 0;
-    font-size: clamp(26px, 5vw, 40px);
-    font-weight: 800; color: #fff; letter-spacing: -.5px;
-  }
-  .goodbye-wrap h1 span { color: var(--brand); }
-  .goodbye-wrap p {
-    margin: 0; max-width: 420px;
-    color: var(--txt-dim); font-size: 14px; line-height: 1.6;
-  }
-
-  /* ============ TOAST ============ */
-  .toast {
-    position: fixed; left: 50%; bottom: 30px;
-    transform: translate(-50%, 20px);
-    padding: 12px 20px;
-    background: #fff; color: #111;
-    border-radius: 10px;
-    font-size: 13px; font-weight: 700;
-    box-shadow: 0 14px 36px rgba(0, 0, 0, .55);
-    opacity: 0; pointer-events: none;
-    z-index: 3000;
-    transition: opacity .25s, transform .25s;
-    max-width: 90vw;
-    text-align: center;
-  }
-  .toast.show { opacity: 1; transform: translate(-50%, 0); }
-
-  @media (max-width: 640px) {
-    .review-header { padding: 10px 12px; gap: 8px; min-height: 62px; }
-    .review-header .brand-logo { height: 22px; }
-    .review-project-name { font-size: 15px; }
-    .review-client { font-size: 11px; }
-    .btn-share span, .btn-edit-drive span { display: none; }
-    .btn-share, .btn-edit-drive { padding: 9px 12px; }
-    .state-select, .version-select { padding: 7px 26px 7px 10px; font-size: 11px; }
-    .btn-back { width: 34px; height: 34px; }
-    .btn-back svg { width: 15px; height: 15px; }
+  @media (max-width: 700px) {
+    .theme-toggle { width: 50px; height: 50px; font-size: 20px; bottom: 18px; right: 18px; }
   }
 </style>
 </head>
 <body>
 
-<!-- ================= PROJECTS ================= -->
-<section id="projects-view" class="view active">
-  <header class="app-header">
-    <div class="logo-slot"></div>
-  </header>
-  <div class="projects-body">
-    <div class="projects-title-row">
-      <h1 class="projects-title">Proyectos</h1>
-      <div class="projects-controls">
-        <div class="ctrl-select">
-          <select id="sort-select" aria-label="Ordenar">
-            <option value="recent">Más recientes</option>
-            <option value="oldest">Más antiguos</option>
-            <option value="name-asc">Nombre A → Z</option>
-            <option value="name-desc">Nombre Z → A</option>
-            <option value="updated">Última actualización</option>
-          </select>
-        </div>
-        <div class="ctrl-select">
-          <select id="state-filter" aria-label="Filtrar por estado">
-            <option value="all">Todos los estados</option>
-            <option value="sin-empezar">Sin empezar</option>
-            <option value="en-edicion">En edición</option>
-            <option value="revision">Revisión</option>
-            <option value="aprobado">Aprobado</option>
-          </select>
-        </div>
-        <div class="view-toggle" role="tablist" aria-label="Vista">
-          <button id="view-grid-btn" class="active" type="button" aria-label="Vista cuadrícula">
-            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
-          </button>
-          <button id="view-list-btn" type="button" aria-label="Vista lista">
-            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="3" rx="1.5"/><rect x="3" y="10.5" width="18" height="3" rx="1.5"/><rect x="3" y="17" width="18" height="3" rx="1.5"/></svg>
-          </button>
-        </div>
-        <button class="btn-new-project" id="btn-new-project" type="button">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-          nuevo proyecto
-        </button>
-      </div>
-    </div>
-    <div id="projects-container" class="projects-grid"></div>
+<button id="theme-toggle" class="theme-toggle" type="button"
+        aria-label="Cambiar tema" title="Cambiar tema">
+  <span class="icon-moon" aria-hidden="true">🌙</span>
+  <span class="icon-sun"  aria-hidden="true">☀️</span>
+</button>
+
+<main class="home-card">
+
+  <!-- LOGO KEVIRAGO -->
+  <div class="logo-wrap">
+    <svg class="brand-logo" xmlns="http://www.w3.org/2000/svg"
+         viewBox="0 0 612 191.94" role="img" aria-label="Kevirago">
+      <defs><style>.st0{fill:#111}.st1{fill:#ff2a00}</style></defs>
+      <g>
+        <polygon class="st0" points="247.89 81.03 229.15 81.03 210.3 101.82 210.3 53.44 195.02 53.44 195.02 137.35 210.3 137.35 210.3 122.3 216.92 115.04 229.84 137.35 248.58 137.35 227.77 103.12 247.89 81.03"/>
+        <path class="st0" d="M291.68,84.07c-4.06-2.8-9-4.2-14.83-4.2-5.36,0-10.1,1.26-14.19,3.79-4.1,2.53-7.28,5.94-9.54,10.23-2.26,4.29-3.39,9.12-3.39,14.48v1.15c0,5.82,1.23,10.9,3.68,15.23,2.45,4.33,5.82,7.7,10.11,10.11,4.29,2.41,9.27,3.62,14.94,3.62,4.6,0,8.72-.73,12.36-2.18,3.64-1.45,6.61-3.64,8.91-6.55l-8.62-8.97c-1.46,1.53-3.1,2.72-4.94,3.56-1.84.84-4.18,1.26-7.01,1.26-3.07,0-5.67-.61-7.82-1.84-2.15-1.22-3.77-2.91-4.88-5.06-.75-1.45-1.23-3.07-1.47-4.83h37.04c.92-6.9.44-12.89-1.44-17.99-1.88-5.1-4.85-9.04-8.91-11.84ZM270.13,94.02c1.8-1.45,4.08-2.18,6.84-2.18,2.45,0,4.54.67,6.26,2.01,1.72,1.34,2.97,3.26,3.73,5.75.37,1.22.58,2.58.62,4.08h-22.43c.22-1.31.53-2.56.94-3.74.88-2.49,2.22-4.46,4.02-5.92Z"/>
+        <polygon class="st0" points="334.61 119.18 321.1 81.03 305.24 81.03 326.62 137.35 342.71 137.35 363.97 81.03 348.11 81.03 334.61 119.18"/>
+        <polygon class="st0" points="366.73 93.9 376.5 93.9 376.5 137.35 391.79 137.35 391.79 81.03 366.73 81.03 366.73 93.9"/>
+        <rect class="st0" x="375.81" y="53.44" width="16.78" height="16.09"/>
+        <path class="st0" d="M422.82,82.12c-2.53,1.03-4.54,2.84-6.03,5.4-.19.33-.35.73-.52,1.1v-7.59h-14.83v56.32h15.29v-31.03c0-3.45,1.13-6.09,3.39-7.93,2.26-1.84,5.5-2.76,9.71-2.76h5.75v-15.06h-4.37c-3.07,0-5.86.52-8.39,1.55Z"/>
+        <path class="st0" d="M489.02,119.42v-18.28c0-4.6-1.03-8.47-3.1-11.61-2.07-3.14-4.9-5.53-8.51-7.18-3.6-1.65-7.78-2.47-12.53-2.47s-9.42.84-13.79,2.53c-4.37,1.69-7.82,3.87-10.35,6.55l6.78,10.11c2.22-1.84,4.85-3.29,7.87-4.37,3.03-1.07,5.84-1.61,8.45-1.61,2.99,0,5.42.69,7.3,2.07,1.88,1.38,2.82,3.64,2.82,6.78v4.69c-3.08-1.43-6.97-2.17-11.72-2.17s-9.08.75-12.53,2.24c-3.45,1.49-6.07,3.54-7.87,6.15-1.8,2.61-2.7,5.59-2.7,8.96,0,4.9,1.9,8.91,5.69,12.01,3.79,3.1,8.87,4.65,15.23,4.65s10.8-1.55,13.79-4.65c.74-.77,1.39-1.63,1.95-2.56v6.06h13.56c-.15-2.99-.25-5.98-.29-8.97-.04-2.99-.06-5.98-.06-8.96ZM471.32,125.68c-1.84,1.19-4.21,1.78-7.13,1.78s-5.27-.59-7.07-1.78c-1.8-1.19-2.7-2.74-2.7-4.66s.9-3.45,2.7-4.6c1.8-1.15,4.16-1.72,7.07-1.72s5.38.57,7.18,1.72c1.8,1.15,2.7,2.68,2.7,4.6s-.92,3.47-2.76,4.66Z"/>
+        <path class="st0" d="M545.17,132.17c-3.03-2.53-6.92-3.79-11.67-3.79h-16.55c-.38,0-.67-.09-.86-.29-.19-.19-.29-.42-.29-.69s.08-.55.23-.86l2.2-4.4c1.37.16,2.77.26,4.24.26,4.98,0,9.39-.88,13.22-2.64,3.83-1.76,6.8-4.23,8.91-7.41,2.11-3.18,3.16-6.8,3.16-10.86v-1.26c0-3.98-1.05-7.51-3.16-10.57-2.08-3.02-4.99-5.38-8.74-7.1l7.3-13.02h-15.4l-4.82,10.36c-.16,0-.31-.02-.47-.02-4.9,0-9.25.86-13.04,2.59-3.79,1.72-6.78,4.14-8.97,7.24-2.18,3.1-3.28,6.65-3.28,10.63v1.15c0,4.06,1.09,7.68,3.28,10.86,1.48,2.16,3.36,3.96,5.58,5.46l-3.46,7.12c-1.23,2.45-1.71,4.87-1.44,7.24.27,2.38,1.24,4.31,2.93,5.8,1.68,1.49,3.98,2.24,6.9,2.24h20.23c1.45,0,2.53.31,3.22.92.69.61,1.03,1.57,1.03,2.87,0,1.23-.34,2.16-1.03,2.82-.69.65-1.76.98-3.22.98h-34.37v12.53h35.97c3.37,0,6.32-.71,8.85-2.13,2.53-1.42,4.5-3.33,5.92-5.75,1.42-2.41,2.13-5.19,2.13-8.33,0-5.44-1.51-9.42-4.54-11.95ZM512.12,101.03c0-2.68.98-4.85,2.93-6.49,1.95-1.65,4.42-2.47,7.41-2.47s5.55.82,7.47,2.47c1.92,1.65,2.87,3.81,2.87,6.49v.57c0,2.68-.96,4.91-2.87,6.67-1.92,1.76-4.41,2.64-7.47,2.64s-5.46-.88-7.41-2.64c-1.95-1.76-2.93-3.98-2.93-6.67v-.57Z"/>
+        <path class="st0" d="M608.15,93.61c-2.57-4.33-6.07-7.7-10.52-10.11-4.45-2.41-9.42-3.62-14.94-3.62s-10.63,1.23-15.11,3.68c-4.48,2.45-8.01,5.82-10.57,10.11-2.57,4.29-3.85,9.23-3.85,14.83v1.15c0,5.67,1.28,10.67,3.85,15,2.57,4.33,6.09,7.72,10.57,10.17,4.48,2.45,9.52,3.68,15.11,3.68s10.5-1.22,14.94-3.68c4.44-2.45,7.95-5.84,10.52-10.17,2.57-4.33,3.85-9.33,3.85-15v-1.15c0-5.59-1.28-10.55-3.85-14.88ZM596.83,109.65c0,2.99-.59,5.65-1.78,7.99-1.19,2.34-2.86,4.18-5,5.52-2.15,1.34-4.6,2.01-7.36,2.01s-5.31-.67-7.41-2.01c-2.11-1.34-3.77-3.18-5-5.52-1.23-2.34-1.84-5-1.84-7.99v-1.15c0-2.99.61-5.61,1.84-7.87,1.22-2.26,2.89-4.06,5-5.4,2.11-1.34,4.58-2.01,7.41-2.01s5.21.65,7.36,1.95c2.14,1.3,3.81,3.1,5,5.4,1.19,2.3,1.78,4.94,1.78,7.93v1.15Z"/>
+      </g>
+      <g>
+        <polygon class="st1" points="141.57 0 71.29 40.87 1 0 1 47.9 71.29 88.16 141.57 47.9 141.57 0"/>
+        <polygon class="st1" points="1 129.93 141.57 129.93 141.57 88.16 71.29 88.16 1 88.16 1 129.93"/>
+        <path class="st1" d="M105.43,148.43c0,3.85-3.12,6.98-6.98,6.98s-6.98-3.13-6.98-6.98v-11.52h-40.36v11.52c0,3.85-3.12,6.98-6.98,6.98s-6.98-3.13-6.98-6.98v-11.52H1v7.93c0,8.34.7,15.07,2.11,20,1.51,4.91,4.03,9.53,7.64,13.85,7.63,8.84,17.86,13.26,30.72,13.26s23.1-4.53,29.81-13.76c6.72,9.24,16.66,13.76,29.81,13.76s23.1-4.43,30.72-13.26c3.61-4.31,6.13-8.94,7.64-13.85,1.41-4.92,2.11-11.66,2.11-20v-7.93h-36.15v11.52Z"/>
+      </g>
+    </svg>
   </div>
-</section>
 
-<!-- ================= REVIEW ================= -->
-<section id="review-view" class="view">
-  <header class="review-header">
-    <div class="logo-slot-small"></div>
-    <button class="btn-back" id="btn-back" type="button" aria-label="Volver">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-    </button>
-    <div class="review-info">
-      <h2 class="review-project-name" id="review-project-name">—</h2>
-      <span class="review-client" id="review-client"></span>
-    </div>
-    <div class="review-header-controls">
-      <div class="state-select-wrap">
-        <select class="state-select" id="review-state" aria-label="Estado">
-          <option value="sin-empezar">Sin empezar</option>
-          <option value="en-edicion">En edición</option>
-          <option value="revision">Revisión</option>
-          <option value="aprobado">Aprobado</option>
-        </select>
-      </div>
-      <div class="version-select-wrap">
-        <select class="version-select" id="review-version" aria-label="Versión"></select>
-      </div>
-      <button class="btn-edit-drive" id="btn-edit-drive" type="button" title="Editar enlace de Drive para esta versión">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 20h9M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
-        </svg>
-        <span>Video Drive</span>
-      </button>
-      <button class="btn-share" id="btn-share" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-          <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>
-        </svg>
-        <span>compartir</span>
-      </button>
-    </div>
-  </header>
+  <!-- TÍTULO -->
+  <h1 class="home-title">Work<span class="accent">Flow</span> KB</h1>
+  <p class="home-subtitle">
+    Central de herramientas internas. Selecciona el módulo que deseas abrir.
+  </p>
 
-  <div class="review-main">
-    <div class="video-area">
-      <div class="video-container" id="video-container">
-        <video id="review-video" playsinline preload="metadata" crossorigin="anonymous"></video>
-        <div class="video-empty" id="video-empty">
-          <div class="icon">🎬</div>
-          <div class="title">Sin video para esta versión</div>
-          <div class="sub">Añade un enlace de Google Drive (archivo público) para empezar a revisar.</div>
-          <button class="btn-upload-video" id="btn-upload-video" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-            Añadir video de Drive
-          </button>
-        </div>
-        <div class="vc-bar hidden" id="vc-bar">
-          <button class="vc-btn" id="vc-play" aria-label="Reproducir">
-            <svg id="vc-play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-          </button>
-          <div class="vc-timeline" id="vc-timeline">
-            <div class="vc-track"><div class="vc-progress" id="vc-progress"></div></div>
-            <div id="vc-markers"></div>
-          </div>
-          <div class="vc-time">
-            <span class="vc-current" id="vc-current">00:00</span>
-            <span class="vc-sep">/</span>
-            <span id="vc-total">00:00</span>
-          </div>
-          <div class="vc-volume-wrap">
-            <button class="vc-btn" id="vc-mute" aria-label="Silenciar">
-              <svg id="vc-mute-icon" viewBox="0 0 24 24" fill="currentColor"></svg>
-            </button>
-            <div class="vc-volume" id="vc-volume">
-              <div class="vc-volume-fill" id="vc-volume-fill" style="width:100%"></div>
-            </div>
-          </div>
-          <button class="vc-btn" id="vc-fullscreen" aria-label="Pantalla completa">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
+  <!-- BOTONES CUADRADOS -->
+  <div class="menu-grid">
+    <a class="menu-tile" href="facturero.html" title="Abrir Portal Kevirago">
+      <span class="tile-icon" aria-hidden="true">🧾</span>
+      <span class="tile-label">Facturero</span>
+      <span class="tile-hint">Cotizador · Facturas · Notas</span>
+    </a>
 
-    <aside class="comments-panel">
-      <div class="comments-tabs">
-        <button class="tab-btn active" data-filter="all" type="button">
-          comentarios <span class="tab-count" id="tab-count-all">0</span>
-        </button>
-        <button class="tab-btn" data-filter="pending" type="button">
-          no realizados <span class="tab-count" id="tab-count-pending">0</span>
-        </button>
-      </div>
-      <div class="shared-note" id="shared-note">💬 Comentarios compartidos entre todas las versiones</div>
-      <div class="comments-list" id="comments-list"></div>
-      <div class="comment-input-area">
-        <div class="comment-input-row">
-          <span class="comment-input-time" id="comment-input-time" title="Clic para capturar el tiempo actual">00:00</span>
-          <input type="text" class="comment-input-author" id="comment-input-author" placeholder="tu nombre (opcional)" autocomplete="off">
-        </div>
-        <div class="comment-input-box">
-          <textarea id="comment-input-text" placeholder="escriba su comentario..." rows="1"></textarea>
-          <button class="btn-send-comment" id="btn-send-comment" type="button" aria-label="Enviar comentario">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
-          </button>
-        </div>
-      </div>
-    </aside>
+    <a class="menu-tile" href="revisor.html" title="Abrir Editor de Video">
+      <span class="tile-icon" aria-hidden="true">🎬</span>
+      <span class="tile-label">Revisor</span>
+      <span class="tile-hint">Video · Correciones · Versiones</span>
+    </a>
   </div>
-</section>
 
-<!-- ================= GOODBYE ================= -->
-<section id="goodbye-view" class="view">
-  <div class="goodbye-wrap">
-    <div class="logo-slot-big"></div>
-    <h1>Gracias por tu <span>revisión</span></h1>
-    <p>Puedes cerrar esta pestaña. Tus comentarios quedaron guardados en el autor del proyecto.</p>
+  <div class="home-footer">
+    <p>© WorkFlow <strong>KB</strong> · Edición de Video &amp; Diseño Gráfico</p>
   </div>
-</section>
 
-<!-- ================= CONFIG MODAL ================= -->
-<div class="modal-overlay" id="config-modal">
-  <div class="modal-box" role="dialog" aria-modal="true">
-    <h3 class="modal-title" id="config-title">crear nuevo proyecto</h3>
-    <input type="text" class="config-field" id="config-name" placeholder="nombre del proyecto" maxlength="80">
-    <input type="text" class="config-field" id="config-client" placeholder="cliente" maxlength="80">
-    <input type="date" class="config-field" id="config-date">
-    <div class="config-actions">
-      <button class="btn-cancel" id="config-cancel" type="button">cancelar</button>
-      <button class="btn-save" id="config-save" type="button">guardar</button>
-    </div>
-  </div>
-</div>
-
-<!-- ================= DRIVE MODAL ================= -->
-<div class="modal-overlay" id="drive-modal">
-  <div class="modal-box" role="dialog" aria-modal="true">
-    <h3 class="modal-title">Añadir video de Google Drive</h3>
-    <p class="modal-hint">
-      Pega el enlace de un archivo de Drive que hayas subido. <strong>Debe estar público</strong> ("Cualquiera con el enlace").
-      Se guardará para la versión seleccionada.
-    </p>
-    <div class="drive-input-wrap">
-      <input type="text" class="config-field" id="drive-url-input" placeholder="https://drive.google.com/file/d/…/view" autocomplete="off" spellcheck="false">
-      <span class="drive-icon">📁</span>
-    </div>
-    <div class="drive-preview" id="drive-preview"></div>
-    <div class="config-actions">
-      <button class="btn-cancel" id="drive-cancel" type="button">cancelar</button>
-      <button class="btn-save" id="drive-save" type="button">guardar</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<template id="logo-tpl">
-  <svg class="brand-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612 191.94" role="img" aria-label="Kevirago">
-    <defs><style>.st0{fill:#f0f0f0}.st1{fill:#ff2a00}</style></defs>
-    <g>
-      <polygon class="st0" points="247.89 81.03 229.15 81.03 210.3 101.82 210.3 53.44 195.02 53.44 195.02 137.35 210.3 137.35 210.3 122.3 216.92 115.04 229.84 137.35 248.58 137.35 227.77 103.12 247.89 81.03"/>
-      <path class="st0" d="M291.68,84.07c-4.06-2.8-9-4.2-14.83-4.2-5.36,0-10.1,1.26-14.19,3.79-4.1,2.53-7.28,5.94-9.54,10.23-2.26,4.29-3.39,9.12-3.39,14.48v1.15c0,5.82,1.23,10.9,3.68,15.23,2.45,4.33,5.82,7.7,10.11,10.11,4.29,2.41,9.27,3.62,14.94,3.62,4.6,0,8.72-.73,12.36-2.18,3.64-1.45,6.61-3.64,8.91-6.55l-8.62-8.97c-1.46,1.53-3.1,2.72-4.94,3.56-1.84.84-4.18,1.26-7.01,1.26-3.07,0-5.67-.61-7.82-1.84-2.15-1.22-3.77-2.91-4.88-5.06-.75-1.45-1.23-3.07-1.47-4.83h37.04c.92-6.9.44-12.89-1.44-17.99-1.88-5.1-4.85-9.04-8.91-11.84ZM270.13,94.02c1.8-1.45,4.08-2.18,6.84-2.18,2.45,0,4.54.67,6.26,2.01,1.72,1.34,2.97,3.26,3.73,5.75.37,1.22.58,2.58.62,4.08h-22.43c.22-1.31.53-2.56.94-3.74.88-2.49,2.22-4.46,4.02-5.92Z"/>
-      <polygon class="st0" points="334.61 119.18 321.1 81.03 305.24 81.03 326.62 137.35 342.71 137.35 363.97 81.03 348.11 81.03 334.61 119.18"/>
-      <polygon class="st0" points="366.73 93.9 376.5 93.9 376.5 137.35 391.79 137.35 391.79 81.03 366.73 81.03 366.73 93.9"/>
-      <rect class="st0" x="375.81" y="53.44" width="16.78" height="16.09"/>
-      <path class="st0" d="M422.82,82.12c-2.53,1.03-4.54,2.84-6.03,5.4-.19.33-.35.73-.52,1.1v-7.59h-14.83v56.32h15.29v-31.03c0-3.45,1.13-6.09,3.39-7.93,2.26-1.84,5.5-2.76,9.71-2.76h5.75v-15.06h-4.37c-3.07,0-5.86.52-8.39,1.55Z"/>
-      <path class="st0" d="M489.02,119.42v-18.28c0-4.6-1.03-8.47-3.1-11.61-2.07-3.14-4.9-5.53-8.51-7.18-3.6-1.65-7.78-2.47-12.53-2.47s-9.42.84-13.79,2.53c-4.37,1.69-7.82,3.87-10.35,6.55l6.78,10.11c2.22-1.84,4.85-3.29,7.87-4.37,3.03-1.07,5.84-1.61,8.45-1.61,2.99,0,5.42.69,7.3,2.07,1.88,1.38,2.82,3.64,2.82,6.78v4.69c-3.08-1.43-6.97-2.17-11.72-2.17s-9.08.75-12.53,2.24c-3.45,1.49-6.07,3.54-7.87,6.15-1.8,2.61-2.7,5.59-2.7,8.96,0,4.9,1.9,8.91,5.69,12.01,3.79,3.1,8.87,4.65,15.23,4.65s10.8-1.55,13.79-4.65c.74-.77,1.39-1.63,1.95-2.56v6.06h13.56c-.15-2.99-.25-5.98-.29-8.97-.04-2.99-.06-5.98-.06-8.96ZM471.32,125.68c-1.84,1.19-4.21,1.78-7.13,1.78s-5.27-.59-7.07-1.78c-1.8-1.19-2.7-2.74-2.7-4.66s.9-3.45,2.7-4.6c1.8-1.15,4.16-1.72,7.07-1.72s5.38.57,7.18,1.72c1.8,1.15,2.7,2.68,2.7,4.6s-.92,3.47-2.76,4.66Z"/>
-      <path class="st0" d="M545.17,132.17c-3.03-2.53-6.92-3.79-11.67-3.79h-16.55c-.38,0-.67-.09-.86-.29-.19-.19-.29-.42-.29-.69s.08-.55.23-.86l2.2-4.4c1.37.16,2.77.26,4.24.26,4.98,0,9.39-.88,13.22-2.64,3.83-1.76,6.8-4.23,8.91-7.41,2.11-3.18,3.16-6.8,3.16-10.86v-1.26c0-3.98-1.05-7.51-3.16-10.57-2.08-3.02-4.99-5.38-8.74-7.1l7.3-13.02h-15.4l-4.82,10.36c-.16,0-.31-.02-.47-.02-4.9,0-9.25.86-13.04,2.59-3.79,1.72-6.78,4.14-8.97,7.24-2.18,3.1-3.28,6.65-3.28,10.63v1.15c0,4.06,1.09,7.68,3.28,10.86,1.48,2.16,3.36,3.96,5.58,5.46l-3.46,7.12c-1.23,2.45-1.71,4.87-1.44,7.24.27,2.38,1.24,4.31,2.93,5.8,1.68,1.49,3.98,2.24,6.9,2.24h20.23c1.45,0,2.53.31,3.22.92.69.61,1.03,1.57,1.03,2.87,0,1.23-.34,2.16-1.03,2.82-.69.65-1.76.98-3.22.98h-34.37v12.53h35.97c3.37,0,6.32-.71,8.85-2.13,2.53-1.42,4.5-3.33,5.92-5.75,1.42-2.41,2.13-5.19,2.13-8.33,0-5.44-1.51-9.42-4.54-11.95ZM512.12,101.03c0-2.68.98-4.85,2.93-6.49,1.95-1.65,4.42-2.47,7.41-2.47s5.55.82,7.47,2.47c1.92,1.65,2.87,3.81,2.87,6.49v.57c0,2.68-.96,4.91-2.87,6.67-1.92,1.76-4.41,2.64-7.47,2.64s-5.46-.88-7.41-2.64c-1.95-1.76-2.93-3.98-2.93-6.67v-.57Z"/>
-      <path class="st0" d="M608.15,93.61c-2.57-4.33-6.07-7.7-10.52-10.11-4.45-2.41-9.42-3.62-14.94-3.62s-10.63,1.23-15.11,3.68c-4.48,2.45-8.01,5.82-10.57,10.11-2.57,4.29-3.85,9.23-3.85,14.83v1.15c0,5.67,1.28,10.67,3.85,15,2.57,4.33,6.09,7.72,10.57,10.17,4.48,2.45,9.52,3.68,15.11,3.68s10.5-1.22,14.94-3.68c4.44-2.45,7.95-5.84,10.52-10.17,2.57-4.33,3.85-9.33,3.85-15v-1.15c0-5.59-1.28-10.55-3.85-14.88ZM596.83,109.65c0,2.99-.59,5.65-1.78,7.99-1.19,2.34-2.86,4.18-5,5.52-2.15,1.34-4.6,2.01-7.36,2.01s-5.31-.67-7.41-2.01c-2.11-1.34-3.77-3.18-5-5.52-1.23-2.34-1.84-5-1.84-7.99v-1.15c0-2.99.61-5.61,1.84-7.87,1.22-2.26,2.89-4.06,5-5.4,2.11-1.34,4.58-2.01,7.41-2.01s5.21.65,7.36,1.95c2.14,1.3,3.81,3.1,5,5.4,1.19,2.3,1.78,4.94,1.78,7.93v1.15Z"/>
-    </g>
-    <g>
-      <polygon class="st1" points="141.57 0 71.29 40.87 1 0 1 47.9 71.29 88.16 141.57 47.9 141.57 0"/>
-      <polygon class="st1" points="1 129.93 141.57 129.93 141.57 88.16 71.29 88.16 1 88.16 1 129.93"/>
-      <path class="st1" d="M105.43,148.43c0,3.85-3.12,6.98-6.98,6.98s-6.98-3.13-6.98-6.98v-11.52h-40.36v11.52c0,3.85-3.12,6.98-6.98,6.98s-6.98-3.13-6.98-6.98v-11.52H1v7.93c0,8.34.7,15.07,2.11,20,1.51,4.91,4.03,9.53,7.64,13.85,7.63,8.84,17.86,13.26,30.72,13.26s23.1-4.53,29.81-13.76c6.72,9.24,16.66,13.76,29.81,13.76s23.1-4.43,30.72-13.26c3.61-4.31,6.13-8.94,7.64-13.85,1.41-4.92,2.11-11.66,2.11-20v-7.93h-36.15v11.52Z"/>
-    </g>
-  </svg>
-</template>
+</main>
 
 <script>
 /* =========================================================
-   0 · UTILIDADES
+   MODO OSCURO (persistente con el resto del ecosistema)
    ========================================================= */
-const $ = id => document.getElementById(id);
-const uid   = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-const cuid  = () => 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+(() => {
+  const themeToggle = document.getElementById('theme-toggle');
+  const STORAGE_KEY = 'kevirago_theme';
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved === 'dark') document.body.classList.add('dark');
 
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({
-  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-}[c]));
-
-function fmtTime(sec) {
-  sec = Math.max(0, Number(sec) || 0);
-  const h = Math.floor(sec / 3600);
-  const m = Math.floor((sec % 3600) / 60);
-  const s = Math.floor(sec % 60);
-  if (h > 0) return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-}
-function fmtDateDisplay(iso) {
-  if (!iso) return '';
-  const [y, m, d] = iso.split('-');
-  if (!y || !m || !d) return iso;
-  return `${d}/${m}/${y}`;
-}
-
-let toastTimer;
-function showToast(msg) {
-  const el = $('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
-}
-async function copyToClipboard(text) {
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return true;
-    }
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.setAttribute('readonly', '');
-    ta.style.position = 'fixed';
-    ta.style.top = '-1000px';
-    document.body.appendChild(ta);
-    ta.select();
-    ta.setSelectionRange(0, ta.value.length);
-    document.execCommand('copy');
-    ta.remove();
-    return true;
-  } catch (err) { return false; }
-}
-
-const STATE_LABELS = {
-  'sin-empezar': 'Sin empezar',
-  'en-edicion':  'En edición',
-  'revision':    'Revisión',
-  'aprobado':    'Aprobado'
-};
-
-/* =========================================================
-   1 · GOOGLE DRIVE HELPERS
-   ========================================================= */
-/**
- * Extrae el FILE_ID desde cualquier formato de enlace de Drive.
- * Formatos soportados:
- *  - https://drive.google.com/file/d/FILE_ID/view?usp=sharing
- *  - https://drive.google.com/open?id=FILE_ID
- *  - https://drive.google.com/uc?id=FILE_ID
- *  - https://drive.google.com/uc?export=download&id=FILE_ID
- *  - https://docs.google.com/uc?id=FILE_ID
- *  - Solo el FILE_ID
- */
-function extractDriveId(input) {
-  if (!input) return '';
-  const s = String(input).trim();
-  // Si parece un ID directo (sin slash, sin punto)
-  if (/^[a-zA-Z0-9_-]{20,}$/.test(s) && !s.includes('/')) return s;
-  const patterns = [
-    /\/file\/d\/([a-zA-Z0-9_-]+)/,
-    /[?&]id=([a-zA-Z0-9_-]+)/,
-    /\/d\/([a-zA-Z0-9_-]+)/
-  ];
-  for (const re of patterns) {
-    const m = s.match(re);
-    if (m) return m[1];
-  }
-  return '';
-}
-
-/** URL directa para reproducir en <video> */
-function driveDirectUrl(fileId) {
-  // Endpoint nuevo (funciona mejor)
-  return `https://drive.usercontent.google.com/download?id=${fileId}&export=download&authuser=0`;
-}
-
-/** URL de embed (fallback) */
-function driveEmbedUrl(fileId) {
-  return `https://drive.google.com/file/d/${fileId}/preview`;
-}
-
-/** URL para abrir en Drive */
-function driveViewUrl(fileId) {
-  return `https://drive.google.com/file/d/${fileId}/view`;
-}
-
-/* =========================================================
-   2 · INDEXEDDB (solo proyectos + comentarios)
-   ========================================================= */
-const DB_NAME = 'kevirago_v3_db';
-const DB_VER  = 1;
-const STORE_PROJECTS = 'projects';
-
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VER);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      if (!db.objectStoreNames.contains(STORE_PROJECTS)) {
-        db.createObjectStore(STORE_PROJECTS, { keyPath: 'id' });
-      }
-    };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror   = () => reject(req.error);
-  });
-}
-async function idbGetAllProjects() {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_PROJECTS, 'readonly');
-    const rq = tx.objectStore(STORE_PROJECTS).getAll();
-    rq.onsuccess = () => resolve(rq.result || []);
-    rq.onerror   = () => reject(rq.error);
-  });
-}
-async function idbPutProject(p) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_PROJECTS, 'readwrite');
-    tx.objectStore(STORE_PROJECTS).put(p);
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
-}
-async function idbDeleteProject(id) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_PROJECTS, 'readwrite');
-    tx.objectStore(STORE_PROJECTS).delete(id);
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
-}
-
-/* =========================================================
-   3 · ESTADO
-   ========================================================= */
-let projects         = [];
-let currentProjectId = null;
-let currentFilter    = 'all';
-let currentSort      = 'recent';
-let currentStateFilter = 'all';
-let currentViewMode  = 'grid';
-let isGuest          = false;
-let guestProject     = null;
-let currentVersions  = [];
-
-function getProject(id) { return projects.find(p => p.id === id); }
-function getActiveProject() { return isGuest ? guestProject : getProject(currentProjectId); }
-
-async function refreshProjects() {
-  projects = await idbGetAllProjects();
-}
-
-/* =========================================================
-   4 · LOGO
-   ========================================================= */
-(function injectLogo() {
-  const tpl = $('logo-tpl').content;
-  document.querySelectorAll('.logo-slot, .logo-slot-small, .logo-slot-big').forEach(slot => {
-    slot.appendChild(tpl.cloneNode(true));
+  themeToggle.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('dark');
+    localStorage.setItem(STORAGE_KEY, isDark ? 'dark' : 'light');
   });
 })();
-
-/* =========================================================
-   5 · VISTAS
-   ========================================================= */
-function showView(name) {
-  document.querySelectorAll('.view').forEach(v => {
-    v.classList.toggle('active', v.id === name + '-view');
-  });
-}
-
-/* =========================================================
-   6 · RENDER LISTA DE PROYECTOS
-   ========================================================= */
-function getSortedProjects() {
-  let list = [...projects];
-  if (currentStateFilter !== 'all') {
-    list = list.filter(p => (p.state || 'sin-empezar') === currentStateFilter);
-  }
-  switch (currentSort) {
-    case 'oldest':    return list.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-    case 'name-asc':  return list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-    case 'name-desc': return list.sort((a, b) => (b.name || '').localeCompare(a.name || ''));
-    case 'updated':   return list.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
-    case 'recent':
-    default:          return list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-  }
-}
-
-function renderProjects() {
-  const cont = $('projects-container');
-  cont.className = currentViewMode === 'grid' ? 'projects-grid' : 'projects-list';
-  cont.innerHTML = '';
-
-  const sorted = getSortedProjects();
-  sorted.forEach(p => cont.appendChild(buildProjectCard(p)));
-  cont.appendChild(buildNewCard());
-}
-
-function buildProjectCard(p) {
-  const card = document.createElement('div');
-  card.className = 'project-card' + (currentViewMode === 'list' ? ' list-item' : '');
-  card.dataset.id = p.id;
-
-  const state = p.state || 'sin-empezar';
-  const stateLabel = STATE_LABELS[state] || 'Sin empezar';
-  const version = p.currentVersion || 'v1';
-
-  const thumbHTML = p.thumb
-    ? `<img src="${esc(p.thumb)}" alt="">`
-    : `<div class="thumb-placeholder"><div class="icon">🎬</div><div>Drive</div></div>`;
-
-  card.innerHTML = `
-    <div class="project-thumb">
-      ${thumbHTML}
-      <span class="project-version-badge">${esc(version)}</span>
-      <span class="project-state-badge state-${state}">${esc(stateLabel)}</span>
-    </div>
-    <div class="project-info">
-      <div class="project-name-row">
-        <div class="project-name">${esc(p.name || 'Sin nombre')}</div>
-        <button class="project-menu-btn" type="button" aria-label="Opciones" data-menu-trigger>⋯</button>
-      </div>
-      <div class="project-client">${esc(p.client || 'Sin cliente')}</div>
-      <div class="project-date">${esc(fmtDateDisplay(p.date))}</div>
-    </div>
-    <div class="project-menu" role="menu">
-      <button type="button" data-action="config">Configuración</button>
-      <button type="button" data-action="share">Compartir</button>
-      <button type="button" data-action="delete">Eliminar</button>
-    </div>
-  `;
-
-  card.addEventListener('click', e => {
-    if (e.target.closest('[data-menu-trigger]')) return;
-    if (e.target.closest('.project-menu')) return;
-    location.hash = '#/p/' + p.id;
-  });
-
-  const menuBtn = card.querySelector('[data-menu-trigger]');
-  const menu    = card.querySelector('.project-menu');
-
-  menuBtn.addEventListener('click', e => {
-    e.stopPropagation();
-    const wasOpen = menu.classList.contains('open');
-    closeAllMenus();
-    if (!wasOpen) menu.classList.add('open');
-  });
-
-  menu.addEventListener('click', e => {
-    const btn = e.target.closest('button[data-action]');
-    if (!btn) return;
-    e.stopPropagation();
-    menu.classList.remove('open');
-    const action = btn.dataset.action;
-    if (action === 'config') openConfig('edit', p.id);
-    else if (action === 'delete') deleteProject(p.id);
-    else if (action === 'share') shareProject(p.id);
-  });
-
-  return card;
-}
-
-function buildNewCard() {
-  const card = document.createElement('div');
-  card.className = 'project-card new-card';
-  card.innerHTML = `
-    <div class="new-card-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-    </div>
-    <div class="new-card-label">nuevo proyecto</div>
-  `;
-  card.addEventListener('click', () => openConfig('create'));
-  return card;
-}
-
-function closeAllMenus() {
-  document.querySelectorAll('.project-menu.open').forEach(m => m.classList.remove('open'));
-}
-document.addEventListener('click', closeAllMenus);
-
-async function deleteProject(id) {
-  const p = getProject(id);
-  if (!p) return;
-  if (!confirm(`¿Eliminar "${p.name || 'Sin nombre'}" y todos sus comentarios?`)) return;
-  await idbDeleteProject(id);
-  await refreshProjects();
-  renderProjects();
-  showToast('Proyecto eliminado');
-}
-
-/* =========================================================
-   7 · VISTA Y ORDEN
-   ========================================================= */
-$('view-grid-btn').addEventListener('click', () => {
-  currentViewMode = 'grid';
-  $('view-grid-btn').classList.add('active');
-  $('view-list-btn').classList.remove('active');
-  renderProjects();
-});
-$('view-list-btn').addEventListener('click', () => {
-  currentViewMode = 'list';
-  $('view-list-btn').classList.add('active');
-  $('view-grid-btn').classList.remove('active');
-  renderProjects();
-});
-$('sort-select').addEventListener('change', e => { currentSort = e.target.value; renderProjects(); });
-$('state-filter').addEventListener('change', e => { currentStateFilter = e.target.value; renderProjects(); });
-
-/* =========================================================
-   8 · NUEVO PROYECTO
-   ========================================================= */
-$('btn-new-project').addEventListener('click', e => {
-  e.stopPropagation();
-  openConfig('create');
-});
-
-/* =========================================================
-   9 · CONFIG MODAL
-   ========================================================= */
-let configMode = 'create';
-let configProjectId = null;
-
-function openConfig(mode, id) {
-  configMode = mode;
-  configProjectId = id || null;
-
-  const titleEl = $('config-title');
-  const nameEl  = $('config-name');
-  const cliEl   = $('config-client');
-  const dateEl  = $('config-date');
-
-  if (mode === 'edit') {
-    const p = getProject(id);
-    if (!p) { showToast('Proyecto no encontrado'); return; }
-    titleEl.textContent = 'Configuración de proyecto';
-    nameEl.value = p.name || '';
-    cliEl.value  = p.client || '';
-    dateEl.value = p.date || new Date().toISOString().slice(0,10);
-  } else {
-    titleEl.textContent = 'crear nuevo proyecto';
-    nameEl.value = '';
-    cliEl.value  = '';
-    dateEl.value = new Date().toISOString().slice(0,10);
-  }
-  $('config-modal').classList.add('open');
-  setTimeout(() => nameEl.focus(), 60);
-}
-function closeConfig() { $('config-modal').classList.remove('open'); }
-$('config-cancel').addEventListener('click', closeConfig);
-$('config-modal').addEventListener('click', e => {
-  if (e.target === $('config-modal')) closeConfig();
-});
-
-$('config-save').addEventListener('click', async () => {
-  const name   = $('config-name').value.trim();
-  const client = $('config-client').value.trim();
-  const date   = $('config-date').value || new Date().toISOString().slice(0,10);
-
-  if (!name) { showToast('Ponle un nombre al proyecto'); $('config-name').focus(); return; }
-
-  if (configMode === 'create') {
-    const now = Date.now();
-    const p = {
-      id: uid(),
-      name, client, date,
-      state: 'sin-empezar',
-      currentVersion: 'v1',
-      versions: [
-        { id: 'v1', state: 'sin-empezar', driveId: '' }
-      ],
-      comments: [],   // comentarios compartidos entre versiones
-      thumb: '',
-      createdAt: now,
-      updatedAt: now
-    };
-    await idbPutProject(p);
-    await refreshProjects();
-    closeConfig();
-    renderProjects();
-    showToast('Proyecto creado ✔');
-  } else {
-    const p = getProject(configProjectId);
-    if (!p) return;
-    p.name = name;
-    p.client = client;
-    p.date = date;
-    p.updatedAt = Date.now();
-    await idbPutProject(p);
-    await refreshProjects();
-    closeConfig();
-    renderProjects();
-    showToast('Proyecto actualizado ✔');
-  }
-});
-
-/* =========================================================
-   10 · DRIVE MODAL
-   ========================================================= */
-let driveTargetVersion = 'v1';
-
-function openDriveModal(versionId) {
-  if (isGuest) return;
-  const p = getActiveProject();
-  if (!p) return;
-  driveTargetVersion = versionId || p.currentVersion || 'v1';
-
-  const vObj = (p.versions || []).find(v => v.id === driveTargetVersion);
-  const currentId = vObj && vObj.driveId ? vObj.driveId : '';
-
-  $('drive-url-input').value = currentId ? driveViewUrl(currentId) : '';
-  updateDrivePreview();
-
-  $('drive-modal').classList.add('open');
-  setTimeout(() => $('drive-url-input').focus(), 60);
-}
-function closeDriveModal() { $('drive-modal').classList.remove('open'); }
-
-function updateDrivePreview() {
-  const raw = $('drive-url-input').value.trim();
-  const preview = $('drive-preview');
-  if (!raw) {
-    preview.classList.remove('show', 'error');
-    preview.innerHTML = '';
-    return;
-  }
-  const id = extractDriveId(raw);
-  if (!id) {
-    preview.classList.add('show', 'error');
-    preview.innerHTML = '<span class="lbl">Enlace inválido</span> · Pega un enlace de Drive válido (archivo).';
-    return;
-  }
-  preview.classList.remove('error');
-  preview.classList.add('show');
-  preview.innerHTML = `<span class="lbl">File ID detectado:</span> ${esc(id)}<br>Recuerda que el archivo debe estar como <strong>"Cualquiera con el enlace"</strong>.`;
-}
-
-$('drive-url-input').addEventListener('input', updateDrivePreview);
-$('drive-cancel').addEventListener('click', closeDriveModal);
-$('drive-modal').addEventListener('click', e => {
-  if (e.target === $('drive-modal')) closeDriveModal();
-});
-
-$('drive-save').addEventListener('click', async () => {
-  const p = getActiveProject();
-  if (!p || isGuest) return;
-  const raw = $('drive-url-input').value.trim();
-  const id = extractDriveId(raw);
-
-  if (raw && !id) { showToast('Enlace de Drive inválido'); return; }
-
-  const vObj = (p.versions || []).find(v => v.id === driveTargetVersion);
-  if (!vObj) return;
-  vObj.driveId = id || '';
-  if (vObj.state === 'sin-empezar' && id) vObj.state = 'en-edicion';
-  if (p.state === 'sin-empezar' && id) p.state = 'en-edicion';
-  p.updatedAt = Date.now();
-
-  await idbPutProject(p);
-  await refreshProjects();
-  closeDriveModal();
-
-  // Recargar el video actual si corresponde
-  if (driveTargetVersion === p.currentVersion) {
-    await loadVideoForVersion(p, driveTargetVersion);
-    const stateSel = $('review-state');
-    stateSel.value = vObj.state || p.state;
-    stateSel.dataset.state = stateSel.value;
-  } else {
-    // Si cargamos un video en una versión distinta, saltamos a ella
-    location.hash = '#/p/' + p.id + '/' + driveTargetVersion;
-  }
-  showToast(id ? 'Video de Drive guardado ✔' : 'Enlace eliminado');
-});
-
-/* =========================================================
-   11 · REPRODUCTOR
-   ========================================================= */
-const video        = $('review-video');
-const videoEmpty   = $('video-empty');
-const vcBar        = $('vc-bar');
-const vcPlay       = $('vc-play');
-const vcPlayIcon   = $('vc-play-icon');
-const vcTimeline   = $('vc-timeline');
-const vcProgress   = $('vc-progress');
-const vcMarkers    = $('vc-markers');
-const vcCurrent    = $('vc-current');
-const vcTotal      = $('vc-total');
-const vcMute       = $('vc-mute');
-const vcMuteIcon   = $('vc-mute-icon');
-const vcVolume     = $('vc-volume');
-const vcVolumeFill = $('vc-volume-fill');
-const vcFullscreen = $('vc-fullscreen');
-const videoContainer = $('video-container');
-
-const ICON_PLAY  = `<path d="M8 5v14l11-7z"/>`;
-const ICON_PAUSE = `<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>`;
-const ICON_VOL   = `<path d="M3 9v6h4l5 5V4L7 9H3z"/>`;
-const ICON_MUTE  = `<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3l3.5-3.5-1-1L15.5 11 12 7.5l-1 1L14.5 12 11 15.5l1 1L15.5 13l3.5 3.5 1-1z"/>`;
-
-let controlsHideTimer = null;
-
-function updatePlayIcon() { vcPlayIcon.innerHTML = video.paused ? ICON_PLAY : ICON_PAUSE; }
-function updateMuteIcon() { vcMuteIcon.innerHTML = (video.muted || video.volume === 0) ? ICON_MUTE : ICON_VOL; }
-
-video.addEventListener('play',  () => { updatePlayIcon(); scheduleControlsHide(); });
-video.addEventListener('pause', () => { updatePlayIcon(); showControls(); });
-video.addEventListener('ended', () => { updatePlayIcon(); showControls(); });
-video.addEventListener('loadedmetadata', () => {
-  videoEmpty.style.display = 'none';
-  vcBar.classList.remove('hidden');
-  vcTotal.textContent = fmtTime(video.duration);
-  renderMarkers();
-  updateCommentInputTime();
-});
-video.addEventListener('timeupdate', () => {
-  if (video.duration) {
-    vcProgress.style.width = (video.currentTime / video.duration * 100) + '%';
-  }
-  vcCurrent.textContent = fmtTime(video.currentTime);
-  updateCommentInputTime();
-});
-video.addEventListener('volumechange', () => {
-  vcVolumeFill.style.width = (video.volume * 100) + '%';
-  updateMuteIcon();
-});
-video.addEventListener('error', () => {
-  // Fallback: si el video de Drive no carga, mostrar el panel con link a Drive
-  showDriveLoadError();
-});
-
-vcPlay.addEventListener('click', e => {
-  e.stopPropagation();
-  if (video.paused) video.play().catch(() => {}); else video.pause();
-});
-video.addEventListener('click', () => {
-  if (video.paused) video.play().catch(() => {}); else video.pause();
-});
-
-vcTimeline.addEventListener('click', e => {
-  if (e.target.closest('.vc-marker')) return;
-  if (!video.duration) return;
-  const rect = vcTimeline.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const pct = Math.max(0, Math.min(1, x / rect.width));
-  video.currentTime = pct * video.duration;
-  video.pause();   // pausar al hacer seek
-});
-
-vcMute.addEventListener('click', () => { video.muted = !video.muted; updateMuteIcon(); });
-vcVolume.addEventListener('click', e => {
-  const rect = vcVolume.getBoundingClientRect();
-  const v = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-  video.volume = v;
-  video.muted = v === 0;
-  vcVolumeFill.style.width = (v * 100) + '%';
-  updateMuteIcon();
-});
-vcFullscreen.addEventListener('click', () => {
-  if (!document.fullscreenElement) videoContainer.requestFullscreen?.().catch(() => {});
-  else document.exitFullscreen?.();
-});
-
-function scheduleControlsHide() {
-  clearTimeout(controlsHideTimer);
-  if (video.paused) return;
-  controlsHideTimer = setTimeout(() => vcBar.classList.add('hidden'), 2400);
-}
-function showControls() {
-  vcBar.classList.remove('hidden');
-  scheduleControlsHide();
-}
-videoContainer.addEventListener('mousemove', showControls);
-videoContainer.addEventListener('mouseleave', () => { if (!video.paused) vcBar.classList.add('hidden'); });
-vcBar.addEventListener('mouseenter', () => clearTimeout(controlsHideTimer));
-vcBar.addEventListener('mouseleave', scheduleControlsHide);
-
-/* =========================================================
-   12 · ERROR DE DRIVE
-   ========================================================= */
-function showDriveLoadError() {
-  const p = getActiveProject();
-  if (!p) return;
-  const vObj = (p.versions || []).find(v => v.id === (p.currentVersion || 'v1'));
-  const driveId = vObj && vObj.driveId;
-  if (!driveId) return;
-
-  video.removeAttribute('src');
-  try { video.load(); } catch (e) {}
-  vcBar.classList.add('hidden');
-  videoEmpty.style.display = 'flex';
-  videoEmpty.innerHTML = `
-    <div class="icon">⚠️</div>
-    <div class="title">No se pudo cargar el video desde Drive</div>
-    <div class="sub">Causas comunes:</div>
-    <div class="drive-error">
-      · El archivo no está público → cámbialo a <strong>"Cualquiera con el enlace"</strong>.<br>
-      · El archivo pesa más de <strong>100 MB</strong> → Google pide confirmación y bloquea la reproducción directa. Comprímelo a 720p.<br>
-      · Firefox puede bloquear CORS de Drive → prueba en Chrome/Edge.
-    </div>
-    <a class="btn-drive-fallback" href="${driveViewUrl(driveId)}" target="_blank" rel="noopener">
-      Abrir en Google Drive ↗
-    </a>
-  `;
-}
-
-/* =========================================================
-   13 · CARGA DE VIDEO POR VERSIÓN
-   ========================================================= */
-async function loadVideoForVersion(p, version) {
-  // Limpiar estado previo
-  video.removeAttribute('src');
-  try { video.load(); } catch (e) {}
-  videoEmpty.style.display = 'none';
-
-  const vObj = (p.versions || []).find(v => v.id === version);
-  const driveId = vObj && vObj.driveId;
-
-  if (!driveId) {
-    // Restaurar empty state por defecto
-    videoEmpty.style.display = 'flex';
-    videoEmpty.innerHTML = `
-      <div class="icon">🎬</div>
-      <div class="title">Sin video para esta versión</div>
-      <div class="sub">Añade un enlace de Google Drive (archivo público) para empezar a revisar.</div>
-      ${isGuest ? '' : `
-      <button class="btn-upload-video" id="btn-upload-video" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-        Añadir video de Drive
-      </button>`}
-    `;
-    // Re-bind del botón
-    const btn = $('btn-upload-video');
-    if (btn) btn.addEventListener('click', () => openDriveModal(version));
-    vcBar.classList.add('hidden');
-    renderMarkers();
-    return;
-  }
-
-  // Intentar carga directa desde Drive
-  const url = driveDirectUrl(driveId);
-  video.src = url;
-  videoEmpty.style.display = 'none';
-  vcBar.classList.remove('hidden');
-  try { video.load(); } catch (e) {}
-
-  updatePlayIcon();
-  updateMuteIcon();
-}
-
-/* =========================================================
-   14 · ROUTER
-   ========================================================= */
-function applyHashRoute() {
-  const hash = location.hash || '';
-
-  const sm = hash.match(/^#\/s\/(.+)$/);
-  if (sm) {
-    const payload = decodeShare(sm[1]);
-    if (!payload) { showToast('Enlace inválido'); location.hash = ''; return; }
-    enterGuestMode(payload);
-    return;
-  }
-
-  const pm = hash.match(/^#\/p\/([^\/]+)(?:\/([^\/]+))?$/);
-  if (pm) {
-    const pid = pm[1];
-    const ver = pm[2] || null;
-    isGuest = false;
-    guestProject = null;
-    const p = getProject(pid);
-    if (!p) {
-      showToast('Proyecto no encontrado');
-      location.hash = '';
-      return;
-    }
-    openReview(pid, ver);
-    return;
-  }
-
-  // Sin hash -> lista de proyectos
-  isGuest = false;
-  guestProject = null;
-  currentProjectId = null;
-  try { video.pause(); } catch (e) {}
-  video.removeAttribute('src');
-  try { video.load(); } catch (e) {}
-  showView('projects');
-  renderProjects();
-}
-window.addEventListener('hashchange', applyHashRoute);
-
-function decodeShare(str) {
-  try {
-    const pad = str.length % 4 === 0 ? '' : '='.repeat(4 - (str.length % 4));
-    const b64 = str.replace(/-/g, '+').replace(/_/g, '/') + pad;
-    return JSON.parse(decodeURIComponent(escape(atob(b64))));
-  } catch (err) { return null; }
-}
-function encodeShare(payload) {
-  try {
-    return btoa(unescape(encodeURIComponent(JSON.stringify(payload))))
-      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-  } catch (err) { return ''; }
-}
-
-/* =========================================================
-   15 · REVIEW
-   ========================================================= */
-async function openReview(id, versionOverride) {
-  const p = isGuest ? guestProject : getProject(id);
-  if (!p) { showToast('Proyecto no encontrado'); location.hash = ''; return; }
-
-  currentProjectId = id;
-  currentFilter = 'all';
-  updateFilterTabs();
-
-  showView('review');
-  $('btn-back').style.display = isGuest ? 'none' : 'flex';
-  $('btn-edit-drive').style.display = isGuest ? 'none' : 'inline-flex';
-
-  $('review-project-name').textContent = p.name || 'Sin nombre';
-  $('review-client').textContent = [p.client, fmtDateDisplay(p.date)].filter(Boolean).join(' · ');
-
-  // Versiones
-  currentVersions = (p.versions || []).map(v => v.id);
-  const vSel = $('review-version');
-  vSel.innerHTML = '';
-  currentVersions.forEach(vid => {
-    const opt = document.createElement('option');
-    opt.value = vid;
-    opt.textContent = vid;
-    vSel.appendChild(opt);
-  });
-  if (!isGuest) {
-    const opt = document.createElement('option');
-    opt.value = '__new__';
-    opt.textContent = '+ nueva versión';
-    vSel.appendChild(opt);
-  }
-
-  const activeVersion = versionOverride && currentVersions.includes(versionOverride)
-    ? versionOverride
-    : (p.currentVersion || currentVersions[0] || 'v1');
-  vSel.value = activeVersion;
-  p.currentVersion = activeVersion;
-  if (!isGuest) await idbPutProject(p);
-
-  // Estado
-  const stateSel = $('review-state');
-  const activeVerObj = (p.versions || []).find(v => v.id === activeVersion);
-  const stateVal = (activeVerObj && activeVerObj.state) || p.state || 'sin-empezar';
-  stateSel.value = stateVal;
-  stateSel.dataset.state = stateVal;
-  stateSel.disabled = isGuest;
-
-  await loadVideoForVersion(p, activeVersion);
-  renderComments();
-}
-
-function closeReview() { location.hash = ''; }
-$('btn-back').addEventListener('click', closeReview);
-
-/* =========================================================
-   16 · VERSIÓN
-   ========================================================= */
-$('review-version').addEventListener('change', async e => {
-  const p = getActiveProject();
-  if (!p) return;
-  const val = e.target.value;
-
-  if (val === '__new__') {
-    if (isGuest) { e.target.value = p.currentVersion; return; }
-    const existing = (p.versions || []).map(v => v.id);
-    let n = 1;
-    while (existing.includes('v' + n)) n++;
-    const newId = 'v' + n;
-    p.versions.push({ id: newId, state: 'sin-empezar', driveId: '' });
-    p.currentVersion = newId;
-    p.updatedAt = Date.now();
-    await idbPutProject(p);
-    await refreshProjects();
-    location.hash = '#/p/' + p.id + '/' + newId;
-    showToast('Versión ' + newId + ' creada ✔');
-    return;
-  }
-
-  p.currentVersion = val;
-  p.updatedAt = Date.now();
-  if (!isGuest) await idbPutProject(p);
-  location.hash = '#/p/' + p.id + '/' + val;
-});
-
-/* =========================================================
-   17 · ESTADO
-   ========================================================= */
-$('review-state').addEventListener('change', async e => {
-  const p = getActiveProject();
-  if (!p || isGuest) return;
-  const val = e.target.value;
-  e.target.dataset.state = val;
-
-  const version = p.currentVersion || 'v1';
-  const vObj = (p.versions || []).find(v => v.id === version);
-  if (vObj) vObj.state = val;
-  p.state = val;
-  p.updatedAt = Date.now();
-  await idbPutProject(p);
-  await refreshProjects();
-  showToast('Estado: ' + STATE_LABELS[val]);
-});
-
-/* =========================================================
-   18 · BOTÓN EDITAR DRIVE
-   ========================================================= */
-$('btn-edit-drive').addEventListener('click', () => {
-  const p = getActiveProject();
-  if (!p) return;
-  openDriveModal(p.currentVersion || 'v1');
-});
-
-/* =========================================================
-   19 · COMENTARIOS (COMPARTIDOS ENTRE VERSIONES)
-   ========================================================= */
-const commentsList = $('comments-list');
-const inputTime    = $('comment-input-time');
-const inputAuthor  = $('comment-input-author');
-const inputText    = $('comment-input-text');
-const btnSend      = $('btn-send-comment');
-
-let lockedCommentTime = 0;
-
-function updateCommentInputTime() {
-  if (!inputText.matches(':focus')) {
-    lockedCommentTime = video.currentTime || 0;
-  }
-  inputTime.textContent = fmtTime(lockedCommentTime);
-}
-inputTime.addEventListener('click', () => {
-  lockedCommentTime = video.currentTime || 0;
-  inputTime.textContent = fmtTime(lockedCommentTime);
-  showToast('Tiempo capturado: ' + fmtTime(lockedCommentTime));
-});
-inputText.addEventListener('focus', () => {
-  if (!video.paused) video.pause();
-  lockedCommentTime = video.currentTime || 0;
-  inputTime.textContent = fmtTime(lockedCommentTime);
-});
-
-function renderComments() {
-  const p = getActiveProject();
-  if (!p) return;
-
-  // ⚠️ IMPORTANTE: ya no se filtra por versión → todos los comentarios del proyecto
-  const all = p.comments || [];
-  const filtered = currentFilter === 'all' ? all : all.filter(c => !c.resolved);
-  const sorted = [...filtered].sort((a, b) => a.time - b.time);
-
-  commentsList.innerHTML = '';
-  if (sorted.length === 0) {
-    const empty = document.createElement('div');
-    empty.className = 'comments-empty';
-    empty.textContent = currentFilter === 'all'
-      ? 'Sin comentarios aún. Sé el primero.'
-      : 'No hay comentarios pendientes. ¡Todo realizado!';
-    commentsList.appendChild(empty);
-  } else {
-    sorted.forEach((c, i) => commentsList.appendChild(buildCommentItem(c, i)));
-  }
-
-  $('tab-count-all').textContent = all.length;
-  $('tab-count-pending').textContent = all.filter(c => !c.resolved).length;
-  renderMarkers();
-}
-
-function buildCommentItem(c, index) {
-  const item = document.createElement('div');
-  item.className = 'comment-item' + (c.resolved ? ' resolved' : '');
-  item.dataset.id = c.id;
-
-  // Marcamos con la versión en la que fue creado (informativo)
-  const verLabel = c.version ? ` · ${esc(c.version)}` : '';
-
-  item.innerHTML = `
-    <div class="comment-head">
-      <button class="comment-time-btn" type="button" title="Ir a este momento (pausa)">${fmtTime(c.time)}</button>
-      <span class="comment-author">${esc(c.author || 'Anónimo')}${verLabel}</span>
-      <span class="comment-index">#${index + 1}</span>
-      <div class="comment-actions">
-        <button class="comment-btn check" type="button" title="${c.resolved ? 'Marcar pendiente' : 'Marcar realizado'}" data-role="toggle">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-        </button>
-        <button class="comment-btn del" type="button" title="Eliminar" data-role="delete">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M6 18L18 6"/></svg>
-        </button>
-      </div>
-    </div>
-    <div class="comment-text" contenteditable="true" data-role="text" spellcheck="false">${esc(c.text)}</div>
-  `;
-
-  // Clic en cualquier parte (excepto botones y texto) → seek + PAUSA
-  item.addEventListener('click', e => {
-    if (e.target.closest('.comment-btn')) return;
-    if (e.target.closest('.comment-text')) return;
-    if (e.target.closest('.comment-time-btn')) return;
-    video.currentTime = c.time;
-    video.pause();
-  });
-
-  item.querySelector('.comment-time-btn').addEventListener('click', e => {
-    e.stopPropagation();
-    video.currentTime = c.time;
-    video.pause();
-  });
-
-  item.querySelector('[data-role="toggle"]').addEventListener('click', async e => {
-    e.stopPropagation();
-    const proj = getActiveProject();
-    const target = (proj.comments || []).find(x => x.id === c.id);
-    if (!target) return;
-    target.resolved = !target.resolved;
-    if (!isGuest) { await idbPutProject(proj); await refreshProjects(); }
-    renderComments();
-  });
-
-  item.querySelector('[data-role="delete"]').addEventListener('click', async e => {
-    e.stopPropagation();
-    if (!confirm('¿Eliminar este comentario?')) return;
-    const proj = getActiveProject();
-    proj.comments = (proj.comments || []).filter(x => x.id !== c.id);
-    if (!isGuest) { await idbPutProject(proj); await refreshProjects(); }
-    renderComments();
-    showToast('Comentario eliminado');
-  });
-
-  const textEl = item.querySelector('[data-role="text"]');
-  textEl.addEventListener('input', () => {
-    const proj = getActiveProject();
-    const target = (proj.comments || []).find(x => x.id === c.id);
-    if (!target) return;
-    target.text = textEl.innerText.trim();
-    clearTimeout(item._saveTimer);
-    item._saveTimer = setTimeout(async () => {
-      if (!isGuest) await idbPutProject(proj);
-      renderMarkers();
-    }, 500);
-  });
-  textEl.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); textEl.blur(); }
-  });
-
-  return item;
-}
-
-async function addComment() {
-  const p = getActiveProject();
-  if (!p) return;
-  const text = inputText.value.trim();
-  if (!text) { showToast('Escribe un comentario'); inputText.focus(); return; }
-
-  const time = lockedCommentTime || (video.currentTime || 0);
-  const version = p.currentVersion || 'v1';
-
-  if (!p.comments) p.comments = [];
-  p.comments.push({
-    id: cuid(),
-    time: Number(time) || 0,
-    author: inputAuthor.value.trim() || 'Anónimo',
-    text,
-    resolved: false,
-    version,   // se guarda la versión de origen, pero es visible en todas
-    createdAt: new Date().toISOString()
-  });
-
-  if (!isGuest) { await idbPutProject(p); await refreshProjects(); }
-  try { localStorage.setItem('kevirago_last_author', inputAuthor.value.trim()); } catch (err) {}
-
-  inputText.value = '';
-  lockedCommentTime = video.currentTime || 0;
-  renderComments();
-  showToast('Comentario añadido ✔');
-}
-
-btnSend.addEventListener('click', addComment);
-inputText.addEventListener('keydown', e => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-    e.preventDefault();
-    addComment();
-  }
-});
-
-try {
-  const last = localStorage.getItem('kevirago_last_author');
-  if (last) inputAuthor.value = last;
-} catch (err) {}
-
-/* =========================================================
-   20 · MARCADORES (COMPARTIDOS ENTRE VERSIONES)
-   ========================================================= */
-function renderMarkers() {
-  vcMarkers.innerHTML = '';
-  const p = getActiveProject();
-  if (!p || !video.duration) return;
-
-  // Todos los comentarios (sin filtro por versión)
-  const list = p.comments || [];
-
-  list.forEach(c => {
-    const pct = Math.max(0, Math.min(1, c.time / video.duration)) * 100;
-    const m = document.createElement('button');
-    m.type = 'button';
-    m.className = 'vc-marker' + (c.resolved ? ' resolved' : '');
-    m.style.left = pct + '%';
-    m.dataset.tip = `${fmtTime(c.time)} · ${c.author}: ${c.text.slice(0, 60)}${c.text.length > 60 ? '…' : ''}`;
-    m.addEventListener('click', ev => {
-      ev.stopPropagation();
-      video.currentTime = c.time;
-      video.pause();   // ← pausar al hacer clic en el marcador
-    });
-    vcMarkers.appendChild(m);
-  });
-}
-
-/* =========================================================
-   21 · FILTROS
-   ========================================================= */
-document.querySelectorAll('.tab-btn[data-filter]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    currentFilter = btn.dataset.filter;
-    updateFilterTabs();
-    renderComments();
-  });
-});
-function updateFilterTabs() {
-  document.querySelectorAll('.tab-btn[data-filter]').forEach(b => {
-    b.classList.toggle('active', b.dataset.filter === currentFilter);
-  });
-}
-
-/* =========================================================
-   22 · COMPARTIR
-   ========================================================= */
-function buildSharePayload(project) {
-  const version = project.currentVersion || 'v1';
-  const vObj = (project.versions || []).find(v => v.id === version);
-  return {
-    v: 3,
-    id: project.id,
-    name: project.name,
-    client: project.client,
-    date: project.date,
-    version,
-    state: vObj ? vObj.state : (project.state || 'sin-empezar'),
-    driveId: vObj ? (vObj.driveId || '') : '',
-    // TODOS los comentarios (compartidos entre versiones)
-    cm: (project.comments || []).map(c => ({
-      i: c.id, t: c.time, a: c.author, x: c.text, r: c.resolved ? 1 : 0, v: c.version || 'v1'
-    }))
-  };
-}
-
-async function shareProject(id) {
-  const p = isGuest ? guestProject : getProject(id);
-  if (!p) return;
-
-  const payload = buildSharePayload(p);
-  const encoded = encodeShare(payload);
-  if (!encoded) { showToast('No se pudo generar el enlace'); return; }
-
-  const url = `${location.origin}${location.pathname}#/s/${encoded}`;
-  const ok = await copyToClipboard(url);
-  showToast(ok ? 'Enlace copiado 🔗 Compártelo con tu cliente' : 'No se pudo copiar');
-}
-
-$('btn-share').addEventListener('click', () => {
-  const p = getActiveProject();
-  if (!p) return;
-  shareProject(p.id);
-});
-
-/* =========================================================
-   23 · MODO INVITADO
-   ========================================================= */
-function enterGuestMode(payload) {
-  const version = payload.version || 'v1';
-  const guestProj = {
-    id: payload.id,
-    name: payload.name || 'Proyecto',
-    client: payload.client || '',
-    date: payload.date || '',
-    state: payload.state || 'sin-empezar',
-    currentVersion: version,
-    versions: [
-      { id: version, state: payload.state || 'sin-empezar', driveId: payload.driveId || '' }
-    ],
-    comments: (payload.cm || []).map(c => ({
-      id: c.i, time: c.t, author: c.a, text: c.x, resolved: !!c.r, version: c.v || version
-    })),
-    thumb: '',
-    createdAt: Date.now(),
-    updatedAt: Date.now()
-  };
-
-  // Si el dueño abre su propio enlace (mismo navegador), preferimos su versión local
-  const local = getProject(payload.id);
-  if (local) {
-    guestProject = local;
-    guestProject.currentVersion = version;
-  } else {
-    guestProject = guestProj;
-  }
-
-  isGuest = true;
-  currentProjectId = payload.id;
-  openReview(payload.id, version);
-}
-
-/* =========================================================
-   24 · INIT
-   ========================================================= */
-async function init() {
-  await refreshProjects();
-  if (location.hash) {
-    applyHashRoute();
-  } else {
-    showView('projects');
-    renderProjects();
-  }
-}
-init();
-
-/* =========================================================
-   25 · ATAJOS
-   ========================================================= */
-document.addEventListener('keydown', e => {
-  if (!$('review-view').classList.contains('active')) return;
-  const tag = (document.activeElement?.tagName || '').toLowerCase();
-  const editing = document.activeElement?.isContentEditable || tag === 'input' || tag === 'textarea';
-
-  if (e.key === ' ' && !editing) {
-    e.preventDefault();
-    if (video.paused) video.play().catch(() => {}); else video.pause();
-  }
-  if (e.key === 'ArrowRight' && !editing) {
-    e.preventDefault();
-    video.currentTime = Math.min(video.duration || 0, video.currentTime + 5);
-    video.pause();
-  }
-  if (e.key === 'ArrowLeft' && !editing) {
-    e.preventDefault();
-    video.currentTime = Math.max(0, video.currentTime - 5);
-    video.pause();
-  }
-  if (e.key === 'm' && !editing) {
-    video.muted = !video.muted;
-    updateMuteIcon();
-  }
-  if (e.key === 'f' && !editing) {
-    if (!document.fullscreenElement) videoContainer.requestFullscreen?.().catch(() => {});
-    else document.exitFullscreen?.();
-  }
-  if (e.key === 'Escape') {
-    if (document.fullscreenElement) return;
-    if (!$('config-modal').classList.contains('open') &&
-        !$('drive-modal').classList.contains('open') &&
-        !isGuest) {
-      location.hash = '';
-    }
-  }
-});
 </script>
+
 </body>
 </html>
