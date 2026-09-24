@@ -8,6 +8,7 @@
 <style>
   :root {
     --brand: #ff2a00;
+    --brand-hover: #e02500;
     --brand-2: #ff6b3d;
     --grad: linear-gradient(135deg, #ff2a00 0%, #ff6b3d 100%);
     --grad-green: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
@@ -38,30 +39,33 @@
   .view.active { display: block; }
   #review-view.active { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
-  .brand-logo { display: block; height: 30px; width: auto; }
-  .brand-logo .st0 { fill: #f0f0f0; }
-  .brand-logo .st1 { fill: var(--brand); }
+  /* ==================== ANIMACIONES GLOBALES ==================== */
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(14px) scale(.97); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes commentIn {
+    from { opacity: 0; transform: translateX(14px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes videoIn {
+    from { opacity: 0; transform: scale(.96); filter: brightness(.4); }
+    to   { opacity: 1; transform: none; filter: none; }
+  }
+  @keyframes panelIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes headerIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+  }
 
-  .btn-home {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 16px;
-    background: var(--panel-2); color: var(--txt);
-    border: 1px solid var(--border); border-radius: 10px;
-    font-size: 13px; font-weight: 700;
-    text-decoration: none;
-    transition: background .2s, border-color .2s, transform .15s, color .2s, box-shadow .2s;
-  }
-  .btn-home:hover {
-    background: var(--brand); border-color: var(--brand); color: #fff;
-    transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(255, 42, 0, .35);
-  }
-  .btn-home:focus-visible {
-    outline: 2px solid var(--brand); outline-offset: 3px;
-    background: var(--brand); border-color: var(--brand); color: #fff;
-  }
-  .btn-home svg { width: 15px; height: 15px; }
-
+  /* ==================== HEADER ==================== */
   .app-header {
     display: flex; align-items: center; justify-content: space-between;
     gap: 20px; flex-wrap: wrap;
@@ -69,13 +73,15 @@
     background: linear-gradient(180deg, #101010 0%, #090909 100%);
     border-bottom: 1px solid var(--border);
     position: relative;
+    animation: headerIn .45s cubic-bezier(.2,.7,.3,1);
   }
   .app-header::after {
     content: '';
     position: absolute; left: 0; right: 0; bottom: -1px;
     height: 2px;
     background: linear-gradient(90deg, var(--brand) 0%, transparent 45%);
-    opacity: .4; pointer-events: none;
+    opacity: .4;
+    pointer-events: none;
   }
   .header-brand {
     display: flex; align-items: center; gap: 14px;
@@ -88,6 +94,8 @@
     min-width: 0;
   }
   .brand-lockup .brand-logo { height: 42px; flex-shrink: 0; }
+  .brand-lockup .brand-logo .st0 { fill: #f0f0f0 !important; }
+  .brand-lockup .brand-logo .st1 { fill: var(--brand) !important; }
   .brand-suffix {
     font-size: 22px; font-weight: 800;
     color: var(--brand); letter-spacing: -.5px;
@@ -98,9 +106,29 @@
     flex: 1 1 auto; justify-content: flex-end;
   }
 
+  .btn-home {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 16px;
+    background: #1c1c1c; color: #f4f4f5;
+    border: 1px solid #2a2a2a; border-radius: 10px;
+    font-size: 13px; font-weight: 700;
+    text-decoration: none;
+    transition: background .2s, border-color .2s, transform .15s, color .2s, box-shadow .2s;
+    white-space: nowrap;
+  }
+  .btn-home:hover {
+    background: var(--brand); border-color: var(--brand); color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(255, 42, 0, .35);
+  }
+  .btn-home:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+  .btn-home svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+  /* ==================== PROYECTOS ==================== */
   .projects-title-bar {
     max-width: 1400px; margin: 0 auto; width: 100%;
     padding: 30px clamp(16px, 3vw, 40px) 0;
+    animation: fadeSlideUp .4s .05s cubic-bezier(.2,.7,.3,1) backwards;
   }
   .projects-title {
     margin: 0; font-size: clamp(32px, 5vw, 48px);
@@ -112,7 +140,7 @@
     max-width: 1400px; margin: 0 auto;
     padding: 28px clamp(16px, 3vw, 40px) 60px;
   }
-  .projects-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
   .ctrl-select { position: relative; }
   .ctrl-select select {
     padding: 10px 34px 10px 14px;
@@ -153,6 +181,7 @@
     font-size: 13.5px; font-weight: 700;
     box-shadow: 0 8px 22px rgba(255, 42, 0, .32);
     transition: transform .2s, filter .2s;
+    white-space: nowrap;
   }
   .btn-new-project:hover { transform: translateY(-1px); filter: brightness(1.06); }
   .btn-new-project svg { width: 15px; height: 15px; }
@@ -172,6 +201,7 @@
     border-radius: 18px;
     cursor: pointer;
     transition: transform .18s, border-color .18s, box-shadow .18s;
+    animation: cardIn .5s cubic-bezier(.2,.7,.3,1) backwards;
   }
   .project-card:hover {
     transform: translateY(-3px);
@@ -289,14 +319,15 @@
   .new-card-icon svg { width: 22px; height: 22px; }
   .new-card-label { font-size: 13.5px; font-weight: 700; color: #c0c0c4; }
 
+  /* ==================== REVIEW ==================== */
   .review-header {
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 14px;
     padding: 12px clamp(12px, 2vw, 22px);
     background: #0d0d0d;
     border-bottom: 1px solid var(--border);
     flex-shrink: 0; min-height: 70px; flex-wrap: wrap;
+    animation: headerIn .4s cubic-bezier(.2,.7,.3,1);
   }
-  .review-header .brand-logo { height: 26px; flex-shrink: 0; }
   .btn-back {
     flex: 0 0 auto;
     width: 38px; height: 38px; padding: 0;
@@ -307,7 +338,7 @@
   }
   .btn-back:hover { background: var(--panel-3); border-color: var(--border-2); }
   .btn-back svg { width: 17px; height: 17px; }
-  .review-info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
+  .review-info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 200px; }
   .review-project-name {
     margin: 0; font-size: clamp(17px, 2.2vw, 22px);
     font-weight: 800; color: #fff; letter-spacing: -.3px;
@@ -316,19 +347,13 @@
   .review-client {
     font-size: 12px; font-weight: 600; color: var(--txt-dim);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .review-header-controls {
     display: flex; align-items: center; gap: 8px;
+    flex-shrink: 0; flex-wrap: wrap;
+    margin-left: auto;
   }
-  .guest-badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 2px 8px;
-    background: rgba(79, 70, 229, .2);
-    border: 1px solid rgba(99, 102, 241, .5);
-    color: #a5b4fc;
-    border-radius: 5px;
-    font-size: 9.5px; font-weight: 800;
-    letter-spacing: .6px; text-transform: uppercase;
-  }
-  .review-header-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+
   .state-select-wrap, .version-select-wrap { position: relative; }
   .state-select, .version-select {
     padding: 9px 32px 9px 14px;
@@ -342,7 +367,6 @@
   }
   .state-select:hover, .version-select:hover { background: var(--panel-3); border-color: var(--border-2); }
   .state-select:focus, .version-select:focus { border-color: var(--brand); }
-  .state-select:disabled, .version-select:disabled { opacity: .5; cursor: not-allowed; }
   .state-select-wrap::after, .version-select-wrap::after {
     content: '▾'; position: absolute; right: 12px; top: 50%;
     transform: translateY(-50%); color: var(--txt-dim);
@@ -353,6 +377,19 @@
   .state-select[data-state="revision"]    { border-color: rgba(99, 102, 241, .7); color: #a5b4fc; }
   .state-select[data-state="aprobado"]    { border-color: rgba(22, 163, 74, .7); color: #6ee7b7; }
 
+  .btn-ico {
+    flex: 0 0 auto;
+    width: 40px; height: 40px; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--panel-2); color: #fff;
+    border: 1px solid var(--border); border-radius: 10px;
+    transition: background .2s, border-color .2s, color .2s;
+  }
+  .btn-ico svg { width: 16px; height: 16px; }
+  .btn-ico:hover { background: var(--panel-3); border-color: var(--border-2); }
+  .btn-ico.btn-del-version:hover { background: #3a1a1a; border-color: #b91c1c; color: #fca5a5; }
+  .btn-ico.btn-del-version:disabled { opacity: .35; cursor: not-allowed; }
+
   .btn-action-top {
     flex: 0 0 auto;
     display: inline-flex; align-items: center; gap: 7px;
@@ -360,29 +397,16 @@
     font-size: 13px; font-weight: 700;
     border: 0;
     transition: transform .15s, filter .2s, background .2s, border-color .2s;
+    white-space: nowrap;
   }
   .btn-action-top svg { width: 15px; height: 15px; }
-  .btn-upload-top {
+  .btn-share {
     background: var(--grad); color: #fff;
     box-shadow: 0 6px 18px rgba(255, 42, 0, .35);
   }
-  .btn-upload-top:hover { transform: translateY(-1px); filter: brightness(1.06); }
-  .btn-share {
-    background: var(--panel-2); color: #fff;
-    border: 1px solid var(--border);
-  }
-  .btn-share:hover { background: var(--panel-3); border-color: var(--border-2); }
-  .btn-return {
-    background: var(--grad-green); color: #fff;
-    box-shadow: 0 6px 18px rgba(22, 163, 74, .35);
-  }
-  .btn-return:hover { transform: translateY(-1px); filter: brightness(1.06); }
-  .btn-import {
-    background: var(--grad-blue); color: #fff;
-    box-shadow: 0 6px 18px rgba(79, 70, 229, .35);
-  }
-  .btn-import:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .btn-share:hover { transform: translateY(-1px); filter: brightness(1.06); }
 
+  /* ==================== VIDEO ==================== */
   .review-main {
     flex: 1 1 auto; display: flex;
     min-height: 0; overflow: hidden;
@@ -393,6 +417,7 @@
     display: flex; align-items: center; justify-content: center;
     padding: clamp(10px, 1.8vw, 22px);
     overflow: hidden;
+    animation: panelIn .5s .05s cubic-bezier(.2,.7,.3,1) backwards;
   }
   .video-container {
     position: relative;
@@ -403,7 +428,11 @@
     border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0, 0, 0, .8);
+    transition: opacity .3s ease;
   }
+  .video-container.video-anim { animation: videoIn .55s cubic-bezier(.2,.7,.3,1); }
+  .video-container.version-out { opacity: 0; transform: scale(.97); transition: opacity .25s, transform .25s; }
+
   #yt-player-host {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
@@ -448,18 +477,6 @@
     animation: spin .9s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .btn-upload-video {
-    margin-top: 4px;
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 11px 20px;
-    background: var(--grad); color: #fff;
-    border: 0; border-radius: 11px;
-    font-size: 13px; font-weight: 700;
-    box-shadow: 0 8px 22px rgba(255, 42, 0, .35);
-    transition: transform .15s, filter .2s;
-  }
-  .btn-upload-video:hover { transform: translateY(-1px); filter: brightness(1.06); }
-  .btn-upload-video svg { width: 15px; height: 15px; }
 
   .vc-bar {
     position: absolute; left: 0; right: 0; bottom: 0;
@@ -514,35 +531,35 @@
     top: 0; bottom: 0;
     pointer-events: none;
   }
-  .vc-marker {
+  .vc-marker-wrap {
     position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    top: 0; bottom: 0;
+    transform: translateX(-50%);
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .vc-marker {
     width: 3px; height: 20px;
     background: var(--brand);
     border: 0; border-radius: 2px; padding: 0;
     pointer-events: auto; cursor: pointer;
-    transition: transform .15s, height .15s, box-shadow .15s, filter .15s;
+    transition: height .15s, box-shadow .15s, filter .15s, background .2s;
     box-shadow: 0 0 4px rgba(255, 42, 0, .55);
-    z-index: 3;
+    flex-shrink: 0;
   }
-  .vc-timeline:hover .vc-marker { height: 24px; }
-  .vc-marker:hover {
-    transform: translate(-50%, -50%) scaleX(1.8);
-    height: 28px;
+  .vc-marker-wrap:hover .vc-marker {
+    height: 26px;
     box-shadow: 0 0 14px rgba(255, 42, 0, .95);
-    filter: brightness(1.2); z-index: 5;
+    filter: brightness(1.15);
   }
-  .vc-marker.resolved {
-    background: #16a34a;
-    box-shadow: 0 0 4px rgba(22, 163, 74, .55);
-  }
-  .vc-marker.resolved:hover { box-shadow: 0 0 14px rgba(22, 163, 74, .95); }
-  .vc-marker::after {
-    content: attr(data-tip);
+  .vc-marker.resolved { background: #16a34a; box-shadow: 0 0 4px rgba(22, 163, 74, .55); }
+  .vc-marker-wrap:hover .vc-marker.resolved { box-shadow: 0 0 14px rgba(22, 163, 74, .95); }
+  .vc-marker-tip {
     position: absolute;
-    bottom: calc(100% + 12px);
-    left: 50%; transform: translateX(-50%);
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
     padding: 7px 11px;
     background: #1e1e1e; color: #fff;
     border: 1px solid var(--border-2);
@@ -555,7 +572,16 @@
     box-shadow: 0 10px 24px rgba(0, 0, 0, .85);
     z-index: 10;
   }
-  .vc-marker:hover::after { opacity: 1; }
+  .vc-marker-tip::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #1e1e1e;
+  }
+  .vc-marker-wrap:hover .vc-marker-tip { opacity: 1; }
+
   .vc-time {
     flex: 0 0 auto; color: #d0d0d8;
     font-size: 12.5px; font-weight: 700;
@@ -578,12 +604,14 @@
     background: #fff; border-radius: 999px;
   }
 
+  /* ==================== PANEL COMENTARIOS ==================== */
   .comments-panel {
     flex: 0 0 380px;
     background: var(--panel);
     border-left: 1px solid var(--border);
     display: flex; flex-direction: column;
     min-height: 0; height: 100%;
+    animation: panelIn .5s .1s cubic-bezier(.2,.7,.3,1) backwards;
   }
   @media (max-width: 1100px) { .comments-panel { flex: 0 0 340px; } }
   @media (max-width: 860px)  { .comments-panel { flex: 0 0 310px; } }
@@ -637,7 +665,11 @@
   .comments-list::-webkit-scrollbar-track { background: transparent; }
   .comments-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
   .comments-list::-webkit-scrollbar-thumb:hover { background: var(--border-2); }
-  .comments-empty { padding: 40px 20px; text-align: center; color: var(--txt-dim-2); font-size: 13px; font-style: italic; }
+  .comments-empty {
+    padding: 40px 20px; text-align: center;
+    color: var(--txt-dim-2); font-size: 13px; font-style: italic;
+    animation: fadeSlideUp .4s cubic-bezier(.2,.7,.3,1);
+  }
 
   .comment-item {
     position: relative;
@@ -649,6 +681,9 @@
     transition: background .2s, border-color .2s, opacity .2s, transform .15s;
     cursor: pointer;
   }
+  .comment-item.anim-in {
+    animation: commentIn .4s cubic-bezier(.2,.7,.3,1) backwards;
+  }
   .comment-item.highlight {
     background: #23232e;
     border-color: var(--brand);
@@ -656,7 +691,6 @@
   }
   .comment-item.resolved { opacity: .6; border-left-color: #16a34a; }
   .comment-item.resolved .comment-text { text-decoration: line-through; text-decoration-color: rgba(255,255,255,.25); }
-  .comment-item.new-by-guest { border-left-color: #6366f1; }
   .comment-head { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
   .comment-time-btn {
     display: inline-flex; align-items: center; gap: 4px;
@@ -669,28 +703,12 @@
     cursor: pointer;
   }
   .comment-time-btn:hover { background: var(--brand); color: #fff; }
-  .comment-author {
-    font-size: 11px; font-weight: 700; color: var(--txt-dim);
-    text-transform: uppercase; letter-spacing: .4px;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .comment-new-badge {
-    display: inline-flex;
-    padding: 2px 6px;
-    background: rgba(99, 102, 241, .2);
-    border: 1px solid rgba(99, 102, 241, .5);
-    color: #a5b4fc;
-    border-radius: 4px;
-    font-size: 9px; font-weight: 800;
-    letter-spacing: .4px; text-transform: uppercase;
-  }
   .comment-index {
-    margin-left: auto;
     font-size: 10.5px; font-weight: 700;
     color: var(--txt-dim-2);
     font-variant-numeric: tabular-nums;
   }
-  .comment-actions { display: flex; gap: 4px; margin-left: 4px; }
+  .comment-actions { display: flex; gap: 4px; margin-left: auto; }
   .comment-btn {
     width: 24px; height: 24px; padding: 0;
     display: inline-flex; align-items: center; justify-content: center;
@@ -751,17 +769,22 @@
     width: 60px; text-align: center;
     letter-spacing: 1px;
   }
-  .comment-input-author {
+  .comment-input-hint {
     flex: 1 1 auto; min-width: 0;
-    padding: 6px 10px;
-    background: transparent; color: #fff;
-    border: 0; border-bottom: 1px dashed var(--border);
-    font-size: 12px; font-weight: 600;
-    outline: none;
-    transition: border-color .2s;
+    font-size: 11px; color: var(--txt-dim-2);
+    text-align: right;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  .comment-input-author:focus { border-color: var(--brand); }
-  .comment-input-author::placeholder { color: var(--txt-dim-2); }
+  .comment-input-hint kbd {
+    display: inline-block;
+    padding: 1px 5px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 10px;
+    color: var(--txt-dim);
+  }
   .comment-input-box { display: flex; gap: 8px; align-items: flex-end; }
   .comment-input-box textarea {
     flex: 1 1 auto;
@@ -787,6 +810,7 @@
   .btn-send-comment:hover { transform: translateY(-1px); filter: brightness(1.06); }
   .btn-send-comment svg { width: 16px; height: 16px; }
 
+  /* ==================== MODALES ==================== */
   .modal-overlay {
     position: fixed; inset: 0; z-index: 2000;
     display: none; align-items: center; justify-content: center;
@@ -823,6 +847,7 @@
   }
   .modal-hint strong { color: #fbbf24; }
   .modal-hint code { background: rgba(255,255,255,.08); padding: 1px 5px; border-radius: 4px; font-size: 11px; }
+
   .config-field {
     width: 100%;
     padding: 12px 14px;
@@ -831,10 +856,46 @@
     border: 1px solid var(--border); border-radius: 10px;
     font-size: 14px; font-weight: 600;
     outline: none;
-    transition: border-color .2s;
+    transition: border-color .2s, background .2s;
   }
   .config-field:focus { border-color: var(--brand); }
   .config-field::placeholder { color: var(--txt-dim-2); font-weight: 500; }
+
+  .config-field[type="date"] {
+    color-scheme: dark;
+    cursor: pointer;
+    position: relative;
+    padding-right: 44px;
+    background-image:
+      linear-gradient(var(--panel-2), var(--panel-2)),
+      linear-gradient(transparent, transparent);
+    background-repeat: no-repeat;
+  }
+  .config-field[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    position: absolute;
+    right: 8px; top: 50%;
+    transform: translateY(-50%);
+    width: 32px; height: 32px;
+    padding: 6px;
+    border-radius: 8px;
+    background-color: rgba(255, 42, 0, .12);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff2a00' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='4' width='18' height='18' rx='2'/><line x1='16' y1='2' x2='16' y2='6'/><line x1='8' y1='2' x2='8' y2='6'/><line x1='3' y1='10' x2='21' y2='10'/></svg>");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px 16px;
+    filter: none;
+    opacity: 1;
+    transition: background-color .2s, transform .15s;
+  }
+  .config-field[type="date"]::-webkit-calendar-picker-indicator:hover {
+    background-color: rgba(255, 42, 0, .28);
+    transform: translateY(-50%) scale(1.05);
+  }
+  .config-field[type="date"]::-webkit-calendar-picker-indicator:active {
+    transform: translateY(-50%) scale(.96);
+  }
+
   .config-actions {
     display: flex; justify-content: flex-end; gap: 8px;
     margin-top: 8px;
@@ -854,22 +915,6 @@
   }
   .btn-save:hover { transform: translateY(-1px); filter: brightness(1.06); }
 
-  .share-link-box {
-    width: 100%;
-    padding: 12px 14px;
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    font-family: 'SF Mono', Menlo, Consolas, monospace;
-    font-size: 11px;
-    color: #a5b4fc;
-    word-break: break-all;
-    line-height: 1.55;
-    max-height: 140px;
-    overflow-y: auto;
-    margin-bottom: 10px;
-  }
-
   .toast {
     position: fixed; left: 50%; bottom: 30px;
     transform: translate(-50%, 20px);
@@ -886,26 +931,41 @@
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
   .toast.error { background: #fee2e2; color: #991b1b; }
+  .toast.help {
+    background: var(--panel);
+    color: var(--txt);
+    border: 1px solid var(--border-2);
+    text-align: left;
+    line-height: 1.7;
+    font-weight: 500;
+    padding: 16px 22px;
+    max-width: 420px;
+    white-space: pre-line;
+  }
+  .toast.help strong { color: var(--brand); font-weight: 800; display: block; margin-bottom: 6px; }
+  .toast.help kbd {
+    display: inline-block;
+    min-width: 20px;
+    text-align: center;
+    padding: 1px 6px;
+    margin-right: 4px;
+    background: var(--panel-3);
+    border: 1px solid var(--border-2);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 11px;
+    color: #fff;
+    font-weight: 700;
+  }
 
+  /* ==================== RESPONSIVE ==================== */
+  @media (max-width: 900px) {
+    .app-header { gap: 14px; }
+    .btn-new-project { padding: 10px 14px; font-size: 12.5px; }
+  }
+
+  /* ---------- Proyectos móvil ---------- */
   @media (max-width: 640px) {
-    .review-header { padding: 10px 12px; gap: 8px; min-height: 62px; }
-    .review-header .brand-logo { height: 22px; }
-    .review-project-name { font-size: 15px; }
-    .review-client { font-size: 11px; }
-    .btn-action-top span { display: none; }
-    .btn-action-top { padding: 9px 12px; }
-    .state-select, .version-select { padding: 7px 26px 7px 10px; font-size: 11px; }
-    .btn-back { width: 34px; height: 34px; }
-    .btn-back svg { width: 15px; height: 15px; }
-    .vc-bar { padding: 28px 10px 10px; gap: 8px; }
-    .vc-btn { width: 34px; height: 34px; }
-
-    /* ============================================================
-       Header de proyectos — reorganizado para móvil (grid 2×2)
-       Fila 1: Inicio .......................... logo + "Revisor"
-       Fila 2: [Sort ▾] ......................... [Filter ▾]
-       Fila 3: [⊞ ☰] ............................ [+ nuevo proyecto]
-       ============================================================ */
     .app-header {
       flex-direction: column;
       align-items: stretch;
@@ -914,9 +974,29 @@
     }
     .header-brand {
       width: 100%;
-      justify-content: space-between;
-      gap: 10px;
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+      gap: 8px;
+      align-items: center;
+      min-width: 0;
     }
+    .btn-home {
+      padding: 8px 12px;
+      font-size: 12px;
+      gap: 6px;
+      flex: 0 0 auto;
+    }
+    .btn-home span { display: inline; }
+    .btn-home svg { width: 14px; height: 14px; }
+    .brand-lockup {
+      padding-left: 10px;
+      gap: 8px;
+      min-width: 0;
+      flex: 0 0 auto;
+    }
+    .brand-lockup .brand-logo { height: 26px; }
+    .brand-suffix { font-size: 17px; letter-spacing: -.3px; }
+
     .header-controls {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -939,12 +1019,92 @@
       gap: 6px;
     }
     .btn-new-project svg { width: 13px; height: 13px; }
+  }
 
-    .btn-home span { display: none; }
-    .btn-home { padding: 10px 12px; }
-    .brand-lockup .brand-logo { height: 26px; }
-    .brand-suffix { font-size: 17px; }
-    .brand-lockup { padding-left: 10px; gap: 8px; }
+  /* ============ REVIEW HEADER MÓVIL — DISTRIBUCIÓN LIMPIA ============
+     Fila 1:  [←] [Nombre + Cliente]
+     Fila 2:  [Estado ▾] [Versión ▾] [🗑] [🔗]
+     ================================================================== */
+  @media (max-width: 640px) {
+    .review-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      min-height: auto;
+    }
+    .btn-back {
+      order: 1;
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
+    }
+    .review-info {
+      order: 2;
+      flex: 1 1 100px;
+      min-width: 0;
+    }
+    .review-project-name { font-size: 15px; }
+    .review-client { font-size: 11px; }
+
+    .review-header-controls {
+      order: 3;
+      width: 100%;
+      margin-left: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+    .state-select-wrap,
+    .version-select-wrap {
+      width: 100%;
+      min-width: 0;
+    }
+    .state-select,
+    .version-select {
+      width: 100%;
+      padding: 8px 26px 8px 10px;
+      font-size: 11px;
+      letter-spacing: .3px;
+    }
+    .btn-del-version {
+      width: 38px;
+      height: 38px;
+    }
+    .btn-share {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      justify-content: center;
+      gap: 0;
+    }
+    .btn-share span { display: none; }
+    .btn-share svg { width: 16px; height: 16px; }
+  }
+
+  @media (max-width: 420px) {
+    .app-header { padding: 10px 12px; gap: 8px; }
+    .btn-home { padding: 7px 10px; font-size: 11px; gap: 5px; }
+    .btn-home svg { width: 13px; height: 13px; }
+    .brand-lockup { padding-left: 8px; gap: 6px; }
+    .brand-lockup .brand-logo { height: 22px; }
+    .brand-suffix { font-size: 15px; }
+
+    .review-header { padding: 8px 10px; gap: 6px; }
+    .btn-back { width: 34px; height: 34px; }
+    .btn-back svg { width: 15px; height: 15px; }
+    .review-project-name { font-size: 14px; }
+    .state-select, .version-select { padding: 7px 22px 7px 8px; font-size: 10.5px; }
+    .state-select-wrap::after,
+    .version-select-wrap::after { right: 9px; font-size: 10px; }
+    .btn-del-version { width: 34px; height: 34px; }
+    .btn-del-version svg { width: 14px; height: 14px; }
+    .btn-share { width: 34px; height: 34px; }
+    .btn-share svg { width: 14px; height: 14px; }
+    .review-header-controls { gap: 6px; }
   }
 </style>
 </head>
@@ -962,7 +1122,7 @@
         <span>Inicio</span>
       </a>
       <div class="brand-lockup">
-        <div class="logo-slot"></div>
+        <div class="brand-logo-slot"></div>
         <span class="brand-suffix">Revisor</span>
       </div>
     </div>
@@ -987,14 +1147,14 @@
         </select>
       </div>
       <div class="view-toggle" role="tablist" aria-label="Vista">
-        <button id="view-grid-btn" class="active" type="button" aria-label="Vista cuadrícula">
+        <button id="view-grid-btn" class="active" type="button" aria-label="Vista cuadrícula" title="Cuadrícula (G)">
           <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
         </button>
-        <button id="view-list-btn" type="button" aria-label="Vista lista">
+        <button id="view-list-btn" type="button" aria-label="Vista lista" title="Lista (L)">
           <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="3" rx="1.5"/><rect x="3" y="10.5" width="18" height="3" rx="1.5"/><rect x="3" y="17" width="18" height="3" rx="1.5"/></svg>
         </button>
       </div>
-      <button class="btn-new-project" id="btn-new-project" type="button">
+      <button class="btn-new-project" id="btn-new-project" type="button" title="Nuevo proyecto (N)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
         nuevo proyecto
       </button>
@@ -1013,16 +1173,12 @@
 <!-- ================= REVIEW ================= -->
 <section id="review-view" class="view">
   <header class="review-header">
-    <div class="logo-slot-small"></div>
-    <button class="btn-back" id="btn-back" type="button" aria-label="Volver">
+    <button class="btn-back" id="btn-back" type="button" aria-label="Volver" title="Volver (Esc)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
     <div class="review-info">
       <h2 class="review-project-name" id="review-project-name">—</h2>
-      <span class="review-client" id="review-client">
-        <span id="review-client-text"></span>
-        <span class="guest-badge" id="guest-badge" style="display:none">👤 Invitado</span>
-      </span>
+      <span class="review-client" id="review-client-text"></span>
     </div>
     <div class="review-header-controls">
       <div class="state-select-wrap">
@@ -1036,28 +1192,21 @@
       <div class="version-select-wrap">
         <select class="version-select" id="review-version" aria-label="Versión"></select>
       </div>
-      <button class="btn-action-top btn-upload-top" id="btn-upload-top" type="button" title="Añadir enlace de video de YouTube">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-        <span id="btn-upload-label">Añadir video</span>
-      </button>
-      <button class="btn-action-top btn-share" id="btn-share" type="button" title="Compartir">
+      <button class="btn-ico btn-del-version" id="btn-del-version" type="button" title="Eliminar versión actual" aria-label="Eliminar versión">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-          <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>
+          <path d="M3 6h18"/>
+          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <line x1="10" y1="11" x2="10" y2="17"/>
+          <line x1="14" y1="11" x2="14" y2="17"/>
         </svg>
-        <span>Compartir</span>
       </button>
-      <button class="btn-action-top btn-return" id="btn-return" type="button" style="display:none" title="Devolver comentarios al autor">
+      <button class="btn-action-top btn-share" id="btn-share" type="button" title="Copiar enlace del proyecto (S)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          <rect x="9" y="9" width="13" height="13" rx="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
         </svg>
-        <span>Devolver</span>
-      </button>
-      <button class="btn-action-top btn-import" id="btn-import" type="button" style="display:none" title="Importar comentarios del cliente">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>
-        </svg>
-        <span>Importar</span>
+        <span>Copiar enlace</span>
       </button>
     </div>
   </header>
@@ -1069,22 +1218,22 @@
 
     <aside class="comments-panel">
       <div class="comments-tabs">
-        <button class="tab-btn active" data-filter="all" type="button">
+        <button class="tab-btn" data-filter="all" type="button" title="Todos (1)">
           comentarios <span class="tab-count" id="tab-count-all">0</span>
         </button>
-        <button class="tab-btn" data-filter="pending" type="button">
+        <button class="tab-btn active" data-filter="pending" type="button" title="No realizados (2)">
           no realizados <span class="tab-count" id="tab-count-pending">0</span>
         </button>
       </div>
-      <div class="shared-note" id="shared-note">💬 Los comentarios se comparten entre todas las versiones</div>
+      <div class="shared-note">💬 Los comentarios se comparten entre todas las versiones</div>
       <div class="comments-list" id="comments-list"></div>
       <div class="comment-input-area">
         <div class="comment-input-row">
           <span class="comment-input-time" id="comment-input-time" title="Clic para editar el tiempo (mm:ss)">00:00</span>
-          <input type="text" class="comment-input-author" id="comment-input-author" placeholder="tu nombre (opcional)" autocomplete="off">
+          <span class="comment-input-hint"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> para enviar</span>
         </div>
         <div class="comment-input-box">
-          <textarea id="comment-input-text" placeholder="escriba su comentario..." rows="1"></textarea>
+          <textarea id="comment-input-text" placeholder="escriba su comentario... (C para enfocar)" rows="1"></textarea>
           <button class="btn-send-comment" id="btn-send-comment" type="button" aria-label="Enviar comentario">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
           </button>
@@ -1101,41 +1250,10 @@
     <input type="text" class="config-field" id="config-name" placeholder="nombre del proyecto" maxlength="80">
     <input type="text" class="config-field" id="config-client" placeholder="cliente" maxlength="80">
     <input type="date" class="config-field" id="config-date">
+    <input type="text" class="config-field" id="config-youtube" placeholder="enlace de YouTube (opcional)" autocomplete="off">
     <div class="config-actions">
       <button class="btn-cancel" id="config-cancel" type="button">cancelar</button>
       <button class="btn-save" id="config-save" type="button">guardar</button>
-    </div>
-  </div>
-</div>
-
-<!-- ================= SHARE MODAL ================= -->
-<div class="modal-overlay" id="share-modal">
-  <div class="modal-box" role="dialog" aria-modal="true">
-    <h3 class="modal-title" id="share-title">Compartir con el cliente</h3>
-    <p class="modal-hint" id="share-hint">
-      Copia el enlace y envíalo junto con el video (por WhatsApp, correo o el medio que prefieras).
-      El cliente podrá revisar, comentar y devolverte sus notas.
-    </p>
-    <div class="share-link-box" id="share-link-box">—</div>
-    <div class="config-actions">
-      <button class="btn-cancel" id="share-close" type="button">cerrar</button>
-      <button class="btn-save" id="share-copy" type="button">copiar enlace</button>
-    </div>
-  </div>
-</div>
-
-<!-- ================= YOUTUBE URL MODAL ================= -->
-<div class="modal-overlay" id="yt-modal">
-  <div class="modal-box" role="dialog" aria-modal="true">
-    <h3 class="modal-title">Añadir video de YouTube</h3>
-    <p class="modal-hint">
-      Pega el enlace del video. Puede ser <strong>público</strong> o <strong>no listado</strong> (no privado).
-      Ejemplo: <code>https://www.youtube.com/watch?v=XXXXXXXXXXX</code>
-    </p>
-    <input type="text" class="config-field" id="yt-url-input" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
-    <div class="config-actions">
-      <button class="btn-cancel" id="yt-cancel" type="button">cancelar</button>
-      <button class="btn-save" id="yt-save" type="button">añadir</button>
     </div>
   </div>
 </div>
@@ -1166,7 +1284,7 @@
 
 <script>
 /* =========================================================
-   0 · CONFIGURACIÓN API (👉 EDITA ESTAS DOS LÍNEAS)
+   0 · CONFIGURACIÓN API
    ========================================================= */
 const API_URL = 'https://script.google.com/macros/s/AKfycbw-KS60jeS-QhcyM6aM5Q-FenysK2r0Vw0-MDsEiBBNR39LINIrvPyth8rCIQQujoMm/exec';
 const API_KEY = 'kevirago_2026_revisor_9f3a7b21c4e8d5a6';
@@ -1200,7 +1318,8 @@ function parseTime(str) {
 }
 function fmtDateDisplay(iso) {
   if (!iso) return '';
-  const [y, m, d] = String(iso).split('-');
+  const datePart = String(iso).split('T')[0];
+  const [y, m, d] = datePart.split('-');
   if (!y || !m || !d) return iso;
   return `${d}/${m}/${y}`;
 }
@@ -1219,10 +1338,11 @@ function getYouTubeId(input) {
 }
 
 let toastTimer;
-function showToast(msg, duration = 3000, isError = false) {
+function showToast(msg, duration = 3000, isError = false, isHelp = false) {
   const el = $('toast');
   el.textContent = msg;
   el.classList.toggle('error', !!isError);
+  el.classList.toggle('help', !!isHelp);
   el.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), duration);
@@ -1246,19 +1366,7 @@ async function copyToClipboard(text) {
     return true;
   } catch (err) { return false; }
 }
-function encodeShare(payload) {
-  try {
-    return btoa(unescape(encodeURIComponent(JSON.stringify(payload))))
-      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-  } catch (err) { return ''; }
-}
-function decodeShare(str) {
-  try {
-    const pad = str.length % 4 === 0 ? '' : '='.repeat(4 - (str.length % 4));
-    const b64 = str.replace(/-/g, '+').replace(/_/g, '/') + pad;
-    return JSON.parse(decodeURIComponent(escape(atob(b64))));
-  } catch (err) { return null; }
-}
+
 const STATE_LABELS = {
   'sin-empezar': 'Sin empezar',
   'en-edicion':  'En edición',
@@ -1267,7 +1375,7 @@ const STATE_LABELS = {
 };
 
 /* =========================================================
-   2 · API (Google Apps Script)
+   2 · API
    ========================================================= */
 async function apiGet(params = {}) {
   const qs = new URLSearchParams({ key: API_KEY, ...params }).toString();
@@ -1280,7 +1388,6 @@ async function apiGet(params = {}) {
 async function apiPost(body) {
   const res = await fetch(`${API_URL}?key=${encodeURIComponent(API_KEY)}`, {
     method: 'POST',
-    // OJO: text/plain para evitar preflight OPTIONS (Apps Script no lo maneja)
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(body)
   });
@@ -1295,20 +1402,16 @@ async function apiPost(body) {
    ========================================================= */
 let projects = [];
 let currentProjectId = null;
-let currentFilter = 'all';
+let currentFilter = 'pending';   // ⬅ por defecto: no realizados
 let currentSort = 'recent';
 let currentStateFilter = 'all';
 let currentViewMode = 'grid';
 let currentVersions = [];
 
-let isGuest = false;
-let guestProject = null;
-let guestPayload = null;
-let guestOriginalCommentIds = new Set();
-let isReturnToHost = false;
+let animateCommentsNext = true;  // se activa al abrir / cambiar versión
 
 function getProject(id) { return projects.find(p => p.id === id); }
-function getActiveProject() { return isGuest ? guestProject : getProject(currentProjectId); }
+function getActiveProject() { return getProject(currentProjectId); }
 
 async function refreshProjects() {
   try {
@@ -1322,7 +1425,6 @@ async function refreshProjects() {
 async function persistProject(p) {
   try {
     await apiPost({ action: 'saveProject', project: p });
-    // actualizamos la lista local
     const idx = projects.findIndex(x => x.id === p.id);
     if (idx >= 0) projects[idx] = p; else projects.push(p);
   } catch (err) {
@@ -1344,7 +1446,7 @@ async function removeProject(id) {
    ========================================================= */
 (function injectLogo() {
   const tpl = $('logo-tpl').content;
-  document.querySelectorAll('.logo-slot, .logo-slot-small').forEach(slot => {
+  document.querySelectorAll('.brand-logo-slot').forEach(slot => {
     slot.appendChild(tpl.cloneNode(true));
   });
 })();
@@ -1359,7 +1461,7 @@ function showView(name) {
 }
 
 /* =========================================================
-   6 · PROYECTOS · RENDER
+   6 · PROYECTOS · RENDER (con animación escalonada)
    ========================================================= */
 function getSortedProjects() {
   let list = [...projects];
@@ -1380,8 +1482,14 @@ function renderProjects() {
   cont.className = currentViewMode === 'grid' ? 'projects-grid' : 'projects-list';
   cont.innerHTML = '';
   const sorted = getSortedProjects();
-  sorted.forEach(p => cont.appendChild(buildProjectCard(p)));
-  cont.appendChild(buildNewCard());
+  sorted.forEach((p, i) => {
+    const card = buildProjectCard(p);
+    card.style.animationDelay = Math.min(i * 45, 500) + 'ms';
+    cont.appendChild(card);
+  });
+  const newCard = buildNewCard();
+  newCard.style.animationDelay = Math.min(sorted.length * 45, 500) + 'ms';
+  cont.appendChild(newCard);
 }
 function buildProjectCard(p) {
   const card = document.createElement('div');
@@ -1496,22 +1604,26 @@ let configProjectId = null;
 function openConfig(mode, id) {
   configMode = mode;
   configProjectId = id || null;
-  const titleEl = $('config-title');
-  const nameEl = $('config-name');
-  const cliEl = $('config-client');
-  const dateEl = $('config-date');
+  const titleEl  = $('config-title');
+  const nameEl   = $('config-name');
+  const cliEl    = $('config-client');
+  const dateEl   = $('config-date');
+  const ytEl     = $('config-youtube');
   if (mode === 'edit') {
     const p = getProject(id);
     if (!p) { showToast('Proyecto no encontrado'); return; }
     titleEl.textContent = 'Configuración de proyecto';
     nameEl.value = p.name || '';
     cliEl.value = p.client || '';
-    dateEl.value = p.date || new Date().toISOString().slice(0,10);
+    dateEl.value = (p.date || '').split('T')[0] || new Date().toISOString().slice(0,10);
+    const vObj = (p.versions || []).find(v => v.id === (p.currentVersion || 'v1'));
+    ytEl.value = vObj && vObj.youtubeId ? `https://www.youtube.com/watch?v=${vObj.youtubeId}` : '';
   } else {
     titleEl.textContent = 'crear nuevo proyecto';
     nameEl.value = '';
     cliEl.value = '';
     dateEl.value = new Date().toISOString().slice(0,10);
+    ytEl.value = '';
   }
   $('config-modal').classList.add('open');
   setTimeout(() => nameEl.focus(), 60);
@@ -1522,37 +1634,73 @@ $('config-modal').addEventListener('click', e => {
   if (e.target === $('config-modal')) closeConfig();
 });
 async function saveConfig() {
-  const name = $('config-name').value.trim();
-  const client = $('config-client').value.trim();
-  const date = $('config-date').value || new Date().toISOString().slice(0,10);
+  const name       = $('config-name').value.trim();
+  const client     = $('config-client').value.trim();
+  const date       = ($('config-date').value || new Date().toISOString().slice(0,10)).split('T')[0];
+  const youtubeUrl = $('config-youtube').value.trim();
+  const youtubeId  = youtubeUrl ? getYouTubeId(youtubeUrl) : '';
+
   if (!name) { showToast('Ponle un nombre al proyecto'); $('config-name').focus(); return; }
+  if (youtubeUrl && !youtubeId) { showToast('URL de YouTube inválida'); $('config-youtube').focus(); return; }
+
   if (configMode === 'create') {
     const now = Date.now();
+    const v1 = {
+      id: 'v1',
+      state: youtubeId ? 'en-edicion' : 'sin-empezar',
+      youtubeId: youtubeId || '',
+      duration: 0
+    };
     const p = {
       id: uid(), name, client, date,
-      state: 'sin-empezar',
+      state: v1.state,
       currentVersion: 'v1',
-      versions: [{ id: 'v1', state: 'sin-empezar', youtubeId: '', duration: 0 }],
-      comments: [], thumb: '',
+      versions: [v1],
+      comments: [],
+      thumb: youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : '',
       createdAt: now, updatedAt: now
     };
     await persistProject(p);
     closeConfig();
     renderProjects();
     showToast('Proyecto creado ✔');
+    location.hash = '#/p/' + p.id;
   } else {
     const p = getProject(configProjectId);
     if (!p) return;
-    p.name = name; p.client = client; p.date = date;
+    p.name = name;
+    p.client = client;
+    p.date = date;
+    const version = p.currentVersion || 'v1';
+    const vObj = (p.versions || []).find(v => v.id === version);
+    if (vObj) {
+      vObj.youtubeId = youtubeId || '';
+      if (youtubeId) {
+        p.thumb = `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+        if (vObj.state === 'sin-empezar') vObj.state = 'en-edicion';
+        if (p.state === 'sin-empezar') p.state = 'en-edicion';
+      } else {
+        p.thumb = '';
+      }
+    }
     p.updatedAt = Date.now();
     await persistProject(p);
     closeConfig();
     renderProjects();
     showToast('Proyecto actualizado ✔');
+    if (location.hash.startsWith('#/p/')) {
+      animateCommentsNext = true;
+      await loadVideoForVersion(p, version);
+      const stateSel = $('review-state');
+      const activeVerObj = (p.versions || []).find(v => v.id === version);
+      const stateVal = (activeVerObj && activeVerObj.state) || p.state || 'sin-empezar';
+      if (stateSel) { stateSel.value = stateVal; stateSel.dataset.state = stateVal; }
+      renderComments();
+    }
   }
 }
 $('config-save').addEventListener('click', saveConfig);
-['config-name','config-client','config-date'].forEach(id => {
+['config-name','config-client','config-date','config-youtube'].forEach(id => {
   $(id).addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); saveConfig(); }
   });
@@ -1579,7 +1727,7 @@ function loadYouTubeAPI() {
 }
 
 /* =========================================================
-   11 · REPRODUCTOR (wrapper sobre YT.Player)
+   11 · REPRODUCTOR
    ========================================================= */
 let ytPlayer = null;
 let ytReady = false;
@@ -1616,6 +1764,12 @@ function destroyPlayer() {
   video = null;
 }
 
+function replayContainerAnim() {
+  videoContainer.classList.remove('video-anim');
+  void videoContainer.offsetWidth; // force reflow
+  videoContainer.classList.add('video-anim');
+}
+
 function buildLoadingState() {
   videoContainer.innerHTML = `
     <div class="video-loading">
@@ -1624,26 +1778,19 @@ function buildLoadingState() {
     </div>
   `;
   video = null; vcBar = null;
+  replayContainerAnim();
 }
 
-function buildEmptyState(version) {
-  const guestMsg = isGuest
-    ? 'El autor no compartió el enlace del video. Pídeselo para poder revisar.'
-    : 'Pega el enlace del video de YouTube para empezar a revisar y dejar comentarios.';
+function buildEmptyState() {
   videoContainer.innerHTML = `
-    <div class="video-empty" id="video-empty">
+    <div class="video-empty">
       <div class="icon">🎬</div>
       <div class="title">Sin video para esta versión</div>
-      <div class="sub">${guestMsg}</div>
-      <button class="btn-upload-video" id="btn-upload-video" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-        Añadir enlace de YouTube
-      </button>
+      <div class="sub">Edita el proyecto (menú ⋯ → Configuración) y pega el enlace de YouTube para empezar a revisar.</div>
     </div>
   `;
   video = null; vcBar = null;
-  const btn = $('btn-upload-video');
-  if (btn) btn.addEventListener('click', () => openYouTubeModal(version));
+  replayContainerAnim();
 }
 
 function buildVideoPlayer() {
@@ -1691,6 +1838,7 @@ function buildVideoPlayer() {
   vcFullscreen = $('vc-fullscreen');
   bindControlsEvents();
   video = ytWrap;
+  replayContainerAnim();
 }
 
 function bindControlsEvents() {
@@ -1706,7 +1854,7 @@ function bindControlsEvents() {
     if (video.paused) video.play(); else video.pause();
   });
   vcTimeline.addEventListener('click', e => {
-    if (e.target.closest('.vc-marker')) return;
+    if (e.target.closest('.vc-marker-wrap') || e.target.closest('.vc-marker')) return;
     const d = video.duration;
     if (!d) return;
     const rect = vcTimeline.getBoundingClientRect();
@@ -1766,7 +1914,7 @@ function setupYouTubePlayer(videoId) {
       }
     });
   }).catch(() => {
-    buildEmptyState(getActiveProject()?.currentVersion || 'v1');
+    buildEmptyState();
     showToast('No se pudo cargar YouTube');
   });
 }
@@ -1786,7 +1934,7 @@ function onPlayerReady(event) {
   if (vcBar) vcBar.classList.remove('hidden');
 
   const p = getActiveProject();
-  if (p && !isGuest) {
+  if (p) {
     const vObj = (p.versions || []).find(v => v.id === (p.currentVersion || 'v1'));
     if (vObj) {
       vObj.duration = duration || 0;
@@ -1863,23 +2011,29 @@ function showControls() {
 }
 
 /* =========================================================
-   12 · CARGA DE VIDEO
+   12 · CARGA DE VIDEO (con animación fade-out/fade-in)
    ========================================================= */
 async function loadVideoForVersion(p, version) {
+  // Animación de salida
+  videoContainer.classList.add('version-out');
+
+  await new Promise(r => setTimeout(r, 220));
+
   destroyPlayer();
+  videoContainer.classList.remove('version-out');
 
   const vObj = (p.versions || []).find(v => v.id === version);
   const youtubeId = vObj && vObj.youtubeId;
 
   if (!youtubeId) {
-    buildEmptyState(version);
+    buildEmptyState();
     return;
   }
   buildLoadingState();
   try {
     await loadYouTubeAPI();
   } catch (e) {
-    buildEmptyState(version);
+    buildEmptyState();
     showToast('No se pudo cargar YouTube');
     return;
   }
@@ -1888,299 +2042,24 @@ async function loadVideoForVersion(p, version) {
 }
 
 /* =========================================================
-   13 · MODAL YOUTUBE URL
+   13 · SHARE (solo copia el enlace)
    ========================================================= */
-let pendingVersionForYT = null;
-function openYouTubeModal(versionId) {
-  pendingVersionForYT = versionId || null;
-  const inp = $('yt-url-input');
-  inp.value = '';
-  $('yt-modal').classList.add('open');
-  setTimeout(() => inp.focus(), 60);
-}
-function closeYouTubeModal() { $('yt-modal').classList.remove('open'); }
-
-$('btn-upload-top').addEventListener('click', () => {
+$('btn-share').addEventListener('click', async () => {
   const p = getActiveProject();
   if (!p) return;
-  openYouTubeModal(p.currentVersion || 'v1');
-});
-$('yt-cancel').addEventListener('click', closeYouTubeModal);
-$('yt-modal').addEventListener('click', e => {
-  if (e.target === $('yt-modal')) closeYouTubeModal();
-});
-$('yt-url-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') { e.preventDefault(); saveYouTubeUrl(); }
-});
-$('yt-save').addEventListener('click', saveYouTubeUrl);
-
-async function saveYouTubeUrl() {
-  const p = getActiveProject();
-  if (!p) return;
-  const url = $('yt-url-input').value.trim();
-  const id = getYouTubeId(url);
-  if (!id) { showToast('URL de YouTube inválida'); return; }
-  const version = pendingVersionForYT || p.currentVersion || 'v1';
-  const vObj = (p.versions || []).find(v => v.id === version);
-  if (!vObj) { showToast('Versión no encontrada'); return; }
-
-  vObj.youtubeId = id;
-  vObj.duration = 0;
-  if (vObj.state === 'sin-empezar') vObj.state = 'en-edicion';
-  p.thumb = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
-  if (p.state === 'sin-empezar') p.state = 'en-edicion';
-  p.updatedAt = Date.now();
-
-  if (!isGuest) {
-    await persistProject(p);
-  }
-  closeYouTubeModal();
-  showToast('Video añadido ✔');
-  await loadVideoForVersion(p, version);
-  renderComments();
-
-  const stateSel = $('review-state');
-  if (stateSel) {
-    stateSel.value = vObj.state || p.state;
-    stateSel.dataset.state = stateSel.value;
-  }
-}
-
-/* =========================================================
-   14 · SHARE / GUEST MODE
-   ========================================================= */
-function buildSharePayload(p) {
-  const version = p.currentVersion || 'v1';
-  const vObj = (p.versions || []).find(v => v.id === version);
-  return {
-    v: 1,
-    pid: p.id,
-    name: p.name || '',
-    client: p.client || '',
-    date: p.date || '',
-    state: (vObj && vObj.state) || p.state || 'sin-empezar',
-    version,
-    youtubeId: (vObj && vObj.youtubeId) || '',
-    comments: (p.comments || []).map(c => ({
-      id: c.id,
-      time: c.time,
-      author: c.author,
-      text: c.text,
-      resolved: !!c.resolved,
-      version: c.version || 'v1',
-      createdAt: c.createdAt || new Date().toISOString()
-    }))
-  };
-}
-function openShareModal() {
-  const p = getActiveProject();
-  if (!p) return;
-  const payload = buildSharePayload(p);
-  const encoded = encodeShare(payload);
-  if (!encoded) { showToast('No se pudo generar el enlace'); return; }
-  const url = `${location.origin}${location.pathname}#/g/${encoded}`;
-  $('share-link-box').textContent = url;
-  $('share-modal').classList.add('open');
-  copyToClipboard(url).then(ok => {
-    if (ok) showToast('Enlace copiado ✔');
-  });
-}
-function closeShareModal() { $('share-modal').classList.remove('open'); }
-
-$('btn-share').addEventListener('click', openShareModal);
-$('share-close').addEventListener('click', closeShareModal);
-$('share-modal').addEventListener('click', e => {
-  if (e.target === $('share-modal')) closeShareModal();
-});
-$('share-copy').addEventListener('click', async () => {
-  const txt = $('share-link-box').textContent || '';
-  const ok = await copyToClipboard(txt);
-  showToast(ok ? 'Enlace copiado ✔' : 'No se pudo copiar');
-});
-
-function enterGuestModeFromPayload(payload, isReturn) {
-  isGuest = true;
-  isReturnToHost = isReturn;
-  guestPayload = payload;
-  guestOriginalCommentIds = new Set((payload.comments || []).map(c => c.id));
-
-  guestProject = {
-    id: payload.pid || uid(),
-    name: payload.name || 'Proyecto',
-    client: payload.client || '',
-    date: payload.date || '',
-    state: payload.state || 'sin-empezar',
-    currentVersion: payload.version || 'v1',
-    versions: [{
-      id: payload.version || 'v1',
-      state: payload.state || 'sin-empezar',
-      youtubeId: payload.youtubeId || '',
-      duration: 0
-    }],
-    comments: (payload.comments || []).map(c => ({ ...c })),
-    thumb: '',
-    _isGuest: true,
-    _originalIds: new Set((payload.comments || []).map(c => c.id)),
-    _returning: isReturn
-  };
-  currentProjectId = guestProject.id;
-  openReview(guestProject.id, guestProject.currentVersion);
-}
-
-function updateGuestControlsUI() {
-  const guestBadge = $('guest-badge');
-  const btnShare = $('btn-share');
-  const btnReturn = $('btn-return');
-  const btnImport = $('btn-import');
-  const btnUploadTop = $('btn-upload-top');
-  const stateSel = $('review-state');
-  const versionSel = $('review-version');
-  const backBtn = $('btn-back');
-
-  if (isGuest) {
-    guestBadge.style.display = 'inline-flex';
-    btnShare.style.display = 'none';
-    stateSel.disabled = true;
-    versionSel.disabled = true;
-    backBtn.style.display = 'none';
-
-    if (isReturnToHost) {
-      btnReturn.style.display = 'none';
-      btnImport.style.display = 'inline-flex';
-      btnUploadTop.style.display = 'none';
-      $('shared-note').textContent = '📥 Comentarios recibidos — pulsa "Importar" para mergear';
-    } else {
-      btnReturn.style.display = 'inline-flex';
-      btnImport.style.display = 'none';
-      btnUploadTop.style.display = (guestProject.versions[0].youtubeId) ? 'none' : 'inline-flex';
-      $('shared-note').textContent = '👤 Modo invitado · solo ves este proyecto';
-    }
-  } else {
-    guestBadge.style.display = 'none';
-    btnShare.style.display = 'inline-flex';
-    btnReturn.style.display = 'none';
-    btnImport.style.display = 'none';
-    btnUploadTop.style.display = 'inline-flex';
-    stateSel.disabled = false;
-    versionSel.disabled = false;
-    backBtn.style.display = 'flex';
-    $('shared-note').textContent = '💬 Los comentarios se comparten entre todas las versiones';
-  }
-}
-
-$('btn-return').addEventListener('click', async () => {
-  if (!isGuest || isReturnToHost) return;
-  const p = getActiveProject();
-  if (!p) return;
-
-  const vObj = (p.versions || []).find(v => v.id === (p.currentVersion || 'v1'));
-  const payload = {
-    v: 1,
-    pid: p.id,
-    name: p.name,
-    client: p.client,
-    date: p.date,
-    state: p.state,
-    version: p.currentVersion || 'v1',
-    youtubeId: (vObj && vObj.youtubeId) || '',
-    comments: (p.comments || []).map(c => ({
-      id: c.id, time: c.time, author: c.author, text: c.text,
-      resolved: !!c.resolved, version: c.version || 'v1',
-      createdAt: c.createdAt || new Date().toISOString()
-    }))
-  };
-  const encoded = encodeShare(payload);
-  const url = `${location.origin}${location.pathname}#/g/${encoded}`;
+  const url = `${location.origin}${location.pathname}#/p/${p.id}`;
   const ok = await copyToClipboard(url);
-
-  $('share-title').textContent = 'Enviar comentarios al autor';
-  $('share-hint').innerHTML = 'Copia este enlace y mándalo de vuelta al autor. Él podrá importar todos tus comentarios a su proyecto.';
-  $('share-link-box').textContent = url;
-  $('share-modal').classList.add('open');
-
-  showToast(ok ? 'Enlace listo para devolver ✔' : 'Copia el enlace manualmente');
+  showToast(ok ? 'Enlace copiado ✔' : 'No se pudo copiar el enlace', 2500, !ok);
 });
-
-$('btn-import').addEventListener('click', async () => {
-  if (!isReturnToHost) return;
-  const incoming = guestProject;
-  if (!incoming) return;
-
-  const localProject = getProject(incoming.id);
-  if (!localProject) {
-    showToast('Proyecto no encontrado');
-    return;
-  }
-
-  if (!confirm(`¿Importar ${incoming.comments.length} comentarios al proyecto "${localProject.name}"?`)) return;
-
-  const existingIds = new Set((localProject.comments || []).map(c => c.id));
-  let added = 0, updated = 0;
-
-  incoming.comments.forEach(inc => {
-    const local = (localProject.comments || []).find(c => c.id === inc.id);
-    if (local) {
-      if (local.text !== inc.text) { local.text = inc.text; updated++; }
-      if (local.resolved !== inc.resolved) { local.resolved = inc.resolved; updated++; }
-      if (local.author !== inc.author) local.author = inc.author;
-      if (local.time !== inc.time) local.time = inc.time;
-    } else {
-      localProject.comments.push({
-        id: inc.id,
-        time: inc.time,
-        author: inc.author,
-        text: inc.text,
-        resolved: !!inc.resolved,
-        version: inc.version || 'v1',
-        createdAt: inc.createdAt || new Date().toISOString()
-      });
-      added++;
-    }
-  });
-
-  localProject.updatedAt = Date.now();
-  await persistProject(localProject);
-  await refreshProjects();
-
-  showToast(`Importado: +${added} nuevos, ${updated} actualizados`);
-
-  exitGuestMode();
-  location.hash = '#/p/' + localProject.id + '/' + (localProject.currentVersion || 'v1');
-});
-
-function exitGuestMode() {
-  isGuest = false;
-  isReturnToHost = false;
-  guestProject = null;
-  guestPayload = null;
-  guestOriginalCommentIds.clear();
-  destroyPlayer();
-  updateGuestControlsUI();
-}
 
 /* =========================================================
-   15 · ROUTER
+   14 · ROUTER
    ========================================================= */
 function applyHashRoute() {
   const hash = location.hash || '';
 
-  const gm = hash.match(/^#\/g\/(.+)$/);
-  if (gm) {
-    const payload = decodeShare(gm[1]);
-    if (!payload) {
-      showToast('Enlace inválido');
-      location.hash = '';
-      return;
-    }
-    const localProject = getProject(payload.pid);
-    const isReturn = !!localProject;
-    enterGuestModeFromPayload(payload, isReturn);
-    return;
-  }
-
   const pm = hash.match(/^#\/p\/([^\/]+)(?:\/([^\/]+))?$/);
   if (pm) {
-    if (isGuest) exitGuestMode();
     const pid = pm[1];
     const ver = pm[2] || null;
     const p = getProject(pid);
@@ -2193,7 +2072,6 @@ function applyHashRoute() {
     return;
   }
 
-  if (isGuest) exitGuestMode();
   currentProjectId = null;
   destroyPlayer();
   showView('projects');
@@ -2202,13 +2080,14 @@ function applyHashRoute() {
 window.addEventListener('hashchange', applyHashRoute);
 
 /* =========================================================
-   16 · REVIEW
+   15 · REVIEW
    ========================================================= */
 async function openReview(id, versionOverride) {
-  const p = isGuest ? guestProject : getProject(id);
+  const p = getProject(id);
   if (!p) { showToast('Proyecto no encontrado'); location.hash = ''; return; }
   currentProjectId = id;
-  currentFilter = 'all';
+  currentFilter = 'pending';   // ⬅ siempre empezar en "no realizados"
+  animateCommentsNext = true;  // ⬅ activar animación de comentarios
   updateFilterTabs();
 
   showView('review');
@@ -2223,18 +2102,19 @@ async function openReview(id, versionOverride) {
     opt.value = vid; opt.textContent = vid;
     vSel.appendChild(opt);
   });
-  if (!isGuest) {
-    const opt = document.createElement('option');
-    opt.value = '__new__';
-    opt.textContent = '+ nueva versión';
-    vSel.appendChild(opt);
-  }
+  const opt = document.createElement('option');
+  opt.value = '__new__';
+  opt.textContent = '+ nueva versión';
+  vSel.appendChild(opt);
+
   const activeVersion = versionOverride && currentVersions.includes(versionOverride)
     ? versionOverride
     : (p.currentVersion || currentVersions[0] || 'v1');
   vSel.value = activeVersion;
   p.currentVersion = activeVersion;
-  if (!isGuest) await persistProject(p);
+  await persistProject(p);
+
+  updateDeleteVersionBtn();
 
   const stateSel = $('review-state');
   const activeVerObj = (p.versions || []).find(v => v.id === activeVersion);
@@ -2242,20 +2122,29 @@ async function openReview(id, versionOverride) {
   stateSel.value = stateVal;
   stateSel.dataset.state = stateVal;
 
-  updateGuestControlsUI();
-
   await loadVideoForVersion(p, activeVersion);
   renderComments();
 }
 function closeReview() { location.hash = ''; }
 $('btn-back').addEventListener('click', closeReview);
 
+function updateDeleteVersionBtn() {
+  const btn = $('btn-del-version');
+  if (!btn) return;
+  const p = getActiveProject();
+  const canDelete = p && (p.versions || []).length > 1;
+  btn.disabled = !canDelete;
+  btn.title = canDelete
+    ? `Eliminar versión ${p.currentVersion}`
+    : 'No puedes eliminar la única versión';
+}
+
 /* =========================================================
-   17 · VERSIÓN
+   16 · VERSIÓN (crear / cambiar / eliminar)
    ========================================================= */
 $('review-version').addEventListener('change', async e => {
   const p = getActiveProject();
-  if (!p || isGuest) { e.target.value = p.currentVersion; return; }
+  if (!p) { e.target.value = p?.currentVersion || 'v1'; return; }
   const val = e.target.value;
   if (val === '__new__') {
     const existing = (p.versions || []).map(v => v.id);
@@ -2276,12 +2165,32 @@ $('review-version').addEventListener('change', async e => {
   location.hash = '#/p/' + p.id + '/' + val;
 });
 
+$('btn-del-version').addEventListener('click', async () => {
+  const p = getActiveProject();
+  if (!p) return;
+  const versions = p.versions || [];
+  if (versions.length <= 1) {
+    showToast('No puedes eliminar la única versión', 2500, true);
+    return;
+  }
+  const cur = p.currentVersion || versions[0].id;
+  if (!confirm(`¿Eliminar la versión "${cur}"? Los comentarios asociados a esa versión se mantendrán etiquetados.`)) return;
+
+  p.versions = versions.filter(v => v.id !== cur);
+  p.currentVersion = p.versions[0].id;
+  p.updatedAt = Date.now();
+  await persistProject(p);
+  await refreshProjects();
+  showToast(`Versión ${cur} eliminada`, 2500);
+  location.hash = '#/p/' + p.id + '/' + p.currentVersion;
+});
+
 /* =========================================================
-   18 · ESTADO
+   17 · ESTADO
    ========================================================= */
 $('review-state').addEventListener('change', async e => {
   const p = getActiveProject();
-  if (!p || isGuest) return;
+  if (!p) return;
   const val = e.target.value;
   e.target.dataset.state = val;
   const version = p.currentVersion || 'v1';
@@ -2294,11 +2203,10 @@ $('review-state').addEventListener('change', async e => {
 });
 
 /* =========================================================
-   19 · COMENTARIOS
+   18 · COMENTARIOS
    ========================================================= */
 const commentsList = $('comments-list');
 const inputTime = $('comment-input-time');
-const inputAuthor = $('comment-input-author');
 const inputText = $('comment-input-text');
 const btnSend = $('btn-send-comment');
 
@@ -2351,6 +2259,9 @@ function renderComments() {
   const filtered = currentFilter === 'all' ? all : all.filter(c => !c.resolved);
   const sorted = [...filtered].sort((a, b) => a.time - b.time);
 
+  const animate = animateCommentsNext;
+  animateCommentsNext = false;
+
   commentsList.innerHTML = '';
   if (sorted.length === 0) {
     const empty = document.createElement('div');
@@ -2360,7 +2271,14 @@ function renderComments() {
       : 'No hay comentarios pendientes. ¡Todo realizado!';
     commentsList.appendChild(empty);
   } else {
-    sorted.forEach((c, i) => commentsList.appendChild(buildCommentItem(c, i)));
+    sorted.forEach((c, i) => {
+      const item = buildCommentItem(c, i);
+      if (animate) {
+        item.classList.add('anim-in');
+        item.style.animationDelay = Math.min(i * 40, 400) + 'ms';
+      }
+      commentsList.appendChild(item);
+    });
   }
   $('tab-count-all').textContent = all.length;
   $('tab-count-pending').textContent = all.filter(c => !c.resolved).length;
@@ -2369,19 +2287,14 @@ function renderComments() {
 function buildCommentItem(c, index) {
   const item = document.createElement('div');
   item.className = 'comment-item' + (c.resolved ? ' resolved' : '');
-  const isNewByGuest = isGuest && guestOriginalCommentIds.size && !guestOriginalCommentIds.has(c.id);
-  if (isNewByGuest) item.classList.add('new-by-guest');
   item.dataset.id = c.id;
 
   const verLabel = c.version ? ` · ${esc(c.version)}` : '';
-  const newBadge = isNewByGuest ? '<span class="comment-new-badge">NUEVO</span>' : '';
 
   item.innerHTML = `
     <div class="comment-head">
       <button class="comment-time-btn" type="button" title="Ir a este momento">${fmtTime(c.time)}</button>
-      <span class="comment-author">${esc(c.author || 'Anónimo')}${verLabel}</span>
-      ${newBadge}
-      <span class="comment-index">#${index + 1}</span>
+      <span class="comment-index">#${index + 1}${verLabel}</span>
       <div class="comment-actions">
         <button class="comment-btn check" type="button" title="${c.resolved ? 'Marcar pendiente' : 'Marcar realizado'}" data-role="toggle">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
@@ -2415,7 +2328,7 @@ function buildCommentItem(c, index) {
     const target = (proj.comments || []).find(x => x.id === c.id);
     if (!target) return;
     target.resolved = !target.resolved;
-    if (!isGuest) await persistProject(proj);
+    await persistProject(proj);
     renderComments();
   });
   item.querySelector('[data-role="delete"]').addEventListener('click', async e => {
@@ -2423,7 +2336,7 @@ function buildCommentItem(c, index) {
     if (!confirm('¿Eliminar este comentario?')) return;
     const proj = getActiveProject();
     proj.comments = (proj.comments || []).filter(x => x.id !== c.id);
-    if (!isGuest) await persistProject(proj);
+    await persistProject(proj);
     renderComments();
     showToast('Comentario eliminado');
   });
@@ -2435,7 +2348,7 @@ function buildCommentItem(c, index) {
     target.text = textEl.innerText.trim();
     clearTimeout(item._saveTimer);
     item._saveTimer = setTimeout(async () => {
-      if (!isGuest) await persistProject(proj);
+      await persistProject(proj);
       renderMarkers();
     }, 700);
   });
@@ -2456,15 +2369,21 @@ async function addComment() {
   p.comments.push({
     id: cuid(),
     time: Number(time) || 0,
-    author: inputAuthor.value.trim() || 'Anónimo',
+    author: '',
     text, resolved: false, version,
     createdAt: new Date().toISOString()
   });
-  if (!isGuest) await persistProject(p);
-  try { localStorage.setItem('kevirago_last_author', inputAuthor.value.trim()); } catch (err) {}
+  await persistProject(p);
   inputText.value = '';
   if (video) lockedCommentTime = video.currentTime || 0;
+  // Animar solo el nuevo ítem (los demás se re-renderizan sin animación)
   renderComments();
+  // Resaltar brevemente el último añadido
+  const lastItem = commentsList.querySelector('.comment-item:last-child');
+  if (lastItem) {
+    lastItem.classList.add('anim-in');
+    lastItem.style.animationDelay = '0ms';
+  }
   showToast('Comentario añadido ✔');
 }
 btnSend.addEventListener('click', addComment);
@@ -2474,13 +2393,9 @@ inputText.addEventListener('keydown', e => {
     addComment();
   }
 });
-try {
-  const last = localStorage.getItem('kevirago_last_author');
-  if (last) inputAuthor.value = last;
-} catch (err) {}
 
 /* =========================================================
-   20 · MARCADORES
+   19 · MARCADORES
    ========================================================= */
 function renderMarkers() {
   if (!vcMarkersEl) return;
@@ -2490,22 +2405,33 @@ function renderMarkers() {
   const list = p.comments || [];
   list.forEach(c => {
     const pct = Math.max(0, Math.min(1, c.time / video.duration)) * 100;
+    const wrap = document.createElement('div');
+    wrap.className = 'vc-marker-wrap';
+    wrap.style.left = pct + '%';
+
     const m = document.createElement('button');
     m.type = 'button';
     m.className = 'vc-marker' + (c.resolved ? ' resolved' : '');
-    m.style.left = pct + '%';
-    m.dataset.tip = `${fmtTime(c.time)} · ${c.author}: ${c.text.slice(0, 60)}${c.text.length > 60 ? '…' : ''}`;
     m.setAttribute('aria-label', `Comentario en ${fmtTime(c.time)}`);
+
+    const tip = document.createElement('span');
+    tip.className = 'vc-marker-tip';
+    const shortText = c.text.length > 60 ? c.text.slice(0, 60) + '…' : c.text;
+    tip.textContent = `${fmtTime(c.time)} · ${shortText}`;
+
     m.addEventListener('click', ev => {
       ev.stopPropagation();
       if (video) { video.currentTime = c.time; video.pause(); }
     });
-    vcMarkersEl.appendChild(m);
+
+    wrap.appendChild(m);
+    wrap.appendChild(tip);
+    vcMarkersEl.appendChild(wrap);
   });
 }
 
 /* =========================================================
-   21 · FILTROS
+   20 · FILTROS
    ========================================================= */
 document.querySelectorAll('.tab-btn[data-filter]').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -2521,9 +2447,10 @@ function updateFilterTabs() {
 }
 
 /* =========================================================
-   22 · INIT
+   21 · INIT
    ========================================================= */
 async function init() {
+  updateFilterTabs();
   await refreshProjects();
   if (location.hash) {
     applyHashRoute();
@@ -2535,48 +2462,134 @@ async function init() {
 init();
 
 /* =========================================================
-   23 · ATAJOS
+   22 · ATAJOS DE TECLADO
    ========================================================= */
+const SHORTCUTS_HELP = `ATAJOS DE TECLADO
+
+Proyectos:
+  N            Nuevo proyecto
+  G            Vista cuadrícula
+  L            Vista lista
+  Esc          Cerrar modal
+
+Review:
+  Espacio      Reproducir / Pausar
+  ← / →        Retroceder / Avanzar 5s
+  M            Silenciar
+  F            Pantalla completa
+  C            Enfocar input de comentario
+  1 / 2        Comentarios · No realizados
+  N            Nueva versión
+  S            Copiar enlace
+  Esc          Volver a proyectos`;
+
 document.addEventListener('keydown', e => {
   const inReview = $('review-view').classList.contains('active');
-  const tag = (document.activeElement?.tagName || '').toLowerCase();
-  const editing = document.activeElement?.isContentEditable || tag === 'input' || tag === 'textarea';
+  const configOpen = $('config-modal').classList.contains('open');
 
+  const tag = (document.activeElement?.tagName || '').toLowerCase();
+  const editing = document.activeElement?.isContentEditable
+                  || tag === 'input'
+                  || tag === 'textarea'
+                  || tag === 'select';
+
+  // Escape: cierra modal / sale de review
   if (e.key === 'Escape') {
-    if ($('config-modal').classList.contains('open')) { closeConfig(); return; }
-    if ($('share-modal').classList.contains('open')) { closeShareModal(); return; }
-    if ($('yt-modal').classList.contains('open')) { closeYouTubeModal(); return; }
+    if (configOpen) { closeConfig(); return; }
     if (document.fullscreenElement) return;
-    if (inReview && !isGuest) { closeReview(); return; }
+    if (inReview) { closeReview(); return; }
     return;
   }
-  if ($('config-modal').classList.contains('open') ||
-      $('share-modal').classList.contains('open') ||
-      $('yt-modal').classList.contains('open')) return;
-  if (!inReview) return;
+
+  // ? (Shift + /) → mostrar ayuda (funciona en cualquier lado)
+  if (e.key === '?' && !editing) {
+    e.preventDefault();
+    showToast(SHORTCUTS_HELP, 6500, false, true);
+    return;
+  }
+
+  if (configOpen) return;
+
+  /* ---------- VISTA PROYECTOS ---------- */
+  if (!inReview) {
+    if (editing) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+    const k = e.key.toLowerCase();
+    if (k === 'n') { e.preventDefault(); openConfig('create'); return; }
+    if (k === 'g') { e.preventDefault(); $('view-grid-btn').click(); return; }
+    if (k === 'l') { e.preventDefault(); $('view-list-btn').click(); return; }
+    return;
+  }
+
+  /* ---------- VISTA REVIEW ---------- */
+  // Atajos que funcionan aunque estés en un input (los más útiles)
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    // ya lo maneja el textarea, no hacemos nada aquí
+    return;
+  }
+
+  // Si estás editando un comentario o escribiendo, solo permitir Escape / ? (ya manejados)
+  if (editing) return;
+
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+  const k = e.key.toLowerCase();
+
+  // 1 / 2 → filtros
+  if (k === '1') { e.preventDefault(); currentFilter = 'all';     updateFilterTabs(); renderComments(); return; }
+  if (k === '2') { e.preventDefault(); currentFilter = 'pending'; updateFilterTabs(); renderComments(); return; }
+
+  // S → copiar enlace
+  if (k === 's') { e.preventDefault(); $('btn-share').click(); return; }
+
+  // N → nueva versión
+  if (k === 'n') {
+    e.preventDefault();
+    const vSel = $('review-version');
+    if (vSel && !vSel.disabled) {
+      vSel.value = '__new__';
+      vSel.dispatchEvent(new Event('change'));
+    }
+    return;
+  }
+
+  // C → enfocar comentario
+  if (k === 'c') {
+    e.preventDefault();
+    inputText.focus();
+    return;
+  }
+
+  // Controles del reproductor
   if (!video) return;
 
-  if (e.key === ' ' && !editing) {
+  if (e.key === ' ') {
     e.preventDefault();
     if (video.paused) video.play(); else video.pause();
+    return;
   }
-  if (e.key === 'ArrowRight' && !editing) {
+  if (e.key === 'ArrowRight') {
     e.preventDefault();
     video.currentTime = Math.min(video.duration || 0, video.currentTime + 5);
     video.pause();
+    return;
   }
-  if (e.key === 'ArrowLeft' && !editing) {
+  if (e.key === 'ArrowLeft') {
     e.preventDefault();
     video.currentTime = Math.max(0, video.currentTime - 5);
     video.pause();
+    return;
   }
-  if (e.key === 'm' && !editing) {
+  if (k === 'm') {
     video.muted = !video.muted;
     updateMuteIcon();
+    return;
   }
-  if (e.key === 'f' && !editing) {
+  if (k === 'f') {
     if (!document.fullscreenElement) videoContainer.requestFullscreen?.().catch(() => {});
     else document.exitFullscreen?.();
+    return;
   }
 });
 </script>
