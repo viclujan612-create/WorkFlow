@@ -236,7 +236,11 @@
     font-size: 12.5px; color: var(--txt-dim);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  .project-date { font-size: 11.5px; color: var(--txt-dim-2); }
+  .project-date {
+    font-size: 11.5px; color: var(--txt-dim-2);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .project-date::before { content: '📅'; font-size: 10px; opacity: .7; }
   .project-menu {
     position: absolute; top: 100%; right: 12px;
     margin-top: -60px;
@@ -289,6 +293,28 @@
   .new-card-icon svg { width: 22px; height: 22px; }
   .new-card-label { font-size: 13.5px; font-weight: 700; color: #c0c0c4; }
 
+  /* Loading spinner genérico */
+  .spinner {
+    width: 38px; height: 38px;
+    border: 3px solid rgba(255, 42, 0, .2);
+    border-top-color: var(--brand);
+    border-radius: 50%;
+    animation: spin .9s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .projects-loading {
+    grid-column: 1 / -1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 14px;
+    padding: 80px 20px;
+    color: var(--txt-dim);
+    font-size: 13px;
+  }
+  .projects-loading .txt { font-weight: 700; color: #c8c8cc; letter-spacing: .3px; }
+
   .review-header {
     display: flex; align-items: center; gap: 12px;
     padding: 12px clamp(12px, 2vw, 22px);
@@ -296,7 +322,6 @@
     border-bottom: 1px solid var(--border);
     flex-shrink: 0; min-height: 70px; flex-wrap: wrap;
   }
-  .review-header .brand-logo { height: 26px; flex-shrink: 0; }
   .btn-back {
     flex: 0 0 auto;
     width: 38px; height: 38px; padding: 0;
@@ -328,7 +353,11 @@
     font-size: 9.5px; font-weight: 800;
     letter-spacing: .6px; text-transform: uppercase;
   }
-  .review-header-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+  .review-header-controls {
+    display: flex; align-items: center; gap: 8px;
+    flex-shrink: 0; flex-wrap: wrap;
+    justify-content: flex-end;
+  }
   .state-select-wrap, .version-select-wrap { position: relative; }
   .state-select, .version-select {
     padding: 9px 32px 9px 14px;
@@ -360,28 +389,24 @@
     font-size: 13px; font-weight: 700;
     border: 0;
     transition: transform .15s, filter .2s, background .2s, border-color .2s;
+    white-space: nowrap;
   }
-  .btn-action-top svg { width: 15px; height: 15px; }
-  .btn-upload-top {
-    background: var(--grad); color: #fff;
-    box-shadow: 0 6px 18px rgba(255, 42, 0, .35);
-  }
-  .btn-upload-top:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .btn-action-top svg { width: 15px; height: 15px; flex-shrink: 0; }
   .btn-share {
     background: var(--panel-2); color: #fff;
     border: 1px solid var(--border);
   }
   .btn-share:hover { background: var(--panel-3); border-color: var(--border-2); }
-  .btn-return {
-    background: var(--grad-green); color: #fff;
-    box-shadow: 0 6px 18px rgba(22, 163, 74, .35);
+  .btn-delete-version {
+    flex: 0 0 auto;
+    width: 38px; height: 38px; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--panel-2); color: #f87171;
+    border: 1px solid var(--border); border-radius: 10px;
+    transition: background .2s, border-color .2s, color .2s;
   }
-  .btn-return:hover { transform: translateY(-1px); filter: brightness(1.06); }
-  .btn-import {
-    background: var(--grad-blue); color: #fff;
-    box-shadow: 0 6px 18px rgba(79, 70, 229, .35);
-  }
-  .btn-import:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .btn-delete-version:hover { background: #3a1a1a; border-color: #7f1d1d; color: #fca5a5; }
+  .btn-delete-version svg { width: 16px; height: 16px; }
 
   .review-main {
     flex: 1 1 auto; display: flex;
@@ -440,14 +465,6 @@
     color: var(--txt-dim); font-size: 13px;
     z-index: 3;
   }
-  .video-loading .spinner {
-    width: 38px; height: 38px;
-    border: 3px solid rgba(255, 42, 0, .2);
-    border-top-color: var(--brand);
-    border-radius: 50%;
-    animation: spin .9s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
   .btn-upload-video {
     margin-top: 4px;
     display: inline-flex; align-items: center; gap: 8px;
@@ -607,6 +624,9 @@
     font-size: 11.5px; font-weight: 700;
     letter-spacing: .4px; text-transform: lowercase;
     transition: background .2s, color .2s, border-color .2s;
+    white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+    min-width: 0;
   }
   .tab-btn:hover { color: #fff; background: var(--panel-2); }
   .tab-btn.active { background: var(--panel-3); color: #fff; border-color: var(--border-2); }
@@ -657,7 +677,7 @@
   .comment-item.resolved { opacity: .6; border-left-color: #16a34a; }
   .comment-item.resolved .comment-text { text-decoration: line-through; text-decoration-color: rgba(255,255,255,.25); }
   .comment-item.new-by-guest { border-left-color: #6366f1; }
-  .comment-head { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+  .comment-head { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; flex-wrap: wrap; }
   .comment-time-btn {
     display: inline-flex; align-items: center; gap: 4px;
     padding: 3px 9px;
@@ -673,6 +693,7 @@
     font-size: 11px; font-weight: 700; color: var(--txt-dim);
     text-transform: uppercase; letter-spacing: .4px;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    max-width: 130px;
   }
   .comment-new-badge {
     display: inline-flex;
@@ -835,6 +856,13 @@
   }
   .config-field:focus { border-color: var(--brand); }
   .config-field::placeholder { color: var(--txt-dim-2); font-weight: 500; }
+  .config-field-label {
+    display: block;
+    font-size: 10.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .8px;
+    color: var(--txt-dim);
+    margin: 4px 0 6px;
+  }
   .config-actions {
     display: flex; justify-content: flex-end; gap: 8px;
     margin-top: 8px;
@@ -887,18 +915,36 @@
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
   .toast.error { background: #fee2e2; color: #991b1b; }
 
-  @media (max-width: 640px) {
-    .review-header { padding: 10px 12px; gap: 8px; min-height: 62px; }
-    .review-header .brand-logo { height: 22px; }
-    .review-project-name { font-size: 15px; }
-    .review-client { font-size: 11px; }
-    .btn-action-top span { display: none; }
-    .btn-action-top { padding: 9px 12px; }
-    .state-select, .version-select { padding: 7px 26px 7px 10px; font-size: 11px; }
+  @media (max-width: 720px) {
+    .review-header {
+      padding: 10px 12px; gap: 8px; min-height: 60px;
+      flex-wrap: wrap;
+    }
+    .review-info { flex: 1 1 100%; order: -1; }
+    .review-header-controls {
+      width: 100%;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .state-select-wrap, .version-select-wrap { flex: 1 1 0; min-width: 0; }
+    .state-select, .version-select {
+      width: 100%;
+      padding: 8px 24px 8px 10px;
+      font-size: 10.5px;
+      text-align: center;
+    }
+    .state-select-wrap::after, .version-select-wrap::after { right: 8px; }
+    .btn-delete-version { width: 34px; height: 34px; flex: 0 0 auto; }
+    .btn-share { padding: 8px 12px; font-size: 11px; }
+    .btn-share span { display: none; }
     .btn-back { width: 34px; height: 34px; }
     .btn-back svg { width: 15px; height: 15px; }
+
     .vc-bar { padding: 28px 10px 10px; gap: 8px; }
     .vc-btn { width: 34px; height: 34px; }
+    .vc-time { font-size: 11px; }
+    .vc-volume-wrap { display: none; }
+    .vc-fullscreen { display: none; }
 
     .btn-home span { display: none; }
     .btn-home { padding: 10px 12px; }
@@ -907,6 +953,11 @@
     .app-header { padding: 12px 14px; gap: 12px; }
     .header-brand { gap: 10px; }
     .brand-lockup { padding-left: 10px; gap: 8px; }
+  }
+
+  @media (max-width: 420px) {
+    .tab-btn { font-size: 10.5px; padding: 8px 6px; }
+    .tab-count { margin-left: 3px; padding: 1px 4px; font-size: 9px; }
   }
 </style>
 </head>
@@ -975,7 +1026,6 @@
 <!-- ================= REVIEW ================= -->
 <section id="review-view" class="view">
   <header class="review-header">
-    <div class="logo-slot-small"></div>
     <button class="btn-back" id="btn-back" type="button" aria-label="Volver">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
@@ -998,9 +1048,12 @@
       <div class="version-select-wrap">
         <select class="version-select" id="review-version" aria-label="Versión"></select>
       </div>
-      <button class="btn-action-top btn-upload-top" id="btn-upload-top" type="button" title="Añadir enlace de video de YouTube">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-        <span id="btn-upload-label">Añadir video</span>
+      <button class="btn-delete-version" id="btn-delete-version" type="button" title="Eliminar versión actual" aria-label="Eliminar versión">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+        </svg>
       </button>
       <button class="btn-action-top btn-share" id="btn-share" type="button" title="Compartir">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -1008,18 +1061,6 @@
           <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>
         </svg>
         <span>Compartir</span>
-      </button>
-      <button class="btn-action-top btn-return" id="btn-return" type="button" style="display:none" title="Devolver comentarios al autor">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-        </svg>
-        <span>Devolver</span>
-      </button>
-      <button class="btn-action-top btn-import" id="btn-import" type="button" style="display:none" title="Importar comentarios del cliente">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>
-        </svg>
-        <span>Importar</span>
       </button>
     </div>
   </header>
@@ -1063,6 +1104,8 @@
     <input type="text" class="config-field" id="config-name" placeholder="nombre del proyecto" maxlength="80">
     <input type="text" class="config-field" id="config-client" placeholder="cliente" maxlength="80">
     <input type="date" class="config-field" id="config-date">
+    <label class="config-field-label" id="config-url-label">video de YouTube (opcional)</label>
+    <input type="text" class="config-field" id="config-url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
     <div class="config-actions">
       <button class="btn-cancel" id="config-cancel" type="button">cancelar</button>
       <button class="btn-save" id="config-save" type="button">guardar</button>
@@ -1128,7 +1171,7 @@
 
 <script>
 /* =========================================================
-   0 · CONFIGURACIÓN API (👉 EDITA ESTAS DOS LÍNEAS)
+   0 · CONFIGURACIÓN API
    ========================================================= */
 const API_URL = 'https://script.google.com/macros/s/AKfycbw-KS60jeS-QhcyM6aM5Q-FenysK2r0Vw0-MDsEiBBNR39LINIrvPyth8rCIQQujoMm/exec';
 const API_KEY = 'kevirago_2026_revisor_9f3a7b21c4e8d5a6';
@@ -1208,9 +1251,47 @@ async function copyToClipboard(text) {
     return true;
   } catch (err) { return false; }
 }
+
+/* ---------- Compresión de payload (link corto) ---------- */
+function compactPayload(p) {
+  const v = (p.versions || []).find(x => x.id === (p.currentVersion || 'v1')) || {};
+  return {
+    p: p.id,
+    n: p.name || '',
+    c: p.client || '',
+    d: p.date || '',
+    s: (v.state) || p.state || 'sin-empezar',
+    v: p.currentVersion || 'v1',
+    y: v.youtubeId || '',
+    m: (p.comments || []).map(c => ([
+      c.id,
+      c.time,
+      c.author,
+      c.text,
+      c.resolved ? 1 : 0,
+      c.version || 'v1',
+      c.createdAt || ''
+    ]))
+  };
+}
+function expandPayload(x) {
+  if (x && Array.isArray(x.m) && x.m.length && Array.isArray(x.m[0])) {
+    return {
+      pid: x.p, name: x.n, client: x.c, date: x.d,
+      state: x.s, version: x.v, youtubeId: x.y,
+      comments: x.m.map(a => ({
+        id: a[0], time: a[1], author: a[2], text: a[3],
+        resolved: !!a[4], version: a[5], createdAt: a[6]
+      }))
+    };
+  }
+  // Back-compat con formato antiguo
+  return x;
+}
 function encodeShare(payload) {
   try {
-    return btoa(unescape(encodeURIComponent(JSON.stringify(payload))))
+    const compact = compactPayload(payload);
+    return btoa(unescape(encodeURIComponent(JSON.stringify(compact))))
       .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   } catch (err) { return ''; }
 }
@@ -1218,9 +1299,11 @@ function decodeShare(str) {
   try {
     const pad = str.length % 4 === 0 ? '' : '='.repeat(4 - (str.length % 4));
     const b64 = str.replace(/-/g, '+').replace(/_/g, '/') + pad;
-    return JSON.parse(decodeURIComponent(escape(atob(b64))));
+    const raw = JSON.parse(decodeURIComponent(escape(atob(b64))));
+    return expandPayload(raw);
   } catch (err) { return null; }
 }
+
 const STATE_LABELS = {
   'sin-empezar': 'Sin empezar',
   'en-edicion':  'En edición',
@@ -1229,7 +1312,7 @@ const STATE_LABELS = {
 };
 
 /* =========================================================
-   2 · API (Google Apps Script)
+   2 · API
    ========================================================= */
 async function apiGet(params = {}) {
   const qs = new URLSearchParams({ key: API_KEY, ...params }).toString();
@@ -1242,7 +1325,6 @@ async function apiGet(params = {}) {
 async function apiPost(body) {
   const res = await fetch(`${API_URL}?key=${encodeURIComponent(API_KEY)}`, {
     method: 'POST',
-    // OJO: text/plain para evitar preflight OPTIONS (Apps Script no lo maneja)
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(body)
   });
@@ -1267,7 +1349,6 @@ let isGuest = false;
 let guestProject = null;
 let guestPayload = null;
 let guestOriginalCommentIds = new Set();
-let isReturnToHost = false;
 
 function getProject(id) { return projects.find(p => p.id === id); }
 function getActiveProject() { return isGuest ? guestProject : getProject(currentProjectId); }
@@ -1284,7 +1365,6 @@ async function refreshProjects() {
 async function persistProject(p) {
   try {
     await apiPost({ action: 'saveProject', project: p });
-    // actualizamos la lista local
     const idx = projects.findIndex(x => x.id === p.id);
     if (idx >= 0) projects[idx] = p; else projects.push(p);
   } catch (err) {
@@ -1306,7 +1386,7 @@ async function removeProject(id) {
    ========================================================= */
 (function injectLogo() {
   const tpl = $('logo-tpl').content;
-  document.querySelectorAll('.logo-slot, .logo-slot-small').forEach(slot => {
+  document.querySelectorAll('.logo-slot').forEach(slot => {
     slot.appendChild(tpl.cloneNode(true));
   });
 })();
@@ -1323,6 +1403,16 @@ function showView(name) {
 /* =========================================================
    6 · PROYECTOS · RENDER
    ========================================================= */
+function renderProjectsLoading() {
+  const cont = $('projects-container');
+  cont.className = 'projects-grid';
+  cont.innerHTML = `
+    <div class="projects-loading">
+      <div class="spinner"></div>
+      <div class="txt">Cargando proyectos…</div>
+    </div>
+  `;
+}
 function getSortedProjects() {
   let list = [...projects];
   if (currentStateFilter !== 'all') {
@@ -1355,6 +1445,7 @@ function buildProjectCard(p) {
   const thumbHTML = p.thumb
     ? `<img src="${esc(p.thumb)}" alt="">`
     : `<div class="thumb-placeholder"><div class="icon">🎬</div><div>sin video</div></div>`;
+  const fechaTxt = fmtDateDisplay(p.date) || fmtDateDisplay(new Date(p.createdAt || Date.now()).toISOString().slice(0,10));
   card.innerHTML = `
     <div class="project-thumb">
       ${thumbHTML}
@@ -1367,7 +1458,7 @@ function buildProjectCard(p) {
         <button class="project-menu-btn" type="button" aria-label="Opciones" data-menu-trigger>⋯</button>
       </div>
       <div class="project-client">${esc(p.client || 'Sin cliente')}</div>
-      <div class="project-date">${esc(fmtDateDisplay(p.date))}</div>
+      <div class="project-date">${esc(fechaTxt)}</div>
     </div>
     <div class="project-menu" role="menu">
       <button type="button" data-action="config">Configuración</button>
@@ -1462,6 +1553,8 @@ function openConfig(mode, id) {
   const nameEl = $('config-name');
   const cliEl = $('config-client');
   const dateEl = $('config-date');
+  const urlEl = $('config-url');
+  const urlLabel = $('config-url-label');
   if (mode === 'edit') {
     const p = getProject(id);
     if (!p) { showToast('Proyecto no encontrado'); return; }
@@ -1469,11 +1562,16 @@ function openConfig(mode, id) {
     nameEl.value = p.name || '';
     cliEl.value = p.client || '';
     dateEl.value = p.date || new Date().toISOString().slice(0,10);
+    urlEl.style.display = 'none';
+    urlLabel.style.display = 'none';
   } else {
     titleEl.textContent = 'crear nuevo proyecto';
     nameEl.value = '';
     cliEl.value = '';
     dateEl.value = new Date().toISOString().slice(0,10);
+    urlEl.value = '';
+    urlEl.style.display = '';
+    urlLabel.style.display = '';
   }
   $('config-modal').classList.add('open');
   setTimeout(() => nameEl.focus(), 60);
@@ -1490,18 +1588,32 @@ async function saveConfig() {
   if (!name) { showToast('Ponle un nombre al proyecto'); $('config-name').focus(); return; }
   if (configMode === 'create') {
     const now = Date.now();
+    let youtubeId = '';
+    let thumb = '';
+    const urlRaw = $('config-url').value.trim();
+    if (urlRaw) {
+      const id = getYouTubeId(urlRaw);
+      if (id) {
+        youtubeId = id;
+        thumb = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+      } else {
+        showToast('URL de YouTube inválida, se ignora');
+      }
+    }
+    const initialState = youtubeId ? 'en-edicion' : 'sin-empezar';
     const p = {
       id: uid(), name, client, date,
-      state: 'sin-empezar',
+      state: initialState,
       currentVersion: 'v1',
-      versions: [{ id: 'v1', state: 'sin-empezar', youtubeId: '', duration: 0 }],
-      comments: [], thumb: '',
+      versions: [{ id: 'v1', state: initialState, youtubeId, duration: 0 }],
+      comments: [], thumb,
       createdAt: now, updatedAt: now
     };
     await persistProject(p);
     closeConfig();
-    renderProjects();
     showToast('Proyecto creado ✔');
+    // Ir directo al modo revisión/comentario
+    location.hash = '#/p/' + p.id + '/v1';
   } else {
     const p = getProject(configProjectId);
     if (!p) return;
@@ -1514,7 +1626,7 @@ async function saveConfig() {
   }
 }
 $('config-save').addEventListener('click', saveConfig);
-['config-name','config-client','config-date'].forEach(id => {
+['config-name','config-client','config-date','config-url'].forEach(id => {
   $(id).addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); saveConfig(); }
   });
@@ -1541,7 +1653,7 @@ function loadYouTubeAPI() {
 }
 
 /* =========================================================
-   11 · REPRODUCTOR (wrapper sobre YT.Player)
+   11 · REPRODUCTOR
    ========================================================= */
 let ytPlayer = null;
 let ytReady = false;
@@ -1582,7 +1694,7 @@ function buildLoadingState() {
   videoContainer.innerHTML = `
     <div class="video-loading">
       <div class="spinner"></div>
-      <div>Cargando reproductor de YouTube…</div>
+      <div>Cargando video…</div>
     </div>
   `;
   video = null; vcBar = null;
@@ -1591,21 +1703,15 @@ function buildLoadingState() {
 function buildEmptyState(version) {
   const guestMsg = isGuest
     ? 'El autor no compartió el enlace del video. Pídeselo para poder revisar.'
-    : 'Pega el enlace del video de YouTube para empezar a revisar y dejar comentarios.';
+    : 'El proyecto fue creado sin video. Puedes añadirlo desde la configuración del proyecto.';
   videoContainer.innerHTML = `
     <div class="video-empty" id="video-empty">
       <div class="icon">🎬</div>
       <div class="title">Sin video para esta versión</div>
       <div class="sub">${guestMsg}</div>
-      <button class="btn-upload-video" id="btn-upload-video" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-        Añadir enlace de YouTube
-      </button>
     </div>
   `;
   video = null; vcBar = null;
-  const btn = $('btn-upload-video');
-  if (btn) btn.addEventListener('click', () => openYouTubeModal(version));
 }
 
 function buildVideoPlayer() {
@@ -1633,7 +1739,7 @@ function buildVideoPlayer() {
           <div class="vc-volume-fill" id="vc-volume-fill" style="width:100%"></div>
         </div>
       </div>
-      <button class="vc-btn" id="vc-fullscreen" aria-label="Pantalla completa">
+      <button class="vc-btn vc-fullscreen" id="vc-fullscreen" aria-label="Pantalla completa">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
       </button>
     </div>
@@ -1750,7 +1856,7 @@ function onPlayerReady(event) {
   const p = getActiveProject();
   if (p && !isGuest) {
     const vObj = (p.versions || []).find(v => v.id === (p.currentVersion || 'v1'));
-    if (vObj) {
+    if (vObj && !vObj.duration) {
       vObj.duration = duration || 0;
       persistProject(p).catch(() => {});
     }
@@ -1862,11 +1968,6 @@ function openYouTubeModal(versionId) {
 }
 function closeYouTubeModal() { $('yt-modal').classList.remove('open'); }
 
-$('btn-upload-top').addEventListener('click', () => {
-  const p = getActiveProject();
-  if (!p) return;
-  openYouTubeModal(p.currentVersion || 'v1');
-});
 $('yt-cancel').addEventListener('click', closeYouTubeModal);
 $('yt-modal').addEventListener('click', e => {
   if (e.target === $('yt-modal')) closeYouTubeModal();
@@ -1941,15 +2042,50 @@ function openShareModal() {
   const encoded = encodeShare(payload);
   if (!encoded) { showToast('No se pudo generar el enlace'); return; }
   const url = `${location.origin}${location.pathname}#/g/${encoded}`;
+  $('share-title').textContent = 'Compartir con el cliente';
+  $('share-hint').innerHTML = 'Copia el enlace y envíalo junto con el video. El cliente podrá revisar, comentar y devolverte sus notas.';
   $('share-link-box').textContent = url;
   $('share-modal').classList.add('open');
   copyToClipboard(url).then(ok => {
     if (ok) showToast('Enlace copiado ✔');
   });
 }
+function openGuestReturnShare() {
+  const p = getActiveProject();
+  if (!p) return;
+  const vObj = (p.versions || []).find(v => v.id === (p.currentVersion || 'v1'));
+  const payload = {
+    v: 1,
+    pid: p.id,
+    name: p.name,
+    client: p.client,
+    date: p.date,
+    state: p.state,
+    version: p.currentVersion || 'v1',
+    youtubeId: (vObj && vObj.youtubeId) || '',
+    comments: (p.comments || []).map(c => ({
+      id: c.id, time: c.time, author: c.author, text: c.text,
+      resolved: !!c.resolved, version: c.version || 'v1',
+      createdAt: c.createdAt || new Date().toISOString()
+    }))
+  };
+  const encoded = encodeShare(payload);
+  if (!encoded) { showToast('No se pudo generar el enlace'); return; }
+  const url = `${location.origin}${location.pathname}#/g/${encoded}`;
+  $('share-title').textContent = 'Devolver comentarios al autor';
+  $('share-hint').innerHTML = 'Copia este enlace y mándalo de vuelta al autor. Al abrirlo, tus comentarios se integrarán automáticamente.';
+  $('share-link-box').textContent = url;
+  $('share-modal').classList.add('open');
+  copyToClipboard(url).then(ok => {
+    if (ok) showToast('Enlace listo para devolver ✔');
+  });
+}
 function closeShareModal() { $('share-modal').classList.remove('open'); }
 
-$('btn-share').addEventListener('click', openShareModal);
+$('btn-share').addEventListener('click', () => {
+  if (isGuest) openGuestReturnShare();
+  else openShareModal();
+});
 $('share-close').addEventListener('click', closeShareModal);
 $('share-modal').addEventListener('click', e => {
   if (e.target === $('share-modal')) closeShareModal();
@@ -1960,9 +2096,8 @@ $('share-copy').addEventListener('click', async () => {
   showToast(ok ? 'Enlace copiado ✔' : 'No se pudo copiar');
 });
 
-function enterGuestModeFromPayload(payload, isReturn) {
+function enterGuestModeFromPayload(payload) {
   isGuest = true;
-  isReturnToHost = isReturn;
   guestPayload = payload;
   guestOriginalCommentIds = new Set((payload.comments || []).map(c => c.id));
 
@@ -1981,9 +2116,7 @@ function enterGuestModeFromPayload(payload, isReturn) {
     }],
     comments: (payload.comments || []).map(c => ({ ...c })),
     thumb: '',
-    _isGuest: true,
-    _originalIds: new Set((payload.comments || []).map(c => c.id)),
-    _returning: isReturn
+    _isGuest: true
   };
   currentProjectId = guestProject.id;
   openReview(guestProject.id, guestProject.currentVersion);
@@ -1992,95 +2125,41 @@ function enterGuestModeFromPayload(payload, isReturn) {
 function updateGuestControlsUI() {
   const guestBadge = $('guest-badge');
   const btnShare = $('btn-share');
-  const btnReturn = $('btn-return');
-  const btnImport = $('btn-import');
-  const btnUploadTop = $('btn-upload-top');
+  const btnShareSpan = btnShare.querySelector('span');
   const stateSel = $('review-state');
   const versionSel = $('review-version');
   const backBtn = $('btn-back');
+  const delVerBtn = $('btn-delete-version');
 
   if (isGuest) {
     guestBadge.style.display = 'inline-flex';
-    btnShare.style.display = 'none';
     stateSel.disabled = true;
     versionSel.disabled = true;
     backBtn.style.display = 'none';
-
-    if (isReturnToHost) {
-      btnReturn.style.display = 'none';
-      btnImport.style.display = 'inline-flex';
-      btnUploadTop.style.display = 'none';
-      $('shared-note').textContent = '📥 Comentarios recibidos — pulsa "Importar" para mergear';
-    } else {
-      btnReturn.style.display = 'inline-flex';
-      btnImport.style.display = 'none';
-      btnUploadTop.style.display = (guestProject.versions[0].youtubeId) ? 'none' : 'inline-flex';
-      $('shared-note').textContent = '👤 Modo invitado · solo ves este proyecto';
-    }
+    delVerBtn.style.display = 'none';
+    btnShare.style.display = 'inline-flex';
+    if (btnShareSpan) btnShareSpan.textContent = 'Devolver';
+    $('shared-note').textContent = '👤 Modo invitado · tus comentarios se enviarán al autor';
   } else {
     guestBadge.style.display = 'none';
-    btnShare.style.display = 'inline-flex';
-    btnReturn.style.display = 'none';
-    btnImport.style.display = 'none';
-    btnUploadTop.style.display = 'inline-flex';
     stateSel.disabled = false;
     versionSel.disabled = false;
     backBtn.style.display = 'flex';
+    btnShare.style.display = 'inline-flex';
+    if (btnShareSpan) btnShareSpan.textContent = 'Compartir';
+    delVerBtn.style.display = currentVersions.length > 1 ? 'inline-flex' : 'none';
     $('shared-note').textContent = '💬 Los comentarios se comparten entre todas las versiones';
   }
 }
 
-$('btn-return').addEventListener('click', async () => {
-  if (!isGuest || isReturnToHost) return;
-  const p = getActiveProject();
-  if (!p) return;
-
-  const vObj = (p.versions || []).find(v => v.id === (p.currentVersion || 'v1'));
-  const payload = {
-    v: 1,
-    pid: p.id,
-    name: p.name,
-    client: p.client,
-    date: p.date,
-    state: p.state,
-    version: p.currentVersion || 'v1',
-    youtubeId: (vObj && vObj.youtubeId) || '',
-    comments: (p.comments || []).map(c => ({
-      id: c.id, time: c.time, author: c.author, text: c.text,
-      resolved: !!c.resolved, version: c.version || 'v1',
-      createdAt: c.createdAt || new Date().toISOString()
-    }))
-  };
-  const encoded = encodeShare(payload);
-  const url = `${location.origin}${location.pathname}#/g/${encoded}`;
-  const ok = await copyToClipboard(url);
-
-  $('share-title').textContent = 'Enviar comentarios al autor';
-  $('share-hint').innerHTML = 'Copia este enlace y mándalo de vuelta al autor. Él podrá importar todos tus comentarios a su proyecto.';
-  $('share-link-box').textContent = url;
-  $('share-modal').classList.add('open');
-
-  showToast(ok ? 'Enlace listo para devolver ✔' : 'Copia el enlace manualmente');
-});
-
-$('btn-import').addEventListener('click', async () => {
-  if (!isReturnToHost) return;
-  const incoming = guestProject;
-  if (!incoming) return;
-
-  const localProject = getProject(incoming.id);
-  if (!localProject) {
-    showToast('Proyecto no encontrado');
-    return;
-  }
-
-  if (!confirm(`¿Importar ${incoming.comments.length} comentarios al proyecto "${localProject.name}"?`)) return;
-
-  const existingIds = new Set((localProject.comments || []).map(c => c.id));
+async function mergeReturnedComments(localProject, payload) {
+  const incoming = payload.comments || [];
   let added = 0, updated = 0;
 
-  incoming.comments.forEach(inc => {
-    const local = (localProject.comments || []).find(c => c.id === inc.id);
+  if (!localProject.comments) localProject.comments = [];
+
+  incoming.forEach(inc => {
+    const local = localProject.comments.find(c => c.id === inc.id);
     if (local) {
       if (local.text !== inc.text) { local.text = inc.text; updated++; }
       if (local.resolved !== inc.resolved) { local.resolved = inc.resolved; updated++; }
@@ -2102,17 +2181,11 @@ $('btn-import').addEventListener('click', async () => {
 
   localProject.updatedAt = Date.now();
   await persistProject(localProject);
-  await refreshProjects();
-
-  showToast(`Importado: +${added} nuevos, ${updated} actualizados`);
-
-  exitGuestMode();
-  location.hash = '#/p/' + localProject.id + '/' + (localProject.currentVersion || 'v1');
-});
+  return { added, updated };
+}
 
 function exitGuestMode() {
   isGuest = false;
-  isReturnToHost = false;
   guestProject = null;
   guestPayload = null;
   guestOriginalCommentIds.clear();
@@ -2123,7 +2196,7 @@ function exitGuestMode() {
 /* =========================================================
    15 · ROUTER
    ========================================================= */
-function applyHashRoute() {
+async function applyHashRoute() {
   const hash = location.hash || '';
 
   const gm = hash.match(/^#\/g\/(.+)$/);
@@ -2135,8 +2208,15 @@ function applyHashRoute() {
       return;
     }
     const localProject = getProject(payload.pid);
-    const isReturn = !!localProject;
-    enterGuestModeFromPayload(payload, isReturn);
+    if (localProject) {
+      // El host abrió un enlace devuelto: fusionar automáticamente
+      const { added, updated } = await mergeReturnedComments(localProject, payload);
+      await refreshProjects();
+      showToast(`Comentarios importados: +${added} nuevos, ${updated} actualizados ✔`, 4000);
+      location.hash = '#/p/' + localProject.id + '/' + (localProject.currentVersion || 'v1');
+      return;
+    }
+    enterGuestModeFromPayload(payload);
     return;
   }
 
@@ -2236,6 +2316,25 @@ $('review-version').addEventListener('change', async e => {
   p.updatedAt = Date.now();
   await persistProject(p);
   location.hash = '#/p/' + p.id + '/' + val;
+});
+
+/* ---------- Eliminar versión ---------- */
+$('btn-delete-version').addEventListener('click', async () => {
+  const p = getActiveProject();
+  if (!p || isGuest) return;
+  const versions = p.versions || [];
+  if (versions.length <= 1) { showToast('No puedes eliminar la única versión'); return; }
+  const cur = p.currentVersion || 'v1';
+  if (!confirm(`¿Eliminar la versión ${cur}? Los comentarios asociados a esa versión se eliminarán también.`)) return;
+
+  p.versions = versions.filter(v => v.id !== cur);
+  p.comments = (p.comments || []).filter(c => (c.version || 'v1') !== cur);
+  const newVer = p.versions[p.versions.length - 1].id;
+  p.currentVersion = newVer;
+  p.updatedAt = Date.now();
+  await persistProject(p);
+  showToast('Versión eliminada');
+  location.hash = '#/p/' + p.id + '/' + newVer;
 });
 
 /* =========================================================
@@ -2486,10 +2585,14 @@ function updateFilterTabs() {
    22 · INIT
    ========================================================= */
 async function init() {
-  await refreshProjects();
   if (location.hash) {
+    // Si vamos a una ruta directa, primero cargamos los proyectos
+    renderProjectsLoading();
+    await refreshProjects();
     applyHashRoute();
   } else {
+    renderProjectsLoading();
+    await refreshProjects();
     showView('projects');
     renderProjects();
   }
