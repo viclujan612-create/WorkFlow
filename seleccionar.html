@@ -959,7 +959,7 @@ a:hover { text-decoration: underline; }
 .icon-done { display: none; }
 
 /* =====================================================================
-   11 · TOAST (ahora arriba, no tapa los botones de abajo)
+   11 · TOAST (arriba, no tapa los botones de abajo)
    ===================================================================== */
 .toast {
   position: fixed; left: 50%; top: 24px;
@@ -988,21 +988,225 @@ a:hover { text-decoration: underline; }
   .sidebar.right { width: 220px; }
   .side-preview { width: 140px; height: 110px; }
 }
+
 @media (max-width: 900px) {
   .sidebar.left { width: 240px; }
   .sidebar.right { display: none; }
   .side-preview { width: 110px; height: 90px; }
 }
-@media (max-width: 640px) {
-  .app-header { flex-direction: column; align-items: stretch; padding: 12px 14px; gap: 10px; }
-  .header-brand { width: 100%; gap: 8px; }
-  .btn-home { padding: 8px 12px; font-size: 12px; gap: 6px; }
-  .brand-lockup { padding-left: 10px; gap: 8px; }
-  .brand-lockup .brand-logo { height: 26px; }
-  .brand-suffix { font-size: 17px; }
-  .header-controls { width: 100%; }
-  .sidebar.left { width: 200px; }
+
+/* ---------- MÓVIL/TABLET: layout apilado (imagen arriba, lista abajo) ---------- */
+@media (max-width: 720px) {
+  .main-layout { flex-direction: column; }
+
+  .center-area {
+    order: 1;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .sidebar.left {
+    order: 2;
+    width: 100%;
+    flex: 0 0 auto;
+    max-height: 32vh;
+    min-height: 150px;
+    border-right: none;
+    border-top: 1px solid var(--border);
+  }
   .side-preview { display: none; }
+
+  /* Viewer ocupando todo el alto disponible */
+  .viewer-container {
+    padding: 10px;
+    gap: 8px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .main-viewer {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+  }
+  .image-zoom-wrapper { border-radius: 10px; }
+
+  /* Controles de zoom arriba a la derecha para no tapar los botones */
+  .zoom-controls {
+    bottom: auto;
+    top: 10px;
+    right: 10px;
+    padding: 3px;
+  }
+  .zoom-controls button { padding: 6px 10px; font-size: 12px; }
+
+  .viewer-footer { padding: 8px 0 0; gap: 4px; }
+  .image-info-row { padding: 0; max-width: 100%; gap: 8px; }
+  .image-title { font-size: 12.5px; }
+  .image-counter { font-size: 11px; padding: 2px 8px; }
+  .image-meta {
+    font-size: 10.5px;
+    padding: 0;
+    max-width: 100%;
+    gap: 2px 8px;
+  }
+
+  /* Botones de acción a ancho completo, mitad y mitad */
+  .actions { width: 100%; gap: 8px; margin-top: 2px; }
+  .btn-action {
+    flex: 1 1 0;
+    justify-content: center;
+    padding: 10px 12px;
+    font-size: 12.5px;
+  }
+  .btn-action kbd { display: none; }
+
+  /* Lista de archivos compacta (filmstrip) */
+  .panel-header { padding: 7px 10px; font-size: 10px; }
+  .browser-toolbar { padding: 6px 8px; gap: 4px; }
+  .browser-toolbar button { padding: 7px 8px; font-size: 11px; }
+  .search-box { padding: 6px 8px; }
+  .input-field { padding: 8px 10px; font-size: 12.5px; }
+  .file-item { padding: 7px 9px; font-size: 12px; }
+  .file-list { padding: 4px; }
+}
+
+/* ---------- MÓVIL PEQUEÑO: headers y picker ---------- */
+@media (max-width: 640px) {
+  /* --- App header (workspaces) — marca arriba, controles en grid --- */
+  .app-header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 14px;
+    gap: 10px;
+  }
+  .header-brand {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: center;
+    min-width: 0;
+  }
+  .btn-home {
+    padding: 8px 12px;
+    font-size: 12px;
+    gap: 6px;
+    flex: 0 0 auto;
+  }
+  .btn-home svg { width: 14px; height: 14px; }
+  .brand-lockup {
+    padding-left: 10px;
+    gap: 8px;
+    min-width: 0;
+    flex: 0 0 auto;
+  }
+  .brand-lockup .brand-logo { height: 26px; }
+  .brand-suffix { font-size: 17px; letter-spacing: -.3px; }
+
+  .header-controls {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    width: 100%;
+    flex: initial;
+    justify-content: initial;
+  }
+  .ctrl-select { width: 100%; }
+  .ctrl-select select {
+    width: 100%;
+    padding: 9px 28px 9px 12px;
+    font-size: 12px;
+  }
+  .view-toggle { justify-self: end; }
+  #btn-new-workspace {
+    grid-column: 1 / -1;
+    justify-content: center;
+    padding: 10px 12px;
+    font-size: 12.5px;
+  }
+
+  /* --- Selector header (dentro del espacio) — como el review-header --- */
+  .selector-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    min-height: auto;
+  }
+  .btn-back {
+    order: 1;
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+  }
+  .selector-info {
+    order: 2;
+    flex: 1 1 100px;
+    min-width: 0;
+  }
+  .selector-name { font-size: 15px; }
+  .selector-meta { font-size: 11px; }
+  .selector-controls {
+    order: 3;
+    width: 100%;
+    margin-left: 0;
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+  .selector-controls .btn-secondary {
+    flex: 1 1 auto;
+    justify-content: center;
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  /* --- Empty state del visor --- */
+  .empty-state { gap: 16px; padding: 30px 20px; }
+  .empty-state .icon { font-size: 52px; }
+  .empty-state .title { font-size: 19px; letter-spacing: -.3px; }
+  .empty-state .sub { font-size: 12.5px; }
+  .empty-state .cta-big {
+    padding: 14px 22px;
+    font-size: 13.5px;
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+    justify-content: center;
+  }
+  .empty-state .cta-big .cta-ico { font-size: 18px; }
+
+  /* --- WS empty state (picker de carpeta raíz) --- */
+  .ws-empty-state { padding: 40px 16px; gap: 12px; }
+  .ws-empty-state .icon { font-size: 52px; }
+  .ws-empty-state .title { font-size: 19px; letter-spacing: -.3px; }
+  .ws-empty-state .sub { font-size: 12.5px; }
+  .ws-empty-state .warn { padding: 12px 14px; font-size: 12px; }
+  .ws-empty-state .actions-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  .ws-empty-state .actions-row button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* --- Grid de workspaces --- */
+  .projects-title-bar { padding: 20px 14px 0; }
+  .projects-title { font-size: 28px; }
+  .projects-body { padding: 18px 14px 40px; }
+  .projects-grid {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 12px;
+  }
+
+  /* --- Modales --- */
+  .modal-box { padding: 18px 16px; border-radius: 16px; }
+  .modal-title { font-size: 12px; }
+  .modal-hint { font-size: 11.5px; }
+  .config-field { padding: 11px 12px; font-size: 13.5px; margin-bottom: 8px; }
+  .config-actions button { padding: 10px 14px; font-size: 12.5px; }
 }
 </style>
 </head>
@@ -1044,7 +1248,7 @@ a:hover { text-decoration: underline; }
       </a>
       <div class="brand-lockup">
         <div class="brand-logo-slot"></div>
-        <span class="brand-suffix">selector</span>
+        <span class="brand-suffix">Seleccionar</span>
       </div>
     </div>
 
@@ -1465,7 +1669,6 @@ async function init() {
         return;
       }
     } catch (e) {}
-    // Si no hay permiso, mostramos el picker inicial con opción de retomar
     renderInitialPicker(saved);
     return;
   }
