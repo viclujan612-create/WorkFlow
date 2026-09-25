@@ -1154,11 +1154,11 @@ body.readonly-mode .file-actions { display: none !important; }
 /* =====================================================================
    CONFIG
    ===================================================================== */
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZudRPK9I5dfDtWDPWUhnYj-T8bIQs4SLDhgTFv6rNS2r49E28tyEdIzzp4LYmvvIx-A/exec';
-const CLIENT_ID  = '1012223420500-68k5tqdnlrv2r32plprincmvr576m549.apps.googleusercontent.com';
-const API_KEY    = 'AIzaSyDh2OmtnvR6oe-pCJJi4itHRqKnCelq2ns';
+const SCRIPT_URL     = 'https://script.google.com/macros/s/AKfycbwZudRPK9I5dfDtWDPWUhnYj-T8bIQs4SLDhgTFv6rNS2r49E28tyEdIzzp4LYmvvIx-A/exec';
+const CLIENT_ID      = '1012223420500-68k5tqdnlrv2r32plprincmvr576m549.apps.googleusercontent.com';
+const API_KEY        = 'AIzaSyDh2OmtnvR6oe-pCJJi4itHRqKnCelq2ns';
 const PROJECT_NUMBER = '1012223420500';
-const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
+const SCOPES         = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly';
 
 /* =====================================================================
    UTILS
@@ -1218,23 +1218,12 @@ function randomId(len = 12) {
   for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * chars.length)];
   return out;
 }
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => {
-      const s = String(r.result);
-      const i = s.indexOf(',');
-      resolve(i >= 0 ? s.slice(i + 1) : s);
-    };
-    r.onerror = () => reject(r.error);
-    r.readAsDataURL(file);
-  });
-}
 
 /* =====================================================================
    API · Apps Script
    ===================================================================== */
 async function apiCall(action, params = {}) {
+  console.log(`[API] → ${action}`, params);
   const body = JSON.stringify({ action, ...params });
   const res = await fetch(SCRIPT_URL, {
     method: 'POST',
@@ -1244,8 +1233,15 @@ async function apiCall(action, params = {}) {
   const text = await res.text();
   let json;
   try { json = JSON.parse(text); }
-  catch (e) { throw new Error('Respuesta inválida del servidor: ' + text.slice(0, 200)); }
-  if (!json.ok) throw new Error(json.error || 'Error desconocido');
+  catch (e) {
+    console.error('[API] Respuesta no-JSON:', text);
+    throw new Error('Respuesta inválida: ' + text.slice(0, 200));
+  }
+  if (!json.ok) {
+    console.error(`[API] ← ${action} ERROR:`, json.error);
+    throw new Error(json.error || 'Error desconocido');
+  }
+  console.log(`[API] ← ${action} OK`, json.data);
   return json.data;
 }
 
@@ -1253,6 +1249,7 @@ async function apiCall(action, params = {}) {
    IMAGE CACHE
    ===================================================================== */
 const imageCache = new Map();
+const thumbCache = new Map();
 
 async function getImageUrl(workspaceId, subfolder, fileName) {
   const key = `${workspaceId}/${subfolder}/${fileName}`;
@@ -1266,9 +1263,21 @@ async function getImageUrl(workspaceId, subfolder, fileName) {
   imageCache.set(key, url);
   return url;
 }
+async function getThumbUrl(workspaceId, subfolder, fileName) {
+  const key = `thumb:${workspaceId}/${subfolder}/${fileName}`;
+  if (thumbCache.has(key)) return thumbCache.get(key);
+  try {
+    const url = await getImageUrl(workspaceId, subfolder, fileName);
+    thumbCache.set(key, url);
+    return url;
+  } catch (e) {
+    return null;
+  }
+}
 function clearImageCache() {
   for (const url of imageCache.values()) URL.revokeObjectURL(url);
   imageCache.clear();
+  thumbCache.clear();
 }
 
 /* =====================================================================
@@ -1278,9 +1287,8 @@ let workspaces = [];
 let currentWorkspace = null;
 let readonlyMode = false;
 let currentShareToken = null;
-let shareReturnHash = null;
 
-let allPhotos = [];      // [{id, name, size}]
+let allPhotos = [];
 let allFavs = [];
 let allDescs = [];
 let imageFiles = [];
@@ -1313,32 +1321,40 @@ function showView(name) {
 /* =====================================================================
    GOOGLE API BOOTSTRAP
    ===================================================================== */
-function onGapiLoaded() {
-  gapi.load('picker', () => { pickerReady = true; updateDriveBtn(); });
+function onGapiLoad() {
+  console.log('[GAPI] api.js cargado');
+  gapi.load('picker', () => {
+    pickerReady = true;
+    console.log('[GAPI] Picker listo ✔');
+    updateDriveBtn();
+  });
 }
-window.addEventListener('load', () => {
-  if (typeof gapi !== 'undefined') onGapiLoaded();
-  // Esperar a GIS
-  const checkGis = setInterval(() => {
-    if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
-      clearInterval(checkGis);
-      tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES,
-        callback: (resp) => {
-          if (resp.error) { showToast('Error de autenticación: ' + resp.error, 'error'); return; }
-          accessToken = resp.access_token;
-          gisReady = true;
-          openDrivePicker();
+function onGisLoad() {
+  console.log('[GIS] client cargado');
+  try {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: SCOPES,
+      callback: (resp) => {
+        console.log('[GIS] callback', resp);
+        if (resp.error) {
+          showToast('Error de autenticación: ' + resp.error, 'error', 5000);
+          return;
         }
-      });
-    }
-  }, 200);
-});
-
+        accessToken = resp.access_token;
+        gisReady = true;
+        console.log('[GIS] Access token OK ✔');
+        openDrivePicker();
+      }
+    });
+    console.log('[GIS] tokenClient inicializado ✔');
+  } catch (e) {
+    console.error('[GIS] Error init', e);
+  }
+}
 function updateDriveBtn() {
   const btn = $('btn-drive');
-  if (btn) btn.disabled = false;
+  if (btn) btn.disabled = !pickerReady;
 }
 
 /* =====================================================================
@@ -1347,8 +1363,11 @@ function updateDriveBtn() {
 async function init() {
   try {
     await apiCall('ping');
+    console.log('[INIT] Backend OK ✔');
   } catch (e) {
+    console.error('[INIT] Backend no responde', e);
     reportError('No se pudo conectar con el servidor', e);
+    return;
   }
   await loadWorkspaces();
   if (location.hash) await applyRoute();
@@ -1359,18 +1378,20 @@ async function init() {
    ===================================================================== */
 async function loadWorkspaces() {
   const cont = $('workspaces-container');
-  cont.className = 'projects-grid';
-  cont.innerHTML = `<div class="ws-loading"><div class="spin"></div><div>Cargando espacios…</div></div>`;
+  if (cont) {
+    cont.className = 'projects-grid';
+    cont.innerHTML = `<div class="ws-loading"><div class="spin"></div><div>Cargando espacios…</div></div>`;
+  }
   try {
     const list = await apiCall('listWorkspaces');
-    // Convertir thumbId a URL inline usando endpoint getFile → pero eso es lento.
-    // Usamos lh3.googleusercontent.com/d/{id} que funciona si el usuario está logueado con acceso
+    console.log('[WS] Espacios recibidos:', list.length);
     workspaces = list.map(w => ({
       ...w,
-      thumb: w.thumbId ? `https://lh3.googleusercontent.com/d/${w.thumbId}=w400` : null
+      thumb: null // se carga lazy
     }));
   } catch (e) {
     workspaces = [];
+    console.error('[WS] Error al cargar', e);
     reportError('Error al cargar espacios', e);
   }
   renderWorkspaceCards();
@@ -1403,7 +1424,6 @@ function renderWorkspaceCards() {
         <div class="title">Sin espacios todavía</div>
         <div class="sub">Creá tu primer espacio de trabajo haciendo clic en <strong>nuevo espacio</strong>.</div>
       </div>`;
-    // Fallthrough para agregar new-card igual
   }
 
   const sorted = getSortedWorkspaces();
@@ -1425,13 +1445,11 @@ function buildWorkspaceCard(w) {
   card.className = 'project-card' + (currentViewMode === 'list' ? ' list-item' : '');
   card.dataset.id = w.id;
 
-  const thumbHTML = w.thumb
-    ? `<img src="${w.thumb}" alt="" onerror="this.style.display='none'; this.parentElement.innerHTML+='<div class=\\'thumb-placeholder\\'><div class=\\'icon\\'>🖼️</div><div>sin favoritos</div></div>'">`
-    : `<div class="thumb-placeholder"><div class="icon">🖼️</div><div>sin favoritos</div></div>`;
+  const thumbHTML = `<div class="thumb-placeholder"><div class="icon">🖼️</div><div>sin favoritos</div></div>`;
 
   const limitBadge = w.maxFavorites ? ` · 🎯 ${w.maxFavorites}` : '';
   card.innerHTML = `
-    <div class="project-thumb">
+    <div class="project-thumb" data-thumb-slot>
       ${thumbHTML}
       <span class="project-version-badge">${w.count} foto${w.count === 1 ? '' : 's'}</span>
       <span class="project-state-badge">${w.shareToken ? 'compartido' : 'workspace'}</span>
@@ -1449,6 +1467,22 @@ function buildWorkspaceCard(w) {
       <button type="button" data-action="delete">Eliminar</button>
     </div>
   `;
+
+  // Cargar thumb si hay
+  if (w.thumbId) {
+    const slot = card.querySelector('[data-thumb-slot]');
+    // Encontrar el archivo para pedir thumb
+    // Usamos el nombre del primer favorito, que listWorkspaces ya nos dio
+    if (w.thumbName) {
+      getThumbUrl(w.id, 'favoritos', w.thumbName).then(url => {
+        if (url && slot) {
+          slot.innerHTML = `<img src="${url}" alt="">
+            <span class="project-version-badge">${w.count} foto${w.count === 1 ? '' : 's'}</span>
+            <span class="project-state-badge">${w.shareToken ? 'compartido' : 'workspace'}</span>`;
+        }
+      });
+    }
+  }
 
   card.addEventListener('click', e => {
     if (e.target.closest('[data-menu-trigger]')) return;
@@ -1496,7 +1530,7 @@ function closeAllMenus() {
 document.addEventListener('click', closeAllMenus);
 
 /* =====================================================================
-   HEADER · SORT / VIEW / NEW
+   HEADER
    ===================================================================== */
 $('sort-select').addEventListener('change', e => { currentSort = e.target.value; renderWorkspaceCards(); });
 $('view-grid-btn').addEventListener('click', () => {
@@ -1602,11 +1636,17 @@ async function deleteWorkspace(w) {
    ===================================================================== */
 async function applyRoute() {
   const hash = location.hash || '';
+  console.log('[ROUTE]', hash, readonlyMode ? '(readonly)' : '');
 
-  const shareMatch = hash.match(/^#\/share\/([a-z0-9]+)(?:\?(.*))?$/i);
+  const shareMatch = hash.match(/^#\/share\/([a-z0-9]+)/i);
   if (shareMatch) {
-    const token = shareMatch[1];
-    await openSharedWorkspace(token);
+    await openSharedWorkspace(shareMatch[1]);
+    return;
+  }
+
+  // Si estamos en readonly, no dejamos navegar fuera del share
+  if (readonlyMode) {
+    if (currentShareToken) location.hash = `#/share/${currentShareToken}`;
     return;
   }
 
@@ -1645,7 +1685,6 @@ async function openWorkspace(w) {
   const parts = [w.client, fmtDateDisplay(w.date)].filter(Boolean);
   $('selector-meta').textContent = parts.join(' · ') || 'Sin cliente';
 
-  // Botón límite: activo solo si ya hay token de share generado
   $('btn-fav-limit').disabled = !w.shareToken;
   $('btn-fav-limit').textContent = w.maxFavorites ? `🎯 Límite: ${w.maxFavorites}` : '🎯 Límite favoritos';
 
@@ -1656,6 +1695,11 @@ async function openWorkspace(w) {
 }
 
 async function openSharedWorkspace(token) {
+  // Si ya estamos en readonly con el mismo token, no recargar
+  if (readonlyMode && currentShareToken === token && currentWorkspace) {
+    showView('selector');
+    return;
+  }
   try {
     const meta = await apiCall('getSharedWorkspace', { token });
     readonlyMode = true;
@@ -1684,7 +1728,7 @@ async function openSharedWorkspace(token) {
     renderEmptyCenter();
   } catch (e) {
     reportError('Enlace inválido', e);
-    location.hash = '';
+    // No romper, solo mostrar error
   }
 }
 
@@ -1702,7 +1746,9 @@ async function loadAllFiles() {
     allPhotos = photos.filter(f => isImage(f.name));
     allFavs = favs.filter(f => isImage(f.name));
     allDescs = descs.filter(f => isImage(f.name));
+    console.log(`[FILES] fotos: ${allPhotos.length}, favs: ${allFavs.length}, desc: ${allDescs.length}`);
   } catch (e) {
+    console.error('[FILES] Error', e);
     reportError('Error al leer archivos', e);
     allPhotos = []; allFavs = []; allDescs = [];
   }
@@ -1718,7 +1764,7 @@ function renderFileList() {
 
   if (filtered.length === 0) {
     fileList.innerHTML = `<li style="padding:20px 14px;color:var(--txt-dim-2);font-size:12px;text-align:center;">
-      ${allPhotos.length === 0 ? 'Sin fotos importadas todavía.<br>Usá <strong>📥 Importar</strong> o <strong>📁 Drive</strong>.' : 'Sin resultados.'}
+      ${allPhotos.length === 0 ? 'Sin fotos importadas todavía.<br>Usá <strong>📁 Drive</strong>.' : 'Sin resultados.'}
     </li>`;
     return;
   }
@@ -1790,7 +1836,7 @@ function renderEmptyCenter() {
       <div class="empty-state">
         <div class="icon">📥</div>
         <div class="title">Este espacio aún no tiene fotos</div>
-        <div class="sub">${readonlyMode ? 'El fotógrafo todavía no cargó fotos en este espacio.' : `Importá imágenes desde tu PC o desde Drive al espacio <strong>${escapeHTML(currentWorkspace.name)}</strong>.`}</div>
+        <div class="sub">${readonlyMode ? 'El fotógrafo todavía no cargó fotos en este espacio.' : `Importá imágenes desde Drive al espacio <strong>${escapeHTML(currentWorkspace.name)}</strong>.`}</div>
         ${readonlyMode ? '' : `<button class="cta-big" id="cta-drive"><span class="cta-ico">📁</span><span>Cargar desde Drive</span></button>`}
       </div>`;
     const cta = $('cta-drive');
@@ -1809,13 +1855,9 @@ function renderEmptyCenter() {
 function renderViewer() {
   $('center-area').innerHTML = `
     <div class="viewer-container">
-      <div class="side-preview" id="prev-preview" title="Anterior (←)">
-        <div class="nav-label">← Anterior</div>
-      </div>
+      <div class="side-preview" id="prev-preview" title="Anterior (←)"><div class="nav-label">← Anterior</div></div>
       <div class="main-viewer">
-        <div class="image-zoom-wrapper" id="zoom-wrapper">
-          <img id="current-image" src="" alt="">
-        </div>
+        <div class="image-zoom-wrapper" id="zoom-wrapper"><img id="current-image" src="" alt=""></div>
         <div class="zoom-controls">
           <button id="zoom-in" title="Acercar">+</button>
           <button id="zoom-out" title="Alejar">−</button>
@@ -1833,9 +1875,7 @@ function renderViewer() {
           </div>
         </div>
       </div>
-      <div class="side-preview" id="next-preview" title="Siguiente (→)">
-        <div class="nav-label">Siguiente →</div>
-      </div>
+      <div class="side-preview" id="next-preview" title="Siguiente (→)"><div class="nav-label">Siguiente →</div></div>
     </div>`;
   bindViewerEvents();
 }
@@ -1913,7 +1953,6 @@ async function updateImageView() {
     return;
   }
 
-  // Dimensiones
   const dims = await new Promise((res) => {
     const i = new Image();
     i.onload = () => res({ width: i.naturalWidth, height: i.naturalHeight });
@@ -1924,7 +1963,6 @@ async function updateImageView() {
   if (dims) infoParts.push(`<span class="sep">·</span>`, `<span>${dims.width} × ${dims.height}</span>`);
   $('image-meta').innerHTML = infoParts.join(' ');
 
-  // Previews
   if (currentIndex > 0) {
     try {
       const prevUrl = await getImageUrl(currentWorkspace.id, 'fotos', imageFiles[currentIndex - 1].name);
@@ -1955,38 +1993,26 @@ async function handleLike() {
   }
   const entry = imageFiles[currentIndex];
   try {
-    await apiCall('moveFile', {
-      id: currentWorkspace.id,
-      from: 'fotos', to: 'favoritos',
-      fileName: entry.name
-    });
+    await apiCall('moveFile', { id: currentWorkspace.id, from: 'fotos', to: 'favoritos', fileName: entry.name });
     showToast(`♥ Añadido a favoritos: ${entry.name}`);
     await loadAllFiles();
     if (allPhotos.length === 0) { renderEmptyCenter(); return; }
     if (currentIndex >= allPhotos.length) currentIndex = allPhotos.length - 1;
     await updateImageView();
-  } catch (err) {
-    reportError('Error al mover a favoritos', err);
-  }
+  } catch (err) { reportError('Error al mover a favoritos', err); }
 }
 
 async function handleDislike() {
   if (imageFiles.length === 0) return;
   const entry = imageFiles[currentIndex];
   try {
-    await apiCall('moveFile', {
-      id: currentWorkspace.id,
-      from: 'fotos', to: 'descartar',
-      fileName: entry.name
-    });
+    await apiCall('moveFile', { id: currentWorkspace.id, from: 'fotos', to: 'descartar', fileName: entry.name });
     showToast(`✕ Descartada: ${entry.name}`);
     await loadAllFiles();
     if (allPhotos.length === 0) { renderEmptyCenter(); return; }
     if (currentIndex >= allPhotos.length) currentIndex = allPhotos.length - 1;
     await updateImageView();
-  } catch (err) {
-    reportError('Error al descartar', err);
-  }
+  } catch (err) { reportError('Error al descartar', err); }
 }
 
 /* =====================================================================
@@ -2029,7 +2055,6 @@ async function renderFavorites() {
     wrap.appendChild(removeBtn);
     likedGrid.appendChild(wrap);
 
-    // Lazy load de la imagen
     getImageUrl(currentWorkspace.id, 'favoritos', f.name)
       .then(url => { img.src = url; })
       .catch(() => { img.style.background = '#333'; });
@@ -2038,11 +2063,7 @@ async function renderFavorites() {
 
 async function removeFromFavorites(name) {
   try {
-    await apiCall('moveFile', {
-      id: currentWorkspace.id,
-      from: 'favoritos', to: 'fotos',
-      fileName: name
-    });
+    await apiCall('moveFile', { id: currentWorkspace.id, from: 'favoritos', to: 'fotos', fileName: name });
     showToast(`↩ Devuelta a fotos: ${name}`);
     imageCache.delete(`${currentWorkspace.id}/favoritos/${name}`);
     imageCache.delete(`${currentWorkspace.id}/fotos/${name}`);
@@ -2051,9 +2072,7 @@ async function removeFromFavorites(name) {
       if (favFiles.length === 0) closeFav();
       else { favIndex = Math.min(favIndex, favFiles.length - 1); await showFavAt(favIndex); }
     }
-  } catch (err) {
-    reportError('Error al devolver a fotos', err);
-  }
+  } catch (err) { reportError('Error al devolver a fotos', err); }
 }
 
 /* =====================================================================
@@ -2076,9 +2095,7 @@ async function showFavAt(i) {
     favCounter.textContent = `${i + 1} / ${favFiles.length}`;
     favPrevBtn.disabled = i <= 0;
     favNextBtn.disabled = i >= favFiles.length - 1;
-  } catch (e) {
-    reportError('Error al cargar favorito', e);
-  }
+  } catch (e) { reportError('Error al cargar favorito', e); }
 }
 $('fav-close').addEventListener('click', closeFav);
 favModal.addEventListener('click', e => { if (e.target === favModal) closeFav(); });
@@ -2096,44 +2113,52 @@ function closeFav() {
 }
 
 /* =====================================================================
-   IMPORTAR · GOOGLE PICKER (Drive → fotos/)
+   DRIVE PICKER
    ===================================================================== */
 $('btn-drive').addEventListener('click', openDrivePickerOrAuth);
-$('btn-import').addEventListener('click', () => {
-  // En modo local (backend Apps Script) redirigimos al picker de Drive también
-  openDrivePickerOrAuth();
-});
 
 function openDrivePickerOrAuth() {
-  if (readonlyMode) { showToast('Modo lectura', 'error'); return; }
+  console.log('[DRIVE] click. pickerReady:', pickerReady, 'tokenClient:', !!tokenClient, 'accessToken:', !!accessToken);
+  if (readonlyMode) { showToast('Modo lectura: no podés importar', 'error'); return; }
+  if (!tokenClient) {
+    showToast('Google API no está lista. Esperá 2 segundos y reintentá.', 'error', 4000);
+    return;
+  }
   if (!accessToken) {
-    if (!tokenClient) { showToast('Google API no está lista todavía', 'error'); return; }
-    tokenClient.requestAccessToken();
+    tokenClient.requestAccessToken({ prompt: 'consent' });
     return;
   }
   openDrivePicker();
 }
 
 function openDrivePicker() {
-  if (!pickerReady) { showToast('Picker no está listo, esperá un segundo', 'error'); return; }
+  if (!pickerReady) {
+    showToast('Picker no está listo. Recargá la página.', 'error');
+    return;
+  }
+  try {
+    const folderView = new google.picker.DocsView(google.picker.ViewId.FOLDERS)
+      .setIncludeFolders(true)
+      .setSelectFolderEnabled(true)
+      .setMimeTypes('application/vnd.google-apps.folder');
 
-  const folderView = new google.picker.DocsView(google.picker.ViewId.FOLDERS)
-    .setIncludeFolders(true)
-    .setSelectFolderEnabled(true)
-    .setMimeTypes('application/vnd.google-apps.folder');
-
-  const picker = new google.picker.PickerBuilder()
-    .addView(folderView)
-    .setOAuthToken(accessToken)
-    .setDeveloperKey(API_KEY)
-    .setAppId(PROJECT_NUMBER)
-    .setTitle('Elegí la carpeta de Drive con las fotos')
-    .setCallback(pickerCallback)
-    .build();
-  picker.setVisible(true);
+    const picker = new google.picker.PickerBuilder()
+      .addView(folderView)
+      .setOAuthToken(accessToken)
+      .setDeveloperKey(API_KEY)
+      .setAppId(PROJECT_NUMBER)
+      .setTitle('Elegí la carpeta de Drive con las fotos')
+      .setCallback(pickerCallback)
+      .build();
+    picker.setVisible(true);
+  } catch (e) {
+    console.error('[PICKER] Error al construir', e);
+    showToast('Error al abrir el selector de Drive: ' + e.message, 'error', 5000);
+  }
 }
 
 async function pickerCallback(data) {
+  console.log('[PICKER]', data.action);
   if (data.action !== google.picker.Action.PICKED) return;
   const doc = data.docs[0];
   if (!doc) return;
@@ -2141,7 +2166,6 @@ async function pickerCallback(data) {
 }
 
 async function importFromDriveFolder(folderId, folderName) {
-  // Listar archivos de la carpeta elegida vía REST de Drive
   let files = [];
   try {
     const q = encodeURIComponent(`'${folderId}' in parents and trashed=false`);
@@ -2151,6 +2175,7 @@ async function importFromDriveFolder(folderId, folderName) {
     if (json.error) throw new Error(json.error.message);
     files = (json.files || []).filter(f => f.mimeType && f.mimeType.startsWith('image/'));
   } catch (e) {
+    console.error('[DRIVE] Error listando', e);
     reportError('Error listando carpeta', e);
     return;
   }
@@ -2173,14 +2198,11 @@ async function importFromDriveFolder(folderId, folderName) {
   for (const f of files) {
     try {
       importFilename.textContent = f.name;
-
-      // Descargar archivo desde Drive
       const dlUrl = `https://www.googleapis.com/drive/v3/files/${f.id}?alt=media`;
       const dlRes = await fetch(dlUrl, { headers: { Authorization: 'Bearer ' + accessToken } });
       if (!dlRes.ok) throw new Error('No se pudo descargar ' + f.name);
       const blob = await dlRes.blob();
 
-      // Convertir a base64 y subir por Apps Script
       const base64 = await new Promise((resolve, reject) => {
         const r = new FileReader();
         r.onload = () => {
@@ -2205,7 +2227,7 @@ async function importFromDriveFolder(folderId, folderName) {
       importCounterText.textContent = `${done} / ${total}`;
       importPercent.textContent = pct + '%';
     } catch (err) {
-      console.error('Error con', f.name, err);
+      console.error('[IMPORT] Error con', f.name, err);
     }
   }
 
@@ -2222,7 +2244,7 @@ async function importFromDriveFolder(folderId, folderName) {
 }
 
 /* =====================================================================
-   COMPARTIR ENLACE
+   COMPARTIR
    ===================================================================== */
 $('btn-share-ws').addEventListener('click', async () => {
   if (!currentWorkspace || readonlyMode) return;
@@ -2233,9 +2255,7 @@ $('btn-share-ws').addEventListener('click', async () => {
     const url = `${location.origin}${location.pathname}#/share/${token}`;
     $('share-url').value = url;
     $('share-modal').classList.add('open');
-  } catch (e) {
-    reportError('Error al generar enlace', e);
-  }
+  } catch (e) { reportError('Error al generar enlace', e); }
 });
 $('share-close').addEventListener('click', () => $('share-modal').classList.remove('open'));
 $('share-modal').addEventListener('click', e => { if (e.target === $('share-modal')) $('share-modal').classList.remove('open'); });
@@ -2270,13 +2290,11 @@ $('favlimit-save').addEventListener('click', async () => {
     $('btn-fav-limit').textContent = limit ? `🎯 Límite: ${limit}` : '🎯 Límite favoritos';
     $('favlimit-modal').classList.remove('open');
     showToast(limit ? `Límite: ${limit} favoritos` : 'Sin límite');
-  } catch (e) {
-    reportError('Error al guardar límite', e);
-  }
+  } catch (e) { reportError('Error al guardar límite', e); }
 });
 
 /* =====================================================================
-   BOTONES HEADER DEL SELECTOR
+   BOTONES HEADER
    ===================================================================== */
 $('btn-back').addEventListener('click', () => { location.hash = ''; });
 $('btn-edit-ws').addEventListener('click', () => {
@@ -2297,27 +2315,15 @@ window.addEventListener('keydown', e => {
     if (e.key === 'Delete' || e.key === 'Backspace') { $('fav-remove').click(); e.preventDefault(); return; }
     return;
   }
-  if (wsModal.classList.contains('open')) {
-    if (e.key === 'Escape') closeWsModal();
-    return;
-  }
-  if ($('favlimit-modal').classList.contains('open')) {
-    if (e.key === 'Escape') $('favlimit-modal').classList.remove('open');
-    return;
-  }
-  if ($('share-modal').classList.contains('open')) {
-    if (e.key === 'Escape') $('share-modal').classList.remove('open');
-    return;
-  }
+  if (wsModal.classList.contains('open')) { if (e.key === 'Escape') closeWsModal(); return; }
+  if ($('favlimit-modal').classList.contains('open')) { if (e.key === 'Escape') $('favlimit-modal').classList.remove('open'); return; }
+  if ($('share-modal').classList.contains('open')) { if (e.key === 'Escape') $('share-modal').classList.remove('open'); return; }
   if (importModal.classList.contains('open')) return;
   if (editing) return;
 
   const inSelector = document.getElementById('selector-view').classList.contains('active');
 
-  if (e.key === 'Escape') {
-    if (inSelector) location.hash = '';
-    return;
-  }
+  if (e.key === 'Escape') { if (inSelector) location.hash = ''; return; }
 
   if (!inSelector) {
     if (readonlyMode) return;
@@ -2331,11 +2337,9 @@ window.addEventListener('keydown', e => {
     if (e.key.toLowerCase() === 'i' && !readonlyMode) { e.preventDefault(); openDrivePickerOrAuth(); }
     return;
   }
-  if (e.key === 'ArrowRight') {
-    if (currentIndex < allPhotos.length - 1) { currentIndex++; updateImageView(); }
-  } else if (e.key === 'ArrowLeft') {
-    if (currentIndex > 0) { currentIndex--; updateImageView(); }
-  } else if (e.key.toLowerCase() === 'l') handleLike();
+  if (e.key === 'ArrowRight') { if (currentIndex < allPhotos.length - 1) { currentIndex++; updateImageView(); } }
+  else if (e.key === 'ArrowLeft') { if (currentIndex > 0) { currentIndex--; updateImageView(); } }
+  else if (e.key.toLowerCase() === 'l') handleLike();
   else if (e.key.toLowerCase() === 'd')   handleDislike();
   else if (e.key.toLowerCase() === 'i' && !readonlyMode) openDrivePickerOrAuth();
 });
